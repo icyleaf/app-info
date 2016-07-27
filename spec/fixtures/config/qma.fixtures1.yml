@@ -1,0 +1,5 @@
+---
+development:
+  host: http://AppInfo.qyer.dev
+production:
+  host: http://AppInfo.qyer.com
