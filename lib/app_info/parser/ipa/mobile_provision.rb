@@ -44,6 +44,16 @@ module AppInfo
         mobileprovision.try(:[], 'Entitlements')
       end
 
+      def method_missing(method_name, *args, &block)
+        key = if method_name.to_s.include?('_')
+          method_name.to_s.split('_').map {|k| k.capitalize }.join('')
+        else
+          method_name.to_s
+        end
+
+        mobileprovision.try(:[], key)
+      end
+
       def empty?
         mobileprovision.nil?
       end

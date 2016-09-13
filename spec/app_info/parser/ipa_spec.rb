@@ -81,12 +81,12 @@ describe AppInfo::Parser::IPA do
       it { expect(subject.bundle_id).to eq('com.icyleaf.bundle') }
       it { expect(subject.device_type).to eq('iPad') }
 
-      it { expect { subject.devices }.to raise_error('Only works in Mac OS') }
-      it { expect { subject.team_name }.to raise_error('Only works in Mac OS') }
-      it { expect { subject.profile_name }.to raise_error('Only works in Mac OS') }
-      it { expect { subject.expired_date }.to raise_error('Only works in Mac OS') }
-      it { expect { subject.distribution_name }.to raise_error('Only works in Mac OS') }
-      it { expect { subject.mobileprovision }.to raise_error('Only works in Mac OS') }
+      it { expect(subject.devices).to be_nil }
+      it { expect(subject.team_name).to be_nil }
+      it { expect(subject.profile_name).to be_nil }
+      it { expect(subject.expired_date).to be_nil }
+      it { expect(subject.distribution_name).to be_nil }
+      it { expect(subject.mobileprovision).to be_kind_of AppInfo::Parser::MobileProvision }
 
       it { expect(subject.mobileprovision?).to be true }
       it { expect(subject.metadata).to be_nil }

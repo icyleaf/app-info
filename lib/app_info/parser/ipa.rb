@@ -140,7 +140,7 @@ module AppInfo
         return unless mobileprovision?
         return @mobileprovision if @mobileprovision
 
-        raise 'Only works in Mac OS' unless OS.mac?
+        return MobileProvision.new(nil) unless OS.mac?
 
         @mobileprovision = MobileProvision.new(mobileprovision_path)
       end
