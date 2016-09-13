@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'app_info/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'app_info'
+  spec.name          = 'app-info'
   spec.version       = AppInfo::VERSION
   spec.authors       = ['icyleaf']
   spec.email         = ['icyleaf.cn@gmail.com']
