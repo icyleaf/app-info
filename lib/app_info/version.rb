@@ -1,5 +1,3 @@
-module App
-  module Info
-    VERSION = '1.0.0'.freeze
-  end
+module AppInfo
+  VERSION = '1.0.1'.freeze
 end

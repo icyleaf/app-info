@@ -5,7 +5,7 @@ require 'app_info/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'app_info'
-  spec.version       = App::Info::VERSION
+  spec.version       = AppInfo::VERSION
   spec.authors       = ['icyleaf']
   spec.email         = ['icyleaf.cn@gmail.com']
 
