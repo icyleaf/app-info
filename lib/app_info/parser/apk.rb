@@ -17,6 +17,8 @@ module AppInfo
 
       def initialize(file)
         @file = file
+
+        Zip.warn_invalid_date = false # fix invaild date format warnings
         @apk = ::Android::Apk.new(file)
       end
 
