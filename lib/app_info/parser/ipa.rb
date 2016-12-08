@@ -1,4 +1,3 @@
-require 'os'
 require 'pngdefry'
 require 'fileutils'
 require 'securerandom'
@@ -28,7 +27,7 @@ module AppInfo
       def os
         Parser::Platform::IOS
       end
-      
+
       def iphone?
         info.iphone?
       end
