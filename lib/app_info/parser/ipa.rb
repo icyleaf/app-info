@@ -17,6 +17,7 @@ module AppInfo
         ADHOC = 'AdHoc'.freeze
         INHOUSE = 'inHouse'.freeze
         RELEASE = 'Release'.freeze
+        UNKOWN = nil
       end
 
       def initialize(file)
@@ -26,6 +27,18 @@ module AppInfo
 
       def os
         Parser::Platform::IOS
+      end
+      
+      def iphone?
+        info.iphone?
+      end
+
+      def ipad?
+        info.ipad?
+      end
+
+      def universal?
+        info.universal?
       end
 
       def build_version
@@ -56,6 +69,10 @@ module AppInfo
         info.icons
       end
 
+      def device_type
+        info.device_type
+      end
+
       def devices
         mobileprovision.devices
       end
@@ -80,22 +97,6 @@ module AppInfo
         "#{profile_name} - #{team_name}" if profile_name && team_name
       end
 
-      def device_type
-        info.device_type
-      end
-
-      def iphone?
-        info.iphone?
-      end
-
-      def ipad?
-        info.ipad?
-      end
-
-      def universal?
-        info.universal?
-      end
-
       def release_type
         if stored?
           ExportType::RELEASE
@@ -105,6 +106,8 @@ module AppInfo
       end
 
       def build_type
+        return ExportType::UNKOWN unless AppInfo::Parser.mac?
+
         if mobileprovision?
           if devices
             ExportType::ADHOC
@@ -124,25 +127,13 @@ module AppInfo
         mobileprovision.delete('DeveloperCertificates') if mobileprovision?
       end
 
-      def cleanup!
-        return unless @contents
-        FileUtils.rm_rf(@contents)
-
-        @contents = nil
-        @icons = nil
-        @app_path = nil
-        @metadata = nil
-        @metadata_path = nil
-        @info = nil
-      end
-
       def mobileprovision
         return unless mobileprovision?
         return @mobileprovision if @mobileprovision
 
-        return MobileProvision.new(nil) unless OS.mac?
+        file = AppInfo::Parser.mac? ? mobileprovision_path : nil
 
-        @mobileprovision = MobileProvision.new(mobileprovision_path)
+        @mobileprovision = MobileProvision.new(file)
       end
 
       def mobileprovision?
@@ -178,6 +169,18 @@ module AppInfo
 
       def app_path
         @app_path ||= Dir.glob(File.join(contents, 'Payload', '*.app')).first
+      end
+
+      def cleanup!
+        return unless @contents
+        FileUtils.rm_rf(@contents)
+
+        @contents = nil
+        @icons = nil
+        @app_path = nil
+        @metadata = nil
+        @metadata_path = nil
+        @info = nil
       end
 
       alias bundle_id identifier

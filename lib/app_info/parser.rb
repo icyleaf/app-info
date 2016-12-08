@@ -10,5 +10,9 @@ module AppInfo
       IOS = 'iOS'.freeze
       ANDROID = 'Android'.freeze
     end
+
+    def self.mac?
+      RbConfig::CONFIG['host_os'] =~ /darwin/ ? true : false
+    end
   end
 end

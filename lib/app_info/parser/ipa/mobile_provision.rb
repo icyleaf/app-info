@@ -59,6 +59,8 @@ module AppInfo
       end
 
       def mobileprovision
+        return @mobileprovision = nil if @path.nil? or @path.empty? or !File.exist?(@path)
+
         data = `security cms -D -i "#{@path}"`
         @mobileprovision = CFPropertyList.native_types(CFPropertyList::List.new(data: data).value)
       rescue CFFormatError
