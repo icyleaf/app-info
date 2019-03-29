@@ -11,5 +11,6 @@ describe AppInfo::Parser::InfoPlist do
   it { expect(subject.identifier).to eq('com.icyleaf.AppInfoDemo') }
   it { expect(subject.bundle_id).to eq('com.icyleaf.AppInfoDemo') }
   it { expect(subject.device_type).to eq('iPhone') }
+  it { expect(subject.min_sdk_version).to eq('9.3') }
   it { expect(subject.info).to be_kind_of Hash }
 end
