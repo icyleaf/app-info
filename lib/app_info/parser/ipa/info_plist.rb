@@ -32,6 +32,13 @@ module AppInfo
         info.try(:[], 'CFBundleName')
       end
 
+      #
+      # Extract the Minimum OS Version from the Info.plist
+      #
+      def min_sdk_version
+        info.try(:[], 'MinimumOSVersion')
+      end
+
       def icons
         return @icons if @icons
 

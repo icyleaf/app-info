@@ -68,6 +68,13 @@ module AppInfo
         info.icons
       end
 
+      #
+      # Return the minimum OS version for the given application
+      #
+      def min_sdk_version
+        info.min_sdk_version
+      end
+
       def device_type
         info.device_type
       end
