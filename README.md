@@ -51,6 +51,14 @@ Teardown suport iPhone/iPad/Universal.
 ```ruby
 ipa = AppInfo.parse('iphone.ipa')
 
+# get app file size
+ipa.size
+# => 3093823
+
+# get app file size in human reable.
+ipa.size(true)
+# => 29 MB
+
 # get app release version
 ipa.release_version
 # => 1.0
@@ -109,6 +117,14 @@ profile.devices
 ```ruby
 apk = AppInfo.parse('android.apk')
 
+# get app file size
+ipa.size
+# => 3093823
+
+# get app file size in human reable.
+ipa.size(true)
+# => 29 MB
+
 # get app release version
 apk.release_version
 # => 1.0
@@ -124,6 +140,26 @@ apk.icons
 # get app support min sdk version
 apk.min_sdk_version
 # => 13
+
+# get use_permissions list
+apk.use_permissions
+# => [...]
+
+# get activitiy list
+apk.activities
+# => [...]
+
+# get service list
+apk.services
+# => [...]
+
+# get certificate list
+apk.certificates
+# => [...]
+
+# get sign list
+apk.signs
+# => [...]
 
 # detect app type (It's difficult to detect phone or tablet)
 ipa.tv?
