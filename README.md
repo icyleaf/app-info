@@ -114,7 +114,7 @@ apk.release_version
 # => 1.0
 
 # get app package name
-apk.package_namebundle_id
+apk.bundle_id
 # => com.icyleaf.AppInfoDemo
 
 # get app icons
