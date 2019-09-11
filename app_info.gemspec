@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'CFPropertyList', ['< 3.1.0', '>= 2.3.4']
   spec.add_dependency 'pngdefry', '~> 0.1.2'
   spec.add_dependency 'ruby_android', '~> 0.7.7'
-  spec.add_dependency 'image_size', '~> 1.5.0'
+  spec.add_dependency 'image_size', '>= 1.5', '< 2.1'
 
   spec.add_development_dependency 'bundler', '>= 1.12'
   spec.add_development_dependency 'rake', '>= 10.0'
