@@ -8,7 +8,7 @@ module AppInfo
   module Parser
     # IPA parser
     class IPA
-      attr_reader :file, :app_path
+      attr_reader :file
 
       # iOS Export types
       module ExportType
@@ -21,7 +21,6 @@ module AppInfo
 
       def initialize(file)
         @file = file
-        @app_path = app_path
       end
 
       def size(humanable = false)
@@ -153,7 +152,7 @@ module AppInfo
       def mobileprovision_path
         filename = 'embedded.mobileprovision'
         @mobileprovision_path ||= File.join(@file, filename)
-        unless File.exist?@mobileprovision_path
+        unless File.exist?(@mobileprovision_path)
           @mobileprovision_path = File.join(app_path, filename)
         end
 
@@ -162,6 +161,7 @@ module AppInfo
 
       def metadata
         return unless metadata?
+
         @metadata ||= CFPropertyList.native_types(CFPropertyList::List.new(file: metadata_path).value)
       end
 
@@ -170,11 +170,11 @@ module AppInfo
       end
 
       def metadata_path
-        @metadata_path ||= File.join(@contents, 'iTunesMetadata.plist')
+        @metadata_path ||= File.join(contents, 'iTunesMetadata.plist')
       end
 
       def info
-        @info ||= InfoPlist.new(@app_path)
+        @info ||= InfoPlist.new(app_path)
       end
 
       def app_path
@@ -183,6 +183,7 @@ module AppInfo
 
       def cleanup!
         return unless @contents
+
         FileUtils.rm_rf(@contents)
 
         @contents = nil
@@ -226,6 +227,6 @@ module AppInfo
           [iphone, ipad]
         end
       end
-    end # /IPA
-  end # /Parser
-end # /AppInfo
+    end
+  end
+end
