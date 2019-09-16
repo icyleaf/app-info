@@ -11,6 +11,10 @@ module AppInfo
         @file = file
       end
 
+      def file_type
+        Parser::Platform::DSYM
+      end
+
       def machos
         @machos ||= case macho
                     when ::MachO::MachOFile

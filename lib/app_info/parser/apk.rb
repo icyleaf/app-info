@@ -29,6 +29,7 @@ module AppInfo
       def os
         Parser::Platform::ANDROID
       end
+      alias file_type os
 
       def build_version
         manifest.version_code.to_s

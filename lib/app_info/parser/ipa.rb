@@ -30,6 +30,7 @@ module AppInfo
       def os
         Parser::Platform::IOS
       end
+      alias file_type os
 
       def iphone?
         info.iphone?

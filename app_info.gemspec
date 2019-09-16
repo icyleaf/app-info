@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['icyleaf']
   spec.email         = ['icyleaf.cn@gmail.com']
 
-  spec.summary       = 'Teardown tool for mobile app(ipa/apk), analysis metedata like version, name, icon'
-  spec.description   = 'Teardown tool for ipa/apk files, even support for info.plist and .mobileprovision files'
+  spec.summary       = 'Teardown tool for mobile app(ipa/apk) and dSYM file, analysis metedata like version, name, icon'
+  spec.description   = 'Teardown tool for ipa/apk files and dSYM file, even support for info.plist and .mobileprovision files'
   spec.homepage      = 'http://github.com/icyleaf/app-info'
   spec.license       = 'MIT'
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }

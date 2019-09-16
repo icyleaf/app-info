@@ -12,6 +12,7 @@ module AppInfo
     module Platform
       IOS = 'iOS'
       ANDROID = 'Android'
+      DSYM = 'dSYM'
     end
 
     def self.mac?
