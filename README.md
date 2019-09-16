@@ -14,7 +14,7 @@ Teardown tool for mobile app(ipa/apk), analysis metedata like version, name, ico
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'app_info'
+gem 'app-info'
 ```
 
 And then execute:
@@ -26,7 +26,7 @@ $ bundle
 Or install it yourself as:
 
 ```bash
-$ gem install app_info
+$ gem install app-info
 ```
 
 ## Usage
@@ -34,7 +34,7 @@ $ gem install app_info
 ### Initialize
 
 ```ruby
-require 'app_info'
+require 'app-info'
 
 # Automatic detect file extsion and parse
 parser = AppInfo.parse('iphone.ipa')
@@ -118,11 +118,11 @@ profile.devices
 apk = AppInfo.parse('android.apk')
 
 # get app file size
-ipa.size
+apk.size
 # => 3093823
 
 # get app file size in human reable.
-ipa.size(true)
+apk.size(true)
 # => 29 MB
 
 # get app release version
@@ -162,8 +162,8 @@ apk.signs
 # => [...]
 
 # detect app type (It's difficult to detect phone or tablet)
-ipa.tv?
-ipa.wear?
+apk.tv?
+apk.wear?
 ```
 
 ## Development
