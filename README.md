@@ -14,7 +14,7 @@ Teardown tool for mobile app(ipa/apk), analysis metedata like version, name, ico
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'app_info'
+gem 'app-info'
 ```
 
 And then execute:
@@ -26,7 +26,7 @@ $ bundle
 Or install it yourself as:
 
 ```bash
-$ gem install app_info
+$ gem install app-info
 ```
 
 ## Usage
@@ -34,7 +34,7 @@ $ gem install app_info
 ### Initialize
 
 ```ruby
-require 'app_info'
+require 'app-info'
 
 # Automatic detect file extsion and parse
 parser = AppInfo.parse('iphone.ipa')
@@ -50,6 +50,14 @@ Teardown suport iPhone/iPad/Universal.
 
 ```ruby
 ipa = AppInfo.parse('iphone.ipa')
+
+# get app file size
+ipa.size
+# => 3093823
+
+# get app file size in human reable.
+ipa.size(true)
+# => 29 MB
 
 # get app release version
 ipa.release_version
@@ -109,12 +117,20 @@ profile.devices
 ```ruby
 apk = AppInfo.parse('android.apk')
 
+# get app file size
+apk.size
+# => 3093823
+
+# get app file size in human reable.
+apk.size(true)
+# => 29 MB
+
 # get app release version
 apk.release_version
 # => 1.0
 
 # get app package name
-apk.package_namebundle_id
+apk.bundle_id
 # => com.icyleaf.AppInfoDemo
 
 # get app icons
@@ -125,9 +141,29 @@ apk.icons
 apk.min_sdk_version
 # => 13
 
+# get use_permissions list
+apk.use_permissions
+# => [...]
+
+# get activitiy list
+apk.activities
+# => [...]
+
+# get service list
+apk.services
+# => [...]
+
+# get certificate list
+apk.certificates
+# => [...]
+
+# get sign list
+apk.signs
+# => [...]
+
 # detect app type (It's difficult to detect phone or tablet)
-ipa.tv?
-ipa.wear?
+apk.tv?
+apk.wear?
 ```
 
 ## Development

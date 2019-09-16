@@ -22,6 +22,10 @@ module AppInfo
         @apk = ::Android::Apk.new(file)
       end
 
+      def size(humanable = false)
+        AppInfo::Parser::Util.file_size(@file, humanable)
+      end
+
       def os
         Parser::Platform::ANDROID
       end
@@ -58,11 +62,11 @@ module AppInfo
       # end
 
       def wear?
-        uses_features.include?('android.hardware.type.watch')
+        use_features.include?('android.hardware.type.watch')
       end
 
       def tv?
-        uses_features.include?('android.software.leanback')
+        use_features.include?('android.software.leanback')
       end
 
       def min_sdk_version
@@ -73,12 +77,36 @@ module AppInfo
         manifest.doc.elements['/manifest/uses-sdk'].attributes['targetSdkVersion'].to_i
       end
 
-      def uses_features
-        uses_features = []
-        manifest.doc.each_element('/manifest/uses-feature') do |elem|
-          uses_features << elem.attributes['name']
+      def use_permissions
+        manifest.use_permissions
+      end
+
+      def use_features
+        manifest_values('/manifest/uses-feature')
+      end
+
+      def signs
+        @apk.signs.each_with_object([]) do |(path, sign), obj|
+          obj << Sign.new(path, sign)
         end
-        uses_features.uniq
+      end
+
+      def certificates
+        @apk.certificates.each_with_object([]) do |(path, certificate), obj|
+          obj << Certificate.new(path, certificate)
+        end
+      end
+
+      def activities
+        components.select {|c| c.type == 'activity' }
+      end
+
+      def services
+        components.select {|c| c.type == 'service' }
+      end
+
+      def components
+        manifest.components
       end
 
       def manifest
@@ -87,6 +115,10 @@ module AppInfo
 
       def resource
         @apk.resource
+      end
+
+      def dex
+        @apk.dex
       end
 
       def icons
@@ -116,6 +148,32 @@ module AppInfo
       alias identifier bundle_id
       alias package_name bundle_id
       alias device_type os
+
+      private
+
+      def manifest_values(path, key = 'name')
+        values = []
+        manifest.doc.each_element(path) do |elem|
+          values << elem.attributes[key]
+        end
+        values.uniq
+      end
+
+      class Certificate
+        attr_reader :path, :certificate
+        def initialize(path, certificate)
+          @path = path
+          @certificate = certificate
+        end
+      end # /Certificate
+
+      class Sign
+        attr_reader :path, :sign
+        def initialize(path, sign)
+          @path = path
+          @sign = sign
+        end
+      end # /Certificate
     end # /APK
   end # /Parser
 end # /AppInfo

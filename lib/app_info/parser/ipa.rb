@@ -24,6 +24,10 @@ module AppInfo
         @app_path = app_path
       end
 
+      def size(humanable = false)
+        AppInfo::Parser::Util.file_size(@file, humanable)
+      end
+
       def os
         Parser::Platform::IOS
       end
