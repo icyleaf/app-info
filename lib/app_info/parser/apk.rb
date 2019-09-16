@@ -45,6 +45,8 @@ module AppInfo
       def bundle_id
         manifest.package_name
       end
+      alias identifier bundle_id
+      alias package_name bundle_id
 
       def device_type
         if wear?
@@ -74,7 +76,10 @@ module AppInfo
       end
 
       def target_sdk_version
-        manifest.doc.elements['/manifest/uses-sdk'].attributes['targetSdkVersion'].to_i
+        manifest.doc
+                .elements['/manifest/uses-sdk']
+                .attributes['targetSdkVersion']
+                .to_i
       end
 
       def use_permissions
@@ -98,11 +103,11 @@ module AppInfo
       end
 
       def activities
-        components.select {|c| c.type == 'activity' }
+        components.select { |c| c.type == 'activity' }
       end
 
       def services
-        components.select {|c| c.type == 'service' }
+        components.select { |c| c.type == 'service' }
       end
 
       def components
@@ -145,10 +150,6 @@ module AppInfo
         @icons
       end
 
-      alias identifier bundle_id
-      alias package_name bundle_id
-      alias device_type os
-
       private
 
       def manifest_values(path, key = 'name')
@@ -159,21 +160,23 @@ module AppInfo
         values.uniq
       end
 
+      # Android Certificate
       class Certificate
         attr_reader :path, :certificate
         def initialize(path, certificate)
           @path = path
           @certificate = certificate
         end
-      end # /Certificate
+      end
 
+      # Android Sign
       class Sign
         attr_reader :path, :sign
         def initialize(path, sign)
           @path = path
           @sign = sign
         end
-      end # /Certificate
-    end # /APK
-  end # /Parser
-end # /AppInfo
+      end
+    end
+  end
+end
