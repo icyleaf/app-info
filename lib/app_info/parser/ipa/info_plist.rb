@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'cfpropertylist'
 
 module AppInfo
@@ -48,7 +50,7 @@ module AppInfo
                            .try(:[], 'CFBundlePrimaryIcon')
                            .try(:[], 'CFBundleIconFiles')
 
-          next if icon_array.nil? || icon_array.count == 0
+          next if icon_array.nil? || icon_array.zero?
 
           icon_array.each do |items|
             Dir.glob(File.join(@app_path, "#{items}*")).find_all.each do |file|
@@ -112,17 +114,17 @@ module AppInfo
 
       private
 
-      def icons_root_path
-        iphone = 'CFBundleIcons'.freeze
-        ipad = 'CFBundleIcons~ipad'.freeze
+      IPHONE_KEY = 'CFBundleIcons'
+      IPAD_KEY = 'CFBundleIcons~ipad'
 
+      def icons_root_path
         case device_type
         when 'iPhone'
-          [iphone]
+          [IPHONE_KEY]
         when 'iPad'
-          [ipad]
+          [IPAD_KEY]
         when 'Universal'
-          [iphone, ipad]
+          [IPHONE_KEY, IPAD_KEY]
         end
       end
     end

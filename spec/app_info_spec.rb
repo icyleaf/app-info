@@ -1,17 +1,46 @@
 require 'securerandom'
 
+MATCH_FILE_TYPES = {
+  'android.apk' => :apk,
+  'ipad.ipa' => :ipa,
+  'iphone.ipa' => :ipa,
+  'tv.apk' => :apk,
+  'wear.apk' => :apk,
+  'multi_ios.dSYM.zip' => :dsym,
+  'single_ios.dSYM.zip' => :dsym
+}.freeze
+
 describe AppInfo do
-  let(:apk_file) { File.dirname(__FILE__) + '/fixtures/apps/android.apk' }
-  let(:ipa_file) { File.dirname(__FILE__) + '/fixtures/apps/iphone.ipa' }
+  Dir.glob(File.expand_path('fixtures/**/*', __dir__)) do |path|
+    next if File.directory? path
 
-  it 'should parse when file extion is .ipa' do
-    file = AppInfo.parse(ipa_file)
-    expect(file.class).to eq(AppInfo::Parser::IPA)
-  end
+    filename = File.basename(path)
+    file_type = MATCH_FILE_TYPES[filename] || :unkown
+    context "file #{filename}" do
+      it "should detect file type is #{file_type}" do
+        expect(AppInfo.detect_file_type(path)).to eq file_type
+      end
 
-  it 'should dump when file extion is .apk' do
-    file = AppInfo.dump(ipa_file)
-    expect(file.class).to eq(AppInfo::Parser::IPA)
+      if file_type == :unkown
+        it 'should throwa an exception when not matched' do
+          expect do
+            AppInfo.parse(path)
+          end.to raise_error(AppInfo::NotAppError)
+        end
+      else
+        it 'should parse' do
+          parse = AppInfo.parse(path)
+          case file_type
+          when :ipa
+            expect(parse.class).to eq(AppInfo::Parser::IPA)
+          when :apk
+            expect(parse.class).to eq(AppInfo::Parser::APK)
+          when :dsym
+            expect(parse.class).to eq(AppInfo::Parser::DSYM)
+          end
+        end
+      end
+    end
   end
 
   it 'should throwa an exception when file is not exist' do
@@ -22,7 +51,7 @@ describe AppInfo do
   end
 
   %w(txt pdf app zip rar).each do |ext|
-    it "should throwa an exception when file is .#{ext}" do
+    it "should throwa an exception when file is #{ext} type" do
       filename = "#{SecureRandom.uuid}.#{ext}"
       file = Tempfile.new(filename)
 

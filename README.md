@@ -1,6 +1,6 @@
 # app_info
 
-Teardown tool for mobile app(ipa/apk), analysis metedata like version, name, icon etc.
+Teardown tool for mobile app(ipa/apk) and dSYM file, analysis metedata like version, name, icon etc.
 
 ## Support
 
@@ -8,6 +8,7 @@ Teardown tool for mobile app(ipa/apk), analysis metedata like version, name, ico
 - iOS ipa file
   - Info.plist file
   - .mobileprovision file
+- dSYM(.zip) file
 
 ## Installation
 
@@ -110,6 +111,46 @@ profile.team_name
 # get app icons
 profile.devices
 # => ['18cf53cddee60c5af9c97b1521e7cbf8342628da']
+```
+
+### dSYM
+
+```ruby
+dsym = AppInfo.parse('ios.dSYM.zip')
+
+# get object name
+dsym.object
+# => iOS
+
+# get macho size
+dsym.machos.size
+# => 1 or 2
+
+dsym.machos.each do |macho|
+  # get cpu type
+  macho.cpu_type
+  # => :arm
+
+  # get cpu name
+  macho.cpu_name
+  # => armv7
+
+  # get UUID (debug id)
+  macho.uuid
+  # => 26dfc15d-bdce-351f-b5de-6ee9f5dd6d85
+
+  # get macho size
+  macho.size
+  # => 866526
+
+  # get macho size in human reable.
+  macho.size(true)
+  # => 862 KB
+
+  # dump data to Hash
+  macho.to_h
+  # => {uuid:"26dfc15d-bdce-351f-b5de-6ee9f5dd6d85", cpu_type: :arm, cpu_name: :armv7, ...}
+end
 ```
 
 ### Android
