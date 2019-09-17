@@ -14,7 +14,7 @@ module AppInfo
   def self.parse(file)
     raise NotFoundError, file unless File.exist?(file)
 
-    case file_ext(file)
+    case detect_file_type(file)
     when :ipa then Parser::IPA.new(file)
     when :apk then Parser::APK.new(file)
     when :mobileprovision then Parser::MobileProvision.new(file)
@@ -26,7 +26,7 @@ module AppInfo
   singleton_class.send(:alias_method, :dump, :parse)
 
   # :nodoc:
-  def self.file_ext(file)
+  def self.detect_file_type(file)
     case value = IO.read(file, 10)
     when /^\x50\x4b\x03\x04/
       if value == "\x50\x4b\x03\x04\x14\x00\x08\x08\x08\x00" || IO.read(file, 6, 30) == "\x63\x6C\x61\x73\x73\x65"
