@@ -15,10 +15,6 @@ module AppInfo
       DSYM = 'dSYM'
     end
 
-    def self.mac?
-      RbConfig::CONFIG['host_os'] =~ /darwin/ ? true : false
-    end
-
     module Util
       FILE_SIZE_UNITS = %w[B KB MB GB TB].freeze
 

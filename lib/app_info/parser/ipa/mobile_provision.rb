@@ -48,10 +48,13 @@ module AppInfo
 
       def method_missing(method_name, *args, &block)
         key = if method_name.to_s.include?('_')
-          method_name.to_s.split('_').map {|k| k.capitalize }.join('')
-        else
-          method_name.to_s
-        end
+                method_name.to_s
+                           .split('_')
+                           .map(&:capitalize)
+                           .join('')
+              else
+                method_name.to_s
+              end
 
         mobileprovision.try(:[], key)
       end
@@ -61,12 +64,27 @@ module AppInfo
       end
 
       def mobileprovision
-        return @mobileprovision = nil if @path.nil? or @path.empty? or !File.exist?(@path)
+        return @mobileprovision = nil unless File.exist?(@path)
 
-        data = `security cms -D -i "#{@path}" 2> /dev/null`
-        @mobileprovision = CFPropertyList.native_types(CFPropertyList::List.new(data: data).value)
+        data = File.read(@path)
+        data = strip_plist_wrapper(data) unless bplist?(data)
+        list = CFPropertyList::List.new(data: data).value
+        @mobileprovision = CFPropertyList.native_types(list)
       rescue CFFormatError
         @mobileprovision = nil
+      end
+
+      private
+
+      def bplist?(raw)
+        raw[0..5] == 'bplist'
+      end
+
+      def strip_plist_wrapper(raw)
+        end_tag = '</plist>'
+        start_point = raw.index('<?xml version=')
+        end_point = raw.index(end_tag) + end_tag.size - 1
+        raw[start_point..end_point]
       end
     end
   end

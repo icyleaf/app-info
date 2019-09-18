@@ -9,7 +9,6 @@ module AppInfo
   class NotFoundError < StandardError; end
   class NotAppError < StandardError; end
 
-  #
   # Get a new parser for automatic
   def self.parse(file)
     raise NotFoundError, file unless File.exist?(file)
@@ -25,23 +24,46 @@ module AppInfo
   end
   singleton_class.send(:alias_method, :dump, :parse)
 
-  # :nodoc:
+
+  # Detect file type by read file header
+  #
+  # TODO: This can be better way to solvt, if anyone knows, tell me please.
   def self.detect_file_type(file)
-    case value = IO.read(file, 10)
-    when /^\x50\x4b\x03\x04/
-      if value == "\x50\x4b\x03\x04\x14\x00\x08\x08\x08\x00" || IO.read(file, 6, 30) == "\x63\x6C\x61\x73\x73\x65"
-        :apk
-      elsif IO.read(file, 1, 13) == "\x48" || IO.read(file, 7, 30) == "\x50\x61\x79\x6C\x6F\x61\x64"
-        :ipa
-      elsif IO.read(file, 2, 12) == "\x30\x4f"
-        :dsym
-      else
-        :unkown
-      end
-    when "\x30\x82\x25\x8F\x06\x09\x2A\x86\x48\x86"
+    header_hex = IO.read(file, 100)
+    type = if header_hex =~ /^\x50\x4b\x03\x04/
+             detect_zip_format(header_hex)
+           else
+             detect_mobileprovision(header_hex)
+           end
+
+    type || :unkown
+  end
+
+  # :nodoc:
+  def self.detect_zip_format(hex)
+    if hex =~ /\x63\x6C\x61\x73\x73\x65/ ||
+       hex =~ /\x41\x6E\x64\x72\x6F\x69\x64\x4D\x61\x6E\x69\x66\x65\x73\x74/ ||
+       hex =~ /\x4D\x45\x54\x41\x2D\x49\x4E\x46/
+      :apk
+    elsif hex.slice(13, 1) == "\x48" ||
+          hex =~ /\x50\x61\x79\x6C\x6F\x61\x64/
+      :ipa
+    elsif hex.slice(12, 2) == "\x30\x4f"
+      :dsym
+    end
+  end
+
+  # :nodoc:
+  def self.detect_mobileprovision(hex)
+    if hex =~ /^\x3C\x3F\x78\x6D\x6C/
+      # plist
       :mobileprovision
-    else
-      :unkown
+    elsif hex =~ /^\x62\x70\x6C\x69\x73\x74/
+      # bplist
+      :mobileprovision
+    elsif hex =~ /\x3C\x3F\x78\x6D\x6C/
+      # signed plist
+      :mobileprovision
     end
   end
 end

@@ -7,7 +7,11 @@ MATCH_FILE_TYPES = {
   'tv.apk' => :apk,
   'wear.apk' => :apk,
   'multi_ios.dSYM.zip' => :dsym,
-  'single_ios.dSYM.zip' => :dsym
+  'single_ios.dSYM.zip' => :dsym,
+  'bplist.mobileprovision' => :mobileprovision,
+  'plist.mobileprovision' => :mobileprovision,
+  'profile.mobileprovision' => :mobileprovision,
+  'signed_plist.mobileprovision' => :mobileprovision
 }.freeze
 
 describe AppInfo do
@@ -32,11 +36,13 @@ describe AppInfo do
           parse = AppInfo.parse(path)
           case file_type
           when :ipa
-            expect(parse.class).to eq(AppInfo::Parser::IPA)
+            expect(parse).to be_a(AppInfo::Parser::IPA)
           when :apk
-            expect(parse.class).to eq(AppInfo::Parser::APK)
+            expect(parse).to be_a(AppInfo::Parser::APK)
           when :dsym
-            expect(parse.class).to eq(AppInfo::Parser::DSYM)
+            expect(parse).to be_a(AppInfo::Parser::DSYM)
+          when :mobileprovision
+            expect(parse).to be_a(AppInfo::Parser::MobileProvision)
           end
         end
       end
