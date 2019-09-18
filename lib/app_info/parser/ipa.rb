@@ -116,8 +116,6 @@ module AppInfo
       end
 
       def build_type
-        return ExportType::UNKOWN unless AppInfo::Parser.mac?
-
         if mobileprovision?
           if devices
             ExportType::ADHOC
@@ -141,9 +139,7 @@ module AppInfo
         return unless mobileprovision?
         return @mobileprovision if @mobileprovision
 
-        file = AppInfo::Parser.mac? ? mobileprovision_path : nil
-
-        @mobileprovision = MobileProvision.new(file)
+        @mobileprovision = MobileProvision.new(mobileprovision_path)
       end
 
       def mobileprovision?
