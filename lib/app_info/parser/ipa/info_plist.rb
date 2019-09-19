@@ -19,6 +19,7 @@ module AppInfo
       def identifier
         info.try(:[], 'CFBundleIdentifier')
       end
+      alias bundle_id identifier
 
       def name
         display_name || bundle_name
@@ -100,6 +101,12 @@ module AppInfo
         end
       end
 
+      def [](key)
+        info.try(:[], key.to_s)
+      end
+
+      private
+
       def info
         @info ||= CFPropertyList.native_types(CFPropertyList::List.new(file: info_path).value)
       end
@@ -107,10 +114,6 @@ module AppInfo
       def info_path
         File.join(@app_path, 'Info.plist')
       end
-
-      alias bundle_id identifier
-
-      private
 
       def icons_root_path
         iphone = 'CFBundleIcons'.freeze

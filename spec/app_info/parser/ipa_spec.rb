@@ -18,6 +18,8 @@ describe AppInfo::Parser::IPA do
       it { expect(subject.bundle_id).to eq('com.icyleaf.AppInfoDemo') }
       it { expect(subject.device_type).to eq('iPhone') }
       it { expect(subject.min_sdk_version).to eq('9.3') }
+      it { expect(subject.info['CFBundleVersion']).to eq('5') }
+      it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.2.3') }
 
       if AppInfo::Parser.mac?
         it { expect(subject.release_type).to eq('AdHoc')}
