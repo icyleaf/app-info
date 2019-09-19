@@ -44,10 +44,17 @@ require 'app-info'
 # Automatic detect file extsion and parse
 parser = AppInfo.parse('iphone.ipa')
 parser = AppInfo.parse('ipad.ipa')
-parser = AppInfo.parse('android.ipa')
+parser = AppInfo.parse('android.apk')
 parser = AppInfo.parse('App/Info.plist')
 parser = AppInfo.parse('provisioning_profile/uuid.mobileprovision')
 parser = AppInfo.parse('App.dSYm.zip')
+
+# If detect file type failed, you can parse in other way
+parser = AppInfo::Parser::IPA('iphone.ipa')
+parser = AppInfo::Parser::IPA('android.apk')
+parser = AppInfo::Parser::InfoPlist('App/Info.plist')
+parser = AppInfo::Parser::MobileProvision('provisioning_profile/uuid.mobileprovision')
+parser = AppInfo::Parser::DSYM('App.dSYm.zip')
 ```
 
 ### iOS
