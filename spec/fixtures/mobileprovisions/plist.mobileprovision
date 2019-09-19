@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AppIDName</key>
+	<string>ios</string>
+	<key>ApplicationIdentifierPrefix</key>
+	<array>
+	<string>1234567890</string>
+	</array>
+	<key>CreationDate</key>
+	<date>2019-06-20T11:47:07Z</date>
+	<key>Platform</key>
+	<array>
+		<string>iOS</string>
+	</array>
+	<key>IsXcodeManaged</key>
+	<false/>
+	<key>DeveloperCertificates</key>
+	<array>
+		<data>SampleDCCBJygAwIBAgIIVVkvzuA1IZ8wDQYJKoZIhvcNAQEFBQAwgZYxCzAJBgNVBAYTAlVTMRMwEQYDVQQKDApBcHBsZSBJbmMuMSwwKgYDVQQLDCNBcHBsZSBXb3JsZHdpZGUgRGV2ZWxvcGVyIFJlbGF0aW9uczFEMEIGA1UEAww7QXBwbGUgV29ybGR3aWRlIERldmVsb3BlciBSZWxhdGlvbnMgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMTkwNjIwMTEyOTQ5WhcNMjIwNjE5MTEyOTQ5WjCBtTEaMBgGCgmSJomT8ixkAQEMCjcyTEE4NUc1OUgxRDBCBgNVBAMMO2lQaG9uZSBEaXN0cmlidXRpb246IE5pY2VsaXZpbmcgQmVpamluZyBUZWNobm9sb2d5IENvLiBMdGQuMRMwEQYDVQQLDAo3MkxBODVHNTlIMS8wLQYDVQQKDCZOaWNlbGl2aW5nIEJlaWppbmcgVGVjaG5vbG9neSBDby4gTHRkLjELMAkGA1UEBhMCQ04wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDTHC98WDN8LA6BEOiYqJHjNPjec37nsRHTPXKwZkXcXz1foBygpULqdw3ovsYzwFOy32RLbpPXoxaTVYC1m4qpvrzAJbilbNuYjO6aozcAMThOFfMogxgFfI2CfHYu3zXg+aLE1cQxEadM0Fuf5mOccDpXx6NAdiQ+3CBSBk+s2gLnySqvcwzaEbSQvwT2KyJUwvubWuh356Q452EXuve9PioZh+mNOaJTkSz410Te9uRPEdUodtH4vJgPbK4H82GrHpOGBK7jrHHatn3VgdYJfDYPUsJ2sFqPC8oTo4V6BC+Vjl+ArixEqh8inB/97JUrmJgeD07JutWbuDkJ+hmdAgMBAAGjggHjMIIB3zAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFIgnFwmpthhgi+zruvZHWcVSVKO3MD8GCCsGAQUFBwEBBDMwMTAvBggrBgEFBQcwAYYjaHR0cDovL29jc3AuYXBwbGUuY29tL29jc3AwMi13d2RyMDEwggEPBgNVHSAEggEGMIIBAjCB/wYJKoZIhvdjZAUBMIHxMIHDBggrBgEFBQcCAjCBtgyBs1JlbGlhbmNlIG9uIHRoaXMgY2VydGlmaWNhdGUgYnkgYW55IHBhcnR5IGFzc3VtZXMgYWNjZXB0YW5jZSBvZiB0aGUgdGhlbiBhcHBsaWNhYmxlIHN0YW5kYXJkIHRlcm1zIGFuZCBjb25kaXRpb25zIG9mIHVzZSwgY2VydGlmaWNhdGUgcG9saWN5IGFuZCBjZXJ0aWZpY2F0aW9uIHByYWN0aWNlIHN0YXRlbWVudHMuMCkGCCsGAQUFBwIBFh1odHRwOi8vd3d3LmFwcGxlLmNvbS9hcHBsZWNhLzAWBgNVHSUBAf8EDDAKBggrBgEFBQcDAzAdBgNVHQ4EFgQU+ASyonJ+dlKnQzMlCHGilBYTUuswDgYDVR0PAQH/BAQDAgeAMBMGCiqGSIb3Y2QGAQQBAf8EAgUAMA0GCSqGSIb3DQEBBQUAA4IBAQAy5aAy50ygOtCLPj6oQkRiW9IPP8hcSmvENE3sWGCX3+lriRk5LnqQMBhVo0vl2rBKAE0saNlxCE4by5zYR0zcI/RucUutHYkjCJDbwwlAvQFCQnXZI19jOJTbAs1+0dz0DQLc3MZW4OlnTTwPgEoWDkBnh6HfghVyuFOxa2cZIxSl/Lg8jSHwdbhw0S9EtbGp6234gDKFgF40zzCyF+Ti1WhCTiYVXsGSRQtKaFUKua7IeiCOb3zqE8gcr0s7Fn6SFpGrNk7km8frUJBXZ/z1dTp25uCYwzcF3eQw8Hc7ZjFz2BHWv8qn9kdTzpFVuLsX8vJmJstL0ndqfgOg3c8w</data>
+	</array>
+
+	<key>Entitlements</key>
+	<dict>
+						<key>com.apple.developer.associated-domains</key>
+		<string>*</string>
+						<key>com.apple.developer.networking.networkextension</key>
+		<array>
+				<string>app-proxy-provider</string>
+				<string>content-filter-provider</string>
+				<string>packet-tunnel-provider</string>
+				<string>dns-proxy</string>
+		</array>
+						<key>aps-environment</key>
+		<string>production</string>
+						<key>com.apple.developer.networking.vpn.api</key>
+		<array>
+				<string>allow-vpn</string>
+		</array>
+						<key>application-identifier</key>
+		<string>1234567890.com.icyleaf.ios</string>
+						<key>keychain-access-groups</key>
+		<array>
+				<string>1234567890.*</string>
+		</array>
+						<key>get-task-allow</key>
+		<false/>
+						<key>com.apple.developer.team-identifier</key>
+		<string>1234567890</string>
+
+	</dict>
+	<key>ExpirationDate</key>
+	<date>2020-06-19T11:47:07Z</date>
+	<key>Name</key>
+	<string>com.icyleaf.ios</string>
+	<key>ProvisionsAllDevices</key>
+	<true/>
+	<key>TeamIdentifier</key>
+	<array>
+		<string>1234567890</string>
+	</array>
+	<key>TeamName</key>
+	<string>icyleaf</string>
+	<key>TimeToLive</key>
+	<integer>365</integer>
+	<key>UUID</key>
+	<string>12345678-5af4-4b93-b7e1-ca71e35562e1</string>
+	<key>Version</key>
+	<integer>1</integer>
+</dict>
+</plist>
