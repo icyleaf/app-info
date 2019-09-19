@@ -117,9 +117,8 @@ module AppInfo
         File.join(@app_path, 'Info.plist')
       end
 
-      def icons_root_path
-        iphone = 'CFBundleIcons'.freeze
-        ipad = 'CFBundleIcons~ipad'.freeze
+      IPHONE_KEY = 'CFBundleIcons'
+      IPAD_KEY = 'CFBundleIcons~ipad'
 
       def icons_root_path
         case device_type

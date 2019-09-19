@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Parse macho-o header to detect file type instead of file extension name. (Maby be not fully support)
 - Dropped Ruby 2.2 and below versions support
 
+## [1.1.2] (2019-09-19)
+
+### Fixed
+
+- Fixed fetch key from ipa.info by Hash way. (thanks @[MobilEKG](https://github.com/MobilEKG))
+
 ## [1.1.0] (2019-06-17)
 
 ### Added
