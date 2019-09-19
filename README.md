@@ -1,6 +1,10 @@
 # app_info
 
-Teardown tool for mobile app(ipa/apk) and dSYM file, analysis metedata like version, name, icon etc.
+[![Build Status](https://travis-ci.org/icyleaf/app_info.svg?branch=master)](https://travis-ci.org/icyleaf/app_info)
+[![Gem version](https://img.shields.io/gem/v/app-info.svg?style=flat)](https://rubygems.org/gems/app_info)
+[![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](LICENSE)
+
+Teardown tool for mobile app(ipa/apk) and dSYM.zip file, analysis metedata like version, name, icon etc.
 
 ## Support
 
@@ -43,6 +47,7 @@ parser = AppInfo.parse('ipad.ipa')
 parser = AppInfo.parse('android.ipa')
 parser = AppInfo.parse('App/Info.plist')
 parser = AppInfo.parse('provisioning_profile/uuid.mobileprovision')
+parser = AppInfo.parse('App.dSYm.zip')
 ```
 
 ### iOS
@@ -217,8 +222,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/app-info. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
-
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
