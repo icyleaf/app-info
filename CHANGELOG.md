@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Parse macho-o header to detect file type instead of file extension name. (Maby be not fully support)
+- Use parse Macho-O header and contents to detect file type instead of file extension name.
 - Dropped Ruby 2.2 and below versions support
 
 ## [1.1.2] (2019-09-19)
