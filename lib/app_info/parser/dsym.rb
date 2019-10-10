@@ -16,7 +16,7 @@ module AppInfo
       end
 
       def machos
-        @machos ||= case macho
+        @machos ||= case macho_type
                     when ::MachO::MachOFile
                       [MachO.new(macho, File.size(app_path))]
                     else
@@ -32,8 +32,8 @@ module AppInfo
                     end
       end
 
-      def macho
-        @macho ||= ::MachO.open(app_path)
+      def macho_type
+        @macho_type ||= ::MachO.open(app_path)
       end
 
       def object
@@ -41,7 +41,13 @@ module AppInfo
       end
 
       def app_path
-        @app_path ||= Dir.glob(File.join(contents, 'Contents', 'Resources', 'DWARF', '*')).first
+        unless @app_path
+          path = File.join(contents, 'Contents', 'Resources', 'DWARF')
+          name = Dir.children(path).first
+          @app_path = File.join(path, name)
+        end
+
+        @app_path
       end
 
       private
@@ -56,8 +62,8 @@ module AppInfo
             Zip::File.open(@file) do |zip_file|
               zip_file.each do |f|
                 dsym_dir ||= f.name
+
                 f_path = File.join(@contents, f.name)
-                FileUtils.mkdir_p(File.dirname(f_path))
                 zip_file.extract(f, f_path) unless File.exist?(f_path)
               end
             end
