@@ -2,10 +2,10 @@ require 'securerandom'
 
 MATCH_FILE_TYPES = {
   'android.apk' => :apk,
-  'ipad.ipa' => :ipa,
-  'iphone.ipa' => :ipa,
   'tv.apk' => :apk,
   'wear.apk' => :apk,
+  'ipad.ipa' => :ipa,
+  'iphone.ipa' => :ipa,
   'multi_ios.dSYM.zip' => :dsym,
   'single_ios.dSYM.zip' => :dsym,
   'bplist.mobileprovision' => :mobileprovision,
@@ -22,14 +22,14 @@ describe AppInfo do
     file_type = MATCH_FILE_TYPES[filename] || :unkown
     context "file #{filename}" do
       it "should detect file type is #{file_type}" do
-        expect(AppInfo.detect_file_type(path)).to eq file_type
+        expect(AppInfo.file_type(path)).to eq file_type
       end
 
       if file_type == :unkown
         it 'should throwa an exception when not matched' do
           expect do
             AppInfo.parse(path)
-          end.to raise_error(AppInfo::NotAppError)
+          end.to raise_error(AppInfo::UnkownFileTypeError)
         end
       else
         it 'should parse' do
@@ -63,7 +63,7 @@ describe AppInfo do
 
       expect do
         AppInfo.parse(file.path)
-      end.to raise_error(AppInfo::NotAppError)
+      end.to raise_error(AppInfo::UnkownFileTypeError)
     end
   end
 end

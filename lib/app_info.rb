@@ -2,36 +2,35 @@
 
 require 'app_info/version'
 require 'app_info/parser'
+require 'zip'
 
-#
 # AppInfo Module
 module AppInfo
   class NotFoundError < StandardError; end
-  class NotAppError < StandardError; end
+  class UnkownFileTypeError < StandardError; end
 
   # Get a new parser for automatic
   def self.parse(file)
     raise NotFoundError, file unless File.exist?(file)
 
-    case detect_file_type(file)
+    case file_type(file)
     when :ipa then Parser::IPA.new(file)
     when :apk then Parser::APK.new(file)
     when :mobileprovision then Parser::MobileProvision.new(file)
     when :dsym then Parser::DSYM.new(file)
     else
-      raise NotAppError, file
+      raise UnkownFileTypeError, "Sorry, AppInfo can not detect file type: #{file}"
     end
   end
   singleton_class.send(:alias_method, :dump, :parse)
 
-
   # Detect file type by read file header
   #
   # TODO: This can be better way to solvt, if anyone knows, tell me please.
-  def self.detect_file_type(file)
+  def self.file_type(file)
     header_hex = IO.read(file, 100)
     type = if header_hex =~ /^\x50\x4b\x03\x04/
-             detect_zip_format(header_hex)
+             detect_zip_file(file)
            else
              detect_mobileprovision(header_hex)
            end
@@ -40,16 +39,17 @@ module AppInfo
   end
 
   # :nodoc:
-  def self.detect_zip_format(hex)
-    if hex =~ /\x63\x6C\x61\x73\x73\x65/ ||
-       hex =~ /\x41\x6E\x64\x72\x6F\x69\x64\x4D\x61\x6E\x69\x66\x65\x73\x74/ ||
-       hex =~ /\x4D\x45\x54\x41\x2D\x49\x4E\x46/
-      :apk
-    elsif hex.slice(13, 1) == "\x48" ||
-          hex =~ /\x50\x61\x79\x6C\x6F\x61\x64/
-      :ipa
-    elsif hex.slice(12, 2) == "\x30\x4f"
-      :dsym
+  def self.detect_zip_file(file)
+    Zip.warn_invalid_date = false
+    Zip::File.open(file) do |zip_file|
+      zip_file.each do |f|
+        path = f.name
+        name = File.basename(path)
+
+        return :apk if name == 'AndroidManifest.xml'
+        return :ipa if path.include?('Payload/') && name.end_with?('Info.plist')
+        return :dsym if path.include?('/DWARF/')
+      end
     end
   end
 

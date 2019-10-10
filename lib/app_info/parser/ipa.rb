@@ -1,3 +1,4 @@
+require 'zip'
 require 'pngdefry'
 require 'fileutils'
 require 'securerandom'

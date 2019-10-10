@@ -1,3 +1,4 @@
+require 'zip'
 require 'macho'
 require 'app_info/core_ext/object/try'
 
@@ -18,14 +19,14 @@ module AppInfo
       def machos
         @machos ||= case macho_type
                     when ::MachO::MachOFile
-                      [MachO.new(macho, File.size(app_path))]
+                      [MachO.new(macho_type, File.size(app_path))]
                     else
-                      size = macho.fat_archs.each_with_object([]) do |arch, obj|
+                      size = macho_type.fat_archs.each_with_object([]) do |arch, obj|
                         obj << arch.size
                       end
 
                       machos = []
-                      macho.machos.each_with_index do |file, i|
+                      macho_type.machos.each_with_index do |file, i|
                         machos << MachO.new(file, size[i])
                       end
                       machos
