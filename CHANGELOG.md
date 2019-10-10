@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added .dSYM.zip format support
 - Added parse mobileprovision in Linux
+- Added `AppInfo.file_type` to detect file type
 
 ### Changed
 
