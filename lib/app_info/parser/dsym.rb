@@ -44,7 +44,7 @@ module AppInfo
       def app_path
         unless @app_path
           path = File.join(contents, 'Contents', 'Resources', 'DWARF')
-          name = Dir.children(path).first
+          name = Dir.entries(path).last
           @app_path = File.join(path, name)
         end
 
