@@ -1,7 +1,7 @@
-describe AppInfo::Parser::InfoPlist do
-  let(:file) { File.dirname(__FILE__) + '/../../../fixtures/apps/iphone.ipa' }
-  let(:ipa) { AppInfo::Parser::IPA.new(file) }
-  subject { AppInfo::Parser::InfoPlist.new(ipa.app_path) }
+describe AppInfo::InfoPlist do
+  let(:file) { File.dirname(__FILE__) + '/../../fixtures/apps/iphone.ipa' }
+  let(:ipa) { AppInfo::IPA.new(file) }
+  subject { AppInfo::InfoPlist.new(ipa.app_path) }
 
   it { expect(subject.build_version).to eq('5') }
   it { expect(subject.release_version).to eq('1.2.3') }

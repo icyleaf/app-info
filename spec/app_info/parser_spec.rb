@@ -1,4 +1,4 @@
-describe AppInfo::Parser::Platform do
-  it { expect(AppInfo::Parser::Platform::IOS).to eq 'iOS' }
-  it { expect(AppInfo::Parser::Platform::ANDROID).to eq 'Android' }
+describe AppInfo::Platform do
+  it { expect(AppInfo::Platform::IOS).to eq 'iOS' }
+  it { expect(AppInfo::Platform::ANDROID).to eq 'Android' }
 end

@@ -50,11 +50,11 @@ parser = AppInfo.parse('provisioning_profile/uuid.mobileprovision')
 parser = AppInfo.parse('App.dSYm.zip')
 
 # If detect file type failed, you can parse in other way
-parser = AppInfo::Parser::IPA.new('iphone.ipa')
-parser = AppInfo::Parser::IPA.new('android.apk')
-parser = AppInfo::Parser::InfoPlist.new('App/Info.plist')
-parser = AppInfo::Parser::MobileProvision.new('provisioning_profile/uuid.mobileprovision')
-parser = AppInfo::Parser::DSYM.new('App.dSYm.zip')
+parser = AppInfo::IPA.new('iphone.ipa')
+parser = AppInfo::IPA.new('android.apk')
+parser = AppInfo::InfoPlist.new('App/Info.plist')
+parser = AppInfo::MobileProvision.new('provisioning_profile/uuid.mobileprovision')
+parser = AppInfo::DSYM.new('App.dSYm.zip')
 ```
 
 ### iOS

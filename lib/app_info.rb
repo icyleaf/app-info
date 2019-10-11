@@ -1,23 +1,33 @@
 # frozen_string_literal: true
-
 require 'app_info/version'
-require 'app_info/parser'
-require 'zip'
+require 'app_info/ipa'
+require 'app_info/ipa/info_plist'
+require 'app_info/ipa/mobile_provision'
+require 'app_info/apk'
+require 'app_info/dsym'
 
 # AppInfo Module
 module AppInfo
-  class NotFoundError < StandardError; end
-  class UnkownFileTypeError < StandardError; end
+  class Error < StandardError; end
+  class NotFoundError < Error; end
+  class UnkownFileTypeError < Error; end
+
+  # App Platform
+  module Platform
+    IOS = 'iOS'
+    ANDROID = 'Android'
+    DSYM = 'dSYM'
+  end
 
   # Get a new parser for automatic
   def self.parse(file)
     raise NotFoundError, file unless File.exist?(file)
 
     case file_type(file)
-    when :ipa then Parser::IPA.new(file)
-    when :apk then Parser::APK.new(file)
-    when :mobileprovision then Parser::MobileProvision.new(file)
-    when :dsym then Parser::DSYM.new(file)
+    when :ipa then IPA.new(file)
+    when :apk then APK.new(file)
+    when :mobileprovision then MobileProvision.new(file)
+    when :dsym then DSYM.new(file)
     else
       raise UnkownFileTypeError, "Sorry, AppInfo can not detect file type: #{file}"
     end

@@ -1,7 +1,7 @@
-describe AppInfo::Parser::IPA do
+describe AppInfo::IPA do
   describe '#iPhone' do
-    let(:file) { File.dirname(__FILE__) + '/../../fixtures/apps/iphone.ipa' }
-    subject { AppInfo::Parser::IPA.new(file) }
+    let(:file) { File.dirname(__FILE__) + '/../fixtures/apps/iphone.ipa' }
+    subject { AppInfo::IPA.new(file) }
 
     context 'parse' do
       it { expect(subject.os).to eq 'iOS' }
@@ -33,14 +33,14 @@ describe AppInfo::Parser::IPA do
       it { expect(subject.metadata).to be_nil }
       it { expect(subject.metadata?).to be false }
       it { expect(subject.stored?).to be false }
-      it { expect(subject.info).to be_kind_of AppInfo::Parser::InfoPlist }
-      it { expect(subject.mobileprovision).to be_kind_of AppInfo::Parser::MobileProvision }
+      it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
+      it { expect(subject.mobileprovision).to be_kind_of AppInfo::MobileProvision }
     end
   end
 
   describe '#iPad' do
-    let(:file) { File.dirname(__FILE__) + '/../../fixtures/apps/ipad.ipa' }
-    subject { AppInfo::Parser::IPA.new(file) }
+    let(:file) { File.dirname(__FILE__) + '/../fixtures/apps/ipad.ipa' }
+    subject { AppInfo::IPA.new(file) }
 
     it { expect(subject.os).to eq 'iOS' }
     it { expect(subject).not_to be_iphone }
@@ -70,7 +70,7 @@ describe AppInfo::Parser::IPA do
     it { expect(subject.metadata?).to be false }
     it { expect(subject.stored?).to be false }
     it { expect(subject.ipad?).to be true }
-    it { expect(subject.info).to be_kind_of AppInfo::Parser::InfoPlist }
-    it { expect(subject.mobileprovision).to be_kind_of AppInfo::Parser::MobileProvision }
+    it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
+    it { expect(subject.mobileprovision).to be_kind_of AppInfo::MobileProvision }
   end
 end

@@ -36,13 +36,13 @@ describe AppInfo do
           parse = AppInfo.parse(path)
           case file_type
           when :ipa
-            expect(parse).to be_a(AppInfo::Parser::IPA)
+            expect(parse).to be_a(AppInfo::IPA)
           when :apk
-            expect(parse).to be_a(AppInfo::Parser::APK)
+            expect(parse).to be_a(AppInfo::APK)
           when :dsym
-            expect(parse).to be_a(AppInfo::Parser::DSYM)
+            expect(parse).to be_a(AppInfo::DSYM)
           when :mobileprovision
-            expect(parse).to be_a(AppInfo::Parser::MobileProvision)
+            expect(parse).to be_a(AppInfo::MobileProvision)
           end
         end
       end

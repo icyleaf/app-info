@@ -1,0 +1,18 @@
+
+AppInfo::DSYM
+  #SingleMachO
+    parse
+      should eq "dSYM"
+      should eq "iOS"
+      should eq MachO::MachOFile
+      should eq "1.0"
+      should eq "1"
+      should eq "com.icyleaf.iOS"
+      should eq "com.icyleaf.iOS"
+      should eq 1
+      should eq :dsym
+      should eq "ea9bbf2d-bfdd-3ce0-85b2-1cbe7152fca5"
+
+Finished in 0.13945 seconds (files took 0.56912 seconds to load)
+10 examples, 0 failures
+
