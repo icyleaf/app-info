@@ -1,5 +1,6 @@
 # app_info
 
+[![Language](https://img.shields.io/badge/ruby-2.3+-701516.svg)](.travis.yml)
 [![Build Status](https://travis-ci.org/icyleaf/app_info.svg?branch=master)](https://travis-ci.org/icyleaf/app_info)
 [![Gem version](https://img.shields.io/gem/v/app-info.svg?style=flat)](https://rubygems.org/gems/app_info)
 [![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](LICENSE)

@@ -9,16 +9,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
-### Added
-
-- Added .dSYM.zip format support
-- Added parse mobileprovision in Linux
-- Added `AppInfo.file_type` to detect file type
-
 ### Changed
 
+- Remove `Parser` module to reduce namespace. #[13](https://github.com/icyleaf/app-info/issues/13)
 - Use parse Macho-O header and contents to detect file type instead of file extension name.
-- Dropped Ruby 2.2 and below versions support
+- Dropped Ruby 2.2 and below versions support.
+
+### Added
+
+- Added .dSYM.zip format support. #[8](https://github.com/icyleaf/app-info/issues/8)
+- Added parse mobileprovision in Linux. #[10](https://github.com/icyleaf/app_info/pull/10)
+- Added `AppInfo.file_type` to detect file type.
 
 ## [1.1.2] (2019-09-19)
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AppInfo
   # Monkey Patch for Object
   module Tryable
