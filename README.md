@@ -46,8 +46,7 @@ require 'app-info'
 parser = AppInfo.parse('iphone.ipa')
 parser = AppInfo.parse('ipad.ipa')
 parser = AppInfo.parse('android.apk')
-parser = AppInfo.parse('App/Info.plist')
-parser = AppInfo.parse('provisioning_profile/uuid.mobileprovision')
+parser = AppInfo.parse('u-u-i-d.mobileprovision')
 parser = AppInfo.parse('App.dSYm.zip')
 
 # If detect file type failed, you can parse in other way
