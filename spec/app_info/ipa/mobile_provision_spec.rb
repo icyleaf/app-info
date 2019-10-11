@@ -1,7 +1,7 @@
-describe AppInfo::Parser::MobileProvision do
-  let(:file) { File.dirname(__FILE__) + '/../../../fixtures/apps/ipad.ipa' }
-  let(:ipa) { AppInfo::Parser::IPA.new(file) }
-  subject { AppInfo::Parser::MobileProvision.new(ipa.mobileprovision_path) }
+describe AppInfo::MobileProvision do
+  let(:file) { File.dirname(__FILE__) + '/../../fixtures/apps/ipad.ipa' }
+  let(:ipa) { AppInfo::IPA.new(file) }
+  subject { AppInfo::MobileProvision.new(ipa.mobileprovision_path) }
 
   it { expect(subject.devices).to be_nil }
   it { expect(subject.team_name).to eq('QYER Inc') }

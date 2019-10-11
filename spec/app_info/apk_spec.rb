@@ -1,16 +1,16 @@
-describe AppInfo::Parser::APK do
+describe AppInfo::APK do
   describe '#PhoneOrTablet' do
-    let(:file) { File.dirname(__FILE__) + '/../../fixtures/apps/android.apk' }
-    subject { AppInfo::Parser::APK.new(file) }
+    let(:file) { File.dirname(__FILE__) + '/../fixtures/apps/android.apk' }
+    subject { AppInfo::APK.new(file) }
 
     it { expect(subject.size).to eq(3070618) }
     it { expect(subject.size(humanable: true)).to eq('2.93 MB') }
     it { expect(subject.os).to eq 'Android' }
     it { expect(subject.wear?).to be false }
     it { expect(subject.tv?).to be false }
-    it { expect(subject.os).to eq AppInfo::Parser::Platform::ANDROID }
+    it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.file).to eq file }
-    it { expect(subject.apk.class).to eq Android::Apk }
+    it { expect(subject.apk).to be_a Android::Apk }
     it { expect(subject.build_version).to eq('5') }
     it { expect(subject.release_version).to eq('1.2.3') }
     it { expect(subject.name).to eq('AppInfoDemo') }
@@ -19,10 +19,10 @@ describe AppInfo::Parser::APK do
     it { expect(subject.icons.length).not_to be_nil }
     it { expect(subject.min_sdk_version).to eq 14 }
     it { expect(subject.target_sdk_version).to eq 29 }
-    it { expect(subject.certificates.first).to be_kind_of(AppInfo::Parser::APK::Certificate) }
+    it { expect(subject.certificates.first).to be_kind_of(AppInfo::APK::Certificate) }
     it { expect(subject.certificates.first.path).to eq('META-INF/CERT.RSA') }
     it { expect(subject.certificates.first.certificate).to be_kind_of(OpenSSL::X509::Certificate) }
-    it { expect(subject.signs.first).to be_kind_of(AppInfo::Parser::APK::Sign) }
+    it { expect(subject.signs.first).to be_kind_of(AppInfo::APK::Sign) }
     it { expect(subject.signs.first.path).to eq('META-INF/CERT.RSA') }
     it { expect(subject.signs.first.sign).to be_kind_of(OpenSSL::PKCS7) }
     it { expect(subject.activities.size).to eq(1) }
@@ -34,15 +34,15 @@ describe AppInfo::Parser::APK do
   end
 
   describe '#Wear' do
-    let(:file) { File.dirname(__FILE__) + '/../../fixtures/apps/wear.apk' }
-    subject { AppInfo::Parser::APK.new(file) }
+    let(:file) { File.dirname(__FILE__) + '/../fixtures/apps/wear.apk' }
+    subject { AppInfo::APK.new(file) }
 
     it { expect(subject.os).to eq 'Android' }
     it { expect(subject.wear?).to be true }
     it { expect(subject.tv?).to be false }
-    it { expect(subject.os).to eq AppInfo::Parser::Platform::ANDROID }
+    it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.file).to eq file }
-    it { expect(subject.apk.class).to eq Android::Apk }
+    it { expect(subject.apk).to be_a Android::Apk }
     it { expect(subject.build_version).to eq('1') }
     it { expect(subject.release_version).to eq('1.0') }
     it { expect(subject.name).to eq('AppInfoWearDemo') }
@@ -54,15 +54,15 @@ describe AppInfo::Parser::APK do
   end
 
   describe '#TV' do
-    let(:file) { File.dirname(__FILE__) + '/../../fixtures/apps/tv.apk' }
-    subject { AppInfo::Parser::APK.new(file) }
+    let(:file) { File.dirname(__FILE__) + '/../fixtures/apps/tv.apk' }
+    subject { AppInfo::APK.new(file) }
 
     it { expect(subject.os).to eq 'Android' }
     it { expect(subject.wear?).to be false }
     it { expect(subject.tv?).to be true }
-    it { expect(subject.os).to eq AppInfo::Parser::Platform::ANDROID }
+    it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.file).to eq file }
-    it { expect(subject.apk.class).to eq Android::Apk }
+    it { expect(subject.apk).to be_a Android::Apk }
     it { expect(subject.build_version).to eq('1') }
     it { expect(subject.release_version).to eq('1.0') }
     it { expect(subject.name).to eq('AppInfoTVDemo') }

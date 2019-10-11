@@ -1,7 +1,7 @@
-describe AppInfo::Parser::DSYM do
+describe AppInfo::DSYM do
   describe '#SingleMachO' do
-    let(:file) { File.dirname(__FILE__) + '/../../fixtures/dsyms/single_ios.dSYM.zip' }
-    subject { AppInfo::Parser::DSYM.new(file) }
+    let(:file) { File.dirname(__FILE__) + '/../fixtures/dsyms/single_ios.dSYM.zip' }
+    subject { AppInfo::DSYM.new(file) }
 
     context 'parse' do
       data = {
@@ -13,6 +13,13 @@ describe AppInfo::Parser::DSYM do
         humanable_size: '846.59 KB'
       }
 
+      it { expect(subject.file_type).to eq AppInfo::Platform::DSYM }
+      it { expect(subject.object).to eq 'iOS' }
+      it { expect(subject.macho_type).to be_a ::MachO::MachOFile }
+      it { expect(subject.release_version).to eq '1.0' }
+      it { expect(subject.build_version).to eq '1' }
+      it { expect(subject.identifier).to eq 'com.icyleaf.iOS' }
+      it { expect(subject.bundle_id).to eq 'com.icyleaf.iOS' }
       it { expect(subject.machos.size).to eq 1 }
       it { expect(subject.machos[0].type).to eq data[:type] }
       it { expect(subject.machos[0].uuid).to eq data[:uuid] }
@@ -25,8 +32,8 @@ describe AppInfo::Parser::DSYM do
   end
 
   describe '#MultiMachO' do
-    let(:file) { File.dirname(__FILE__) + '/../../fixtures/dsyms/multi_ios.dSYM.zip' }
-    subject { AppInfo::Parser::DSYM.new(file) }
+    let(:file) { File.dirname(__FILE__) + '/../fixtures/dsyms/multi_ios.dSYM.zip' }
+    subject { AppInfo::DSYM.new(file) }
 
     context 'parse' do
       data = [
@@ -47,8 +54,15 @@ describe AppInfo::Parser::DSYM do
           humanable_size: '846.59 KB'
         }
       ]
-      it { expect(subject.machos.size).to eq 2 }
 
+      it { expect(subject.file_type).to eq AppInfo::Platform::DSYM }
+      it { expect(subject.object).to eq 'iOS' }
+      it { expect(subject.macho_type).to be_a ::MachO::FatFile }
+      it { expect(subject.release_version).to eq '1.0' }
+      it { expect(subject.build_version).to eq '2' }
+      it { expect(subject.identifier).to eq 'com.icyleaf.iOS' }
+      it { expect(subject.bundle_id).to eq 'com.icyleaf.iOS' }
+      it { expect(subject.machos.size).to eq 2 }
       it { expect(subject.machos[0].type).to eq data[0][:type] }
       it { expect(subject.machos[0].uuid).to eq data[0][:uuid] }
       it { expect(subject.machos[0].cpu_type).to eq data[0][:cpu_type] }
@@ -56,7 +70,6 @@ describe AppInfo::Parser::DSYM do
       it { expect(subject.machos[0].size).to eq data[0][:size] }
       it { expect(subject.machos[0].size(true)).to eq data[0][:humanable_size] }
       it { expect(subject.machos[0].to_h).to eq data[0] }
-
       it { expect(subject.machos[1].type).to eq data[1][:type] }
       it { expect(subject.machos[1].uuid).to eq data[1][:uuid] }
       it { expect(subject.machos[1].cpu_type).to eq data[1][:cpu_type] }
