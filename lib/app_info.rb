@@ -54,10 +54,8 @@ module AppInfo
     Zip::File.open(file) do |zip_file|
       zip_file.each do |f|
         path = f.name
-        name = File.basename(path)
-
-        return :apk if name == 'AndroidManifest.xml'
-        return :ipa if path.include?('Payload/') && name.end_with?('Info.plist')
+        return :apk if path == 'AndroidManifest.xml'
+        return :ipa if path.include?('Payload/') && path.end_with?('Info.plist')
         return :dsym if path.include?('/DWARF/')
       end
     end
