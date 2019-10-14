@@ -1,8 +1,7 @@
 # frozen_string_literal: true`
 
-require 'zip'
 require 'macho'
-require 'app_info/core_ext/object/try'
+require 'app_info/util'
 
 module AppInfo
   # DSYM parser
@@ -82,13 +81,12 @@ module AppInfo
         if File.directory?(@file)
           @contents = @file
         else
-          @contents = "#{Dir.mktmpdir}/AppInfo-dsym-#{SecureRandom.hex}"
           dsym_dir = nil
-          Zip::File.open(@file) do |zip_file|
+          @contents = Util.unarchive(@file, path: 'dsym') do |path, zip_file|
             zip_file.each do |f|
               dsym_dir ||= f.name
 
-              f_path = File.join(@contents, f.name)
+              f_path = File.join(path, f.name)
               zip_file.extract(f, f_path) unless File.exist?(f_path)
             end
           end

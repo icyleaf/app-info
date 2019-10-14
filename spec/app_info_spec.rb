@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 
 MATCH_FILE_TYPES = {
@@ -11,7 +13,9 @@ MATCH_FILE_TYPES = {
   'bplist.mobileprovision' => :mobileprovision,
   'plist.mobileprovision' => :mobileprovision,
   'profile.mobileprovision' => :mobileprovision,
-  'signed_plist.mobileprovision' => :mobileprovision
+  'signed_plist.mobileprovision' => :mobileprovision,
+  'single_mapping.zip' => :proguard,
+  'full_mapping.zip' => :proguard,
 }.freeze
 
 describe AppInfo do
