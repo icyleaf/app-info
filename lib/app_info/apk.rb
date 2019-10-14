@@ -33,23 +33,25 @@ module AppInfo
     end
     alias file_type os
 
-    def build_version
-      manifest.version_code.to_s
-    end
-
-    def release_version
+    def version_name
       manifest.version_name
     end
+    alias release_version version_name
+
+    def version_code
+      manifest.version_code.to_s
+    end
+    alias build_version version_code
 
     def name
       resource.find('@string/app_name')
     end
 
-    def bundle_id
+    def package_name
       manifest.package_name
     end
-    alias identifier bundle_id
-    alias package_name bundle_id
+    alias identifier package_name
+    alias bundle_id package_name
 
     def device_type
       if wear?

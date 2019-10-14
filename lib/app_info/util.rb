@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require 'zip'
+require 'fileutils'
+require 'securerandom'
+
 module AppInfo
   # AppInfo Util
   module Util
@@ -21,6 +25,27 @@ module AppInfo
       end
 
       "#{number} #{FILE_SIZE_UNITS[exponent]}"
+    end
+
+    # Unarchive zip file
+    #
+    # source: https://github.com/soffes/lagunitas/blob/master/lib/lagunitas/ipa.rb
+    def self.unarchive(file, path: nil)
+      path = path ? "#{path}-" : ''
+      root_path = "#{Dir.mktmpdir}/AppInfo-#{path}#{SecureRandom.hex}"
+      Zip::File.open(file) do |zip_file|
+        if block_given?
+          yield root_path, zip_file
+        else
+          zip_file.each do |f|
+            f_path = File.join(root_path, f.name)
+            FileUtils.mkdir_p(File.dirname(f_path))
+            zip_file.extract(f, f_path) unless File.exist?(f_path)
+          end
+        end
+      end
+
+      root_path
     end
   end
 end
