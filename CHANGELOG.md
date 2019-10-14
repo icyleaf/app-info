@@ -17,9 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added .dSYM.zip format support. #[8](https://github.com/icyleaf/app-info/issues/8)
+- Added iOS .dSYM.zip format support. #[8](https://github.com/icyleaf/app-info/issues/8)
 - Added parse mobileprovision in Linux. #[10](https://github.com/icyleaf/app_info/pull/10)
 - Added `AppInfo.file_type` to detect file type.
+- Added detect and simple parse Android proguard file support. #[15](https://github.com/icyleaf/app_info/pull/15)
 
 ## [1.1.2] (2019-09-19)
 

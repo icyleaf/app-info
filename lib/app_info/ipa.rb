@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-require 'zip'
 require 'pngdefry'
 require 'fileutils'
-require 'securerandom'
 require 'cfpropertylist'
 require 'app_info/util'
-require 'app_info/core_ext/object/try'
 
 module AppInfo
   # IPA parser
@@ -199,18 +196,7 @@ module AppInfo
     private
 
     def contents
-      # source: https://github.com/soffes/lagunitas/blob/master/lib/lagunitas/ipa.rb
-      unless @contents
-        @contents = "#{Dir.mktmpdir}/AppInfo-ios-#{SecureRandom.hex}"
-        Zip::File.open(@file) do |zip_file|
-          zip_file.each do |f|
-            f_path = File.join(@contents, f.name)
-            zip_file.extract(f, f_path) unless File.exist?(f_path)
-          end
-        end
-      end
-
-      @contents
+      @contents ||= Util.unarchive(@file, path: 'ios')
     end
 
     def icons_root_path
