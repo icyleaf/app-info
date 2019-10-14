@@ -70,8 +70,6 @@ module AppInfo
       @manifest ||= REXML::Document.new(File.new(manifest_path))
     end
 
-    private
-
     def mapping_path
       @mapping_path ||= Dir.glob(File.join(contents, '*mapping*.txt')).first
     end

@@ -58,7 +58,7 @@ module AppInfo
     Zip.warn_invalid_date = false
     zip_file = Zip::File.open(file)
 
-    return :proguard unless zip_file.find_entry('mapping.txt').nil?
+    return :proguard unless zip_file.glob('*mapping*.txt').empty?
     return :apk unless zip_file.find_entry('AndroidManifest.xml').nil? &&
                        zip_file.find_entry('classes.dex').nil?
 
