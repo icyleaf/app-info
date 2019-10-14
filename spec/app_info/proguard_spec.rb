@@ -8,6 +8,7 @@ describe AppInfo::Proguard do
 
     context 'parse' do
       it { expect(subject.file_type).to eq AppInfo::Platform::PROGUARD }
+      it { expect(subject.uuid).to eq '81384aeb-4837-5f73-a771-417b4399a483' }
       it { expect(subject.mapping?).to be true }
       it { expect(subject.symbol?).to be false }
       it { expect(subject.resource?).to be false }
@@ -27,6 +28,7 @@ describe AppInfo::Proguard do
 
     context 'parse' do
       it { expect(subject.file_type).to eq AppInfo::Platform::PROGUARD }
+      it { expect(subject.uuid).to eq '81384aeb-4837-5f73-a771-417b4399a483' }
       it { expect(subject.mapping?).to be true }
       it { expect(subject.symbol?).to be true }
       it { expect(subject.resource?).to be true }

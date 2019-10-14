@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
+require 'uuidtools'
 require 'rexml/document'
 require 'app_info/util'
 
 module AppInfo
   # Proguard parser
   class Proguard
+    NAMESPACE = UUIDTools::UUID.sha1_create(UUIDTools::UUID_DNS_NAMESPACE, 'icyleaf.com')
+
     attr_reader :file
 
     def initialize(file)
@@ -15,6 +18,12 @@ module AppInfo
     def file_type
       AppInfo::Platform::PROGUARD
     end
+
+    def uuid
+      # Similar to https://docs.sentry.io/workflow/debug-files/#proguard-uuids
+      UUIDTools::UUID.sha1_create(NAMESPACE, File.read(mapping_path)).to_s
+    end
+    alias debug_id uuid
 
     def mapping?
       File.exist?(mapping_path)
