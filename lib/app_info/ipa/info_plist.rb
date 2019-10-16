@@ -50,7 +50,7 @@ module AppInfo
                          .try(:[], 'CFBundlePrimaryIcon')
                          .try(:[], 'CFBundleIconFiles')
 
-        next if icon_array.nil? || icon_array.zero?
+        next if icon_array.nil? || icon_array.empty?
 
         icon_array.each do |items|
           Dir.glob(File.join(@app_path, "#{items}*")).find_all.each do |file|
