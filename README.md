@@ -97,6 +97,10 @@ ipa.universal?
 ipa.release_type
 # => 'AdHoc'
 
+# detect architecture(s)
+ipa.archs
+# => [:armv7, :arm64]
+
 # get more propety in Info.plist
 ipa.info[:CFBundleDisplayName]
 # => 'AppInfoDemo'
@@ -120,7 +124,7 @@ profile.team_id
 profile.team_name
 # => 'Company/Team Name'
 
-# get app icons
+# get UDID of devices
 profile.devices
 # => ['18cf53cddee60c5af9c97b1521e7cbf8342628da']
 ```
