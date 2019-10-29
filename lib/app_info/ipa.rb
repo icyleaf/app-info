@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'macho'
 require 'pngdefry'
 require 'fileutils'
 require 'cfpropertylist'
@@ -127,6 +128,21 @@ module AppInfo
       end
     end
 
+    def archs
+      return unless File.exist?(bundle_path)
+
+      file = MachO.open(bundle_path)
+      case file
+      when MachO::MachOFile
+        [file.cpusubtype]
+      else
+        file.machos.each_with_object([]) do |arch, obj|
+          obj << arch.cpusubtype
+        end
+      end
+    end
+    alias architectures archs
+
     def stored?
       metadata? ? true : false
     end
@@ -168,6 +184,10 @@ module AppInfo
 
     def metadata_path
       @metadata_path ||= File.join(contents, 'iTunesMetadata.plist')
+    end
+
+    def bundle_path
+      @bundle_path ||= File.join(app_path, info.bundle_name)
     end
 
     def info

@@ -20,9 +20,10 @@ describe AppInfo::IPA do
       it { expect(subject.min_sdk_version).to eq('9.3') }
       it { expect(subject.info['CFBundleVersion']).to eq('5') }
       it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.2.3') }
+      it { expect(subject.archs).to eq(%i[armv7 arm64]) }
 
-      it { expect(subject.release_type).to eq('AdHoc')}
-      it { expect(subject.build_type).to eq('AdHoc')}
+      it { expect(subject.release_type).to eq('AdHoc') }
+      it { expect(subject.build_type).to eq('AdHoc') }
       it { expect(subject.devices).to be_kind_of Array }
       it { expect(subject.team_name).to eq('QYER Inc') }
       it { expect(subject.profile_name).to eq('iOS Team Provisioning Profile: *') }
@@ -56,9 +57,10 @@ describe AppInfo::IPA do
     it { expect(subject.identifier).to eq('com.icyleaf.bundle') }
     it { expect(subject.bundle_id).to eq('com.icyleaf.bundle') }
     it { expect(subject.device_type).to eq('iPad') }
+    it { expect(subject.archs).to eq(%i[armv7 arm64]) }
 
-    it { expect(subject.release_type).to eq('inHouse')}
-    it { expect(subject.build_type).to eq('inHouse')}
+    it { expect(subject.release_type).to eq('inHouse') }
+    it { expect(subject.build_type).to eq('inHouse') }
     it { expect(subject.devices).to be_nil }
     it { expect(subject.team_name).to eq('QYER Inc') }
     it { expect(subject.profile_name).to eq('XC: *') }
