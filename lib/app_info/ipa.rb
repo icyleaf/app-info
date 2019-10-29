@@ -3,12 +3,15 @@
 require 'macho'
 require 'pngdefry'
 require 'fileutils'
+require 'forwardable'
 require 'cfpropertylist'
 require 'app_info/util'
 
 module AppInfo
   # IPA parser
   class IPA
+    extend Forwardable
+
     attr_reader :file
 
     # iOS Export types
@@ -33,76 +36,12 @@ module AppInfo
     end
     alias file_type os
 
-    def iphone?
-      info.iphone?
-    end
+    def_delegators :info, :iphone?, :ipad?, :universal?, :build_version, :name,
+                   :release_version, :identifier, :bundle_id, :display_name,
+                   :bundle_name, :icons, :min_sdk_version, :device_type
 
-    def ipad?
-      info.ipad?
-    end
-
-    def universal?
-      info.universal?
-    end
-
-    def build_version
-      info.build_version
-    end
-
-    def release_version
-      info.release_version
-    end
-
-    def identifier
-      info.identifier
-    end
-
-    def name
-      display_name || bundle_name
-    end
-
-    def display_name
-      info.display_name
-    end
-
-    def bundle_name
-      info.bundle_name
-    end
-
-    def icons
-      info.icons
-    end
-
-    #
-    # Return the minimum OS version for the given application
-    #
-    def min_sdk_version
-      info.min_sdk_version
-    end
-
-    def device_type
-      info.device_type
-    end
-
-    def devices
-      mobileprovision.devices
-    end
-
-    def team_name
-      mobileprovision.team_name
-    end
-
-    def team_identifier
-      mobileprovision.team_identifier
-    end
-
-    def profile_name
-      mobileprovision.profile_name
-    end
-
-    def expired_date
-      mobileprovision.expired_date
-    end
+    def_delegators :mobileprovision, :devices, :team_name, :team_identifier,
+                   :profile_name, :expired_date
 
     def distribution_name
       "#{profile_name} - #{team_name}" if profile_name && team_name
@@ -211,7 +150,25 @@ module AppInfo
       @info = nil
     end
 
-    alias bundle_id identifier
+    def [](key)
+      info.try(:[], key.to_s) || mobileprovision.try(:[], key)
+    end
+
+    def method_missing(method_name)
+      value = info.send(method_name) || mobileprovision.send(method_name)
+      return value if value
+
+      key = if method_name.to_s.include?('_')
+              method_name.to_s
+                         .split('_')
+                         .map(&:capitalize)
+                         .join('')
+            else
+              method_name.to_s
+            end
+
+      info.try(:[], key) || mobileprovision.try(:[], key) || super
+    end
 
     private
 

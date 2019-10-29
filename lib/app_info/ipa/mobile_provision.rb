@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'openssl'
 require 'cfpropertylist'
 
 module AppInfo
@@ -45,6 +46,19 @@ module AppInfo
       mobileprovision.try(:[], 'Entitlements')
     end
 
+    def developer_certs
+      certs = mobileprovision.try(:[], 'DeveloperCertificates')
+      return if certs.empty?
+
+      certs.each_with_object([]) do |cert, obj|
+        obj << DeveloperCertificate.new(cert)
+      end
+    end
+
+    def [](key)
+      mobileprovision.try(:[], key.to_s)
+    end
+
     def method_missing(method_name, *args, &block)
       key = if method_name.to_s.include?('_')
               method_name.to_s
@@ -84,6 +98,27 @@ module AppInfo
       start_point = raw.index('<?xml version=')
       end_point = raw.index(end_tag) + end_tag.size - 1
       raw[start_point..end_point]
+    end
+
+    # Developer Certificate
+    class DeveloperCertificate
+      attr_reader :raw
+
+      def initialize(data)
+        @raw = OpenSSL::X509::Certificate.new(data)
+      end
+
+      def name
+        @raw.subject.to_a.find { |name, _, _| name == 'CN' }[1]
+      end
+
+      def created_date
+        @raw.not_after
+      end
+
+      def expired_date
+        @raw.not_before
+      end
     end
   end
 end

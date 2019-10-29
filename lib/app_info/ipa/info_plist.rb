@@ -106,6 +106,19 @@ module AppInfo
       info.try(:[], key.to_s)
     end
 
+    def method_missing(method_name, *args, &block)
+      key = if method_name.to_s.include?('_')
+              method_name.to_s
+                         .split('_')
+                         .map(&:capitalize)
+                         .join('')
+            else
+              method_name.to_s
+            end
+
+      info.try(:[], key)
+    end
+
     private
 
     def info
