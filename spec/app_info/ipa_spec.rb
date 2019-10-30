@@ -31,6 +31,8 @@ describe AppInfo::IPA do
       it { expect(subject.distribution_name).not_to be_nil }
 
       it { expect(subject.mobileprovision?).to be true }
+      it { expect(subject.mobileprovision.developer_certs.first).to be_kind_of AppInfo::MobileProvision::DeveloperCertificate }
+
       it { expect(subject.metadata).to be_nil }
       it { expect(subject.metadata?).to be false }
       it { expect(subject.stored?).to be false }
@@ -68,11 +70,21 @@ describe AppInfo::IPA do
     it { expect(subject.distribution_name).to eq('XC: * - QYER Inc') }
 
     it { expect(subject.mobileprovision?).to be true }
+    it { expect(subject.mobileprovision.developer_certs.first).to be_kind_of AppInfo::MobileProvision::DeveloperCertificate }
+
     it { expect(subject.metadata).to be_nil }
     it { expect(subject.metadata?).to be false }
     it { expect(subject.stored?).to be false }
     it { expect(subject.ipad?).to be true }
     it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
     it { expect(subject.mobileprovision).to be_kind_of AppInfo::MobileProvision }
+
+    it { expect(subject.info['CFBundleVersion']).to eq('1') }
+    it { expect(subject.CFBundleVersion).to eq('1') }
+    it { expect(subject.c_f_bundle_version).to eq('1') }
+
+    it { expect(subject.mobileprovision['TeamName']).to eq('QYER Inc') }
+    it { expect(subject.TeamName).to eq('QYER Inc') }
+    it { expect(subject.team_name).to eq('QYER Inc') }
   end
 end

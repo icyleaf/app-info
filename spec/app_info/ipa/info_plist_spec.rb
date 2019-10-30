@@ -14,4 +14,6 @@ describe AppInfo::InfoPlist do
   it { expect(subject.min_sdk_version).to eq('9.3') }
   it { expect(subject['CFBundleVersion']).to eq('5') }
   it { expect(subject[:CFBundleShortVersionString]).to eq('1.2.3') }
+  it { expect(subject.CFBundleShortVersionString).to eq('1.2.3') }
+  it { expect(subject.c_f_bundle_short_version_string).to eq('1.2.3') }
 end
