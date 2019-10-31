@@ -2,6 +2,7 @@
 
 require 'openssl'
 require 'cfpropertylist'
+require 'app_info/util'
 
 module AppInfo
   # .mobileprovision file parser
@@ -59,19 +60,6 @@ module AppInfo
       mobileprovision.try(:[], key.to_s)
     end
 
-    def method_missing(method_name, *args, &block)
-      key = if method_name.to_s.include?('_')
-              method_name.to_s
-                         .split('_')
-                         .map(&:capitalize)
-                         .join('')
-            else
-              method_name.to_s
-            end
-
-      mobileprovision.try(:[], key)
-    end
-
     def empty?
       mobileprovision.nil?
     end
@@ -85,6 +73,18 @@ module AppInfo
       @mobileprovision = CFPropertyList.native_types(list)
     rescue CFFormatError
       @mobileprovision = nil
+    end
+
+    def method_missing(method_name, *_, &_)
+      mobileprovision.try(:[], Util.format_key(method_name)) ||
+        mobileprovision.send(method_name) ||
+        super
+    end
+
+    def respond_to_missing?(method_name, *_)
+      mobileprovision.key?(Util.format_key(method_name)) ||
+        mobileprovision.respond_to?(method_name) ||
+        super
     end
 
     private

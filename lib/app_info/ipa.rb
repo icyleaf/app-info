@@ -150,26 +150,6 @@ module AppInfo
       @info = nil
     end
 
-    def [](key)
-      info.try(:[], key.to_s) || mobileprovision.try(:[], key)
-    end
-
-    def method_missing(method_name)
-      value = info.send(method_name) || mobileprovision.send(method_name)
-      return value if value
-
-      key = if method_name.to_s.include?('_')
-              method_name.to_s
-                         .split('_')
-                         .map(&:capitalize)
-                         .join('')
-            else
-              method_name.to_s
-            end
-
-      info.try(:[], key) || mobileprovision.try(:[], key) || super
-    end
-
     private
 
     def contents

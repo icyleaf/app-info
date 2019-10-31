@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'cfpropertylist'
+require 'app_info/util'
 
 module AppInfo
   # iOS Info.plist parser
@@ -106,17 +107,16 @@ module AppInfo
       info.try(:[], key.to_s)
     end
 
-    def method_missing(method_name, *args, &block)
-      key = if method_name.to_s.include?('_')
-              method_name.to_s
-                         .split('_')
-                         .map(&:capitalize)
-                         .join('')
-            else
-              method_name.to_s
-            end
+    def method_missing(method_name, *_, &_)
+      info.try(:[], Util.format_key(method_name)) ||
+        info.send(method_name) ||
+        super
+    end
 
-      info.try(:[], key)
+    def respond_to_missing?(method_name, *_)
+      info.key?(Util.format_key(method_name)) ||
+        info.respond_to?(method_name) ||
+        super
     end
 
     private

@@ -9,6 +9,13 @@ module AppInfo
   module Util
     FILE_SIZE_UNITS = %w[B KB MB GB TB].freeze
 
+    def self.format_key(key)
+      key = key.to_s
+      return key unless key.include?('_')
+
+      key.split('_').map(&:capitalize).join('')
+    end
+
     def self.file_size(file, humanable)
       file_size = File.size(file)
       humanable ? size_to_humanable(file_size) : file_size

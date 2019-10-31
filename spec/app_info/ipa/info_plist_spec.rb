@@ -12,6 +12,8 @@ describe AppInfo::InfoPlist do
   it { expect(subject.bundle_id).to eq('com.icyleaf.AppInfoDemo') }
   it { expect(subject.device_type).to eq('iPhone') }
   it { expect(subject.min_sdk_version).to eq('9.3') }
+
+  it { expect(subject.to_h).to be_a Hash }
   it { expect(subject['CFBundleVersion']).to eq('5') }
   it { expect(subject[:CFBundleShortVersionString]).to eq('1.2.3') }
   it { expect(subject.CFBundleShortVersionString).to eq('1.2.3') }

@@ -11,8 +11,8 @@ describe AppInfo::APK do
     it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.file).to eq file }
     it { expect(subject.apk).to be_a Android::Apk }
-    it { expect(subject.build_version).to eq('5') }
     it { expect(subject.release_version).to eq('1.2.3') }
+    it { expect(subject.build_version).to eq('5') }
     it { expect(subject.name).to eq('AppInfoDemo') }
     it { expect(subject.bundle_id).to eq('com.icyleaf.appinfodemo') }
     it { expect(subject.identifier).to eq('com.icyleaf.appinfodemo') }
@@ -43,8 +43,8 @@ describe AppInfo::APK do
     it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.file).to eq file }
     it { expect(subject.apk).to be_a Android::Apk }
-    it { expect(subject.build_version).to eq('1') }
     it { expect(subject.release_version).to eq('1.0') }
+    it { expect(subject.build_version).to eq('1') }
     it { expect(subject.name).to eq('AppInfoWearDemo') }
     it { expect(subject.bundle_id).to eq('com.icyleaf.appinfoweardemo') }
     it { expect(subject.identifier).to eq('com.icyleaf.appinfoweardemo') }

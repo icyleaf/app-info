@@ -80,11 +80,11 @@ describe AppInfo::IPA do
     it { expect(subject.mobileprovision).to be_kind_of AppInfo::MobileProvision }
 
     it { expect(subject.info['CFBundleVersion']).to eq('1') }
-    it { expect(subject.CFBundleVersion).to eq('1') }
-    it { expect(subject.c_f_bundle_version).to eq('1') }
+    it { expect(subject.info.CFBundleVersion).to eq('1') }
+    it { expect(subject.info.c_f_bundle_version).to eq('1') }
 
     it { expect(subject.mobileprovision['TeamName']).to eq('QYER Inc') }
-    it { expect(subject.TeamName).to eq('QYER Inc') }
-    it { expect(subject.team_name).to eq('QYER Inc') }
+    it { expect(subject.mobileprovision.TeamName).to eq('QYER Inc') }
+    it { expect(subject.mobileprovision.team_name).to eq('QYER Inc') }
   end
 end

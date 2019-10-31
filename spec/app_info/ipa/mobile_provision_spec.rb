@@ -7,8 +7,11 @@ describe AppInfo::MobileProvision do
   it { expect(subject.team_name).to eq('QYER Inc') }
   it { expect(subject.profile_name).to eq('XC: *') }
   it { expect(subject.expired_date).not_to be_nil }
-  it { expect(subject['TeamName']).to eq('QYER Inc') }
-
   it { expect(subject.empty?).to be false }
-  it { expect(subject.mobileprovision).to be_kind_of Hash }
+
+  it { expect(subject.mobileprovision).to be_a Hash }
+  it { expect(subject.to_h).to be_a Hash }
+  it { expect(subject['TeamName']).to eq('QYER Inc') }
+  it { expect(subject.TeamName).to eq('QYER Inc') }
+  it { expect(subject.team_name).to eq('QYER Inc') }
 end

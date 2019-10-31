@@ -5,27 +5,27 @@
 
 module AppInfo
   module Tryable #:nodoc:
-    def try(method_name = nil, *args, &b)
+    def try(method_name = nil, *args, &block)
       if method_name.nil? && block_given?
-        if b.arity == 0
+        if block.arity.zero?
           instance_eval(&b)
         else
           yield self
         end
       elsif respond_to?(method_name)
-        public_send(method_name, *args, &b)
+        public_send(method_name, *args, &block)
       end
     end
 
-    def try!(method_name = nil, *args, &b)
+    def try!(method_name = nil, *args, &block)
       if method_name.nil? && block_given?
-        if b.arity == 0
-          instance_eval(&b)
+        if block.arity.zero?
+          instance_eval(&block)
         else
           yield self
         end
       else
-        public_send(method_name, *args, &b)
+        public_send(method_name, *args, &block)
       end
     end
   end

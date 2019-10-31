@@ -2,11 +2,14 @@
 
 require 'ruby_apk'
 require 'image_size'
+require 'forwardable'
 require 'app_info/util'
 
 module AppInfo
   # Parse APK file
   class APK
+    extend Forwardable
+
     attr_reader :file, :apk
 
     # APK Devices
@@ -33,10 +36,14 @@ module AppInfo
     end
     alias file_type os
 
-    def version_name
-      manifest.version_name
-    end
+    def_delegators :@apk, :manifest, :resource, :dex
+
+    def_delegators :manifest, :version_name, :package_name,
+                   :use_permissions, :components
+
     alias release_version version_name
+    alias identifier package_name
+    alias bundle_id package_name
 
     def version_code
       manifest.version_code.to_s
@@ -47,11 +54,7 @@ module AppInfo
       resource.find('@string/app_name')
     end
 
-    def package_name
-      manifest.package_name
-    end
-    alias identifier package_name
-    alias bundle_id package_name
+
 
     def device_type
       if wear?
@@ -87,10 +90,6 @@ module AppInfo
               .to_i
     end
 
-    def use_permissions
-      manifest.use_permissions
-    end
-
     def use_features
       manifest_values('/manifest/uses-feature')
     end
@@ -113,22 +112,6 @@ module AppInfo
 
     def services
       components.select { |c| c.type == 'service' }
-    end
-
-    def components
-      manifest.components
-    end
-
-    def manifest
-      @apk.manifest
-    end
-
-    def resource
-      @apk.resource
-    end
-
-    def dex
-      @apk.dex
     end
 
     def icons
