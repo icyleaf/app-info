@@ -75,13 +75,13 @@ module AppInfo
       @mobileprovision = nil
     end
 
-    def method_missing(method_name, *_, &_)
+    def method_missing(method_name, *args, &block)
       mobileprovision.try(:[], Util.format_key(method_name)) ||
         mobileprovision.send(method_name) ||
         super
     end
 
-    def respond_to_missing?(method_name, *_)
+    def respond_to_missing?(method_name, *args)
       mobileprovision.key?(Util.format_key(method_name)) ||
         mobileprovision.respond_to?(method_name) ||
         super

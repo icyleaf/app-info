@@ -107,13 +107,13 @@ module AppInfo
       info.try(:[], key.to_s)
     end
 
-    def method_missing(method_name, *_, &_)
+    def method_missing(method_name, *args, &block)
       info.try(:[], Util.format_key(method_name)) ||
         info.send(method_name) ||
         super
     end
 
-    def respond_to_missing?(method_name, *_)
+    def respond_to_missing?(method_name, *args)
       info.key?(Util.format_key(method_name)) ||
         info.respond_to?(method_name) ||
         super
