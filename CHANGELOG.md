@@ -9,12 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+
+## [2.1.1] (2019-12-28)
+
+### Fixed
+
+- Correct get dSYM binary file. #[19](https://github.com/icyleaf/app-info/pull/19)
+
 ## [2.1.0] (2019-10-31)
 
 ### Added
 
 - Added `.[]` and `missing_method` to find and match in `AppInfo::InfoPlist` and `AppInfo::MobileProvision'.
-- Added `AppInfo::MobileProvision.developer_certs` . #[17](https://github.com/icyleaf/app-info/pull/17)
+- Added `AppInfo::MobileProvision.developer_certs`. #[17](https://github.com/icyleaf/app-info/pull/17)
 
 ## [2.0.0] (2019-10-29)
 
@@ -50,7 +57,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.1.0..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.1.1..HEAD
+[2.1.1]: https://github.com/icyleaf/app-info/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/icyleaf/app-info/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/icyleaf/app-info/compare/v1.1.2...v2.0.0
 [1.1.2]: https://github.com/icyleaf/app-info/compare/v1.0.5...v1.1.2
