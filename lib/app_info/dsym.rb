@@ -67,7 +67,7 @@ module AppInfo
     def app_path
       unless @app_path
         path = File.join(contents, 'Contents', 'Resources', 'DWARF')
-        name = Dir.entries(path).last
+        name = Dir.entries(path).reject { |f| ['.', '..'].include?(f) }.first
         @app_path = File.join(path, name)
       end
 
