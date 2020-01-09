@@ -54,8 +54,6 @@ module AppInfo
       resource.find('@string/app_name')
     end
 
-
-
     def device_type
       if wear?
         Device::WATCH
@@ -120,11 +118,11 @@ module AppInfo
 
         @icons = @apk.icon.each_with_object([]) do |(path, data), obj|
           icon_name = File.basename(path)
-          icon_path = File.join(tmp_path, File.path(path))
+          icon_path = File.join(tmp_path, File.dirname(path))
           icon_file = File.join(icon_path, icon_name)
           FileUtils.mkdir_p icon_path
           File.open(icon_file, 'w') do |f|
-            f.write data
+            f.write(data.force_encoding('BINARY'))
           end
 
           obj << {
