@@ -121,9 +121,7 @@ module AppInfo
           icon_path = File.join(tmp_path, File.dirname(path))
           icon_file = File.join(icon_path, icon_name)
           FileUtils.mkdir_p icon_path
-          File.open(icon_file, 'w') do |f|
-            f.write(data.force_encoding('BINARY'))
-          end
+          File.open(icon_file, 'wb') { |f| f.write(data) }
 
           obj << {
             name: icon_name,

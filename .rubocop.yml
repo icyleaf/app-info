@@ -26,7 +26,7 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Max: 20
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 100
 
 Metrics/ClassLength:
@@ -35,7 +35,6 @@ Metrics/ClassLength:
 
 Metrics/CyclomaticComplexity:
   Max: 10
-
 
 Style/Documentation:
   Enabled: false
