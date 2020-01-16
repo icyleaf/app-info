@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.1.3] (2020-01-16)
+
+### Fixed
+
+- Store Android icon with BINARY mode AGAIN(correct way).
+
 ## [2.1.2] (2020-01-11)
 
 ### Fixed
@@ -63,7 +69,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.1.2..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.1.3..HEAD
+[2.1.2]: https://github.com/icyleaf/app-info/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/icyleaf/app-info/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/icyleaf/app-info/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/icyleaf/app-info/compare/v2.0.0...v2.1.0
