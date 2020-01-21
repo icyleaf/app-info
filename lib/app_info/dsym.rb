@@ -84,7 +84,10 @@ module AppInfo
           dsym_dir = nil
           @contents = Util.unarchive(@file, path: 'dsym') do |path, zip_file|
             zip_file.each do |f|
-              dsym_dir ||= f.name
+              unless dsym_dir
+                dsym_dir = f.name
+                dsym_dir = dsym_dir.split('/')[0] # fix filename is xxx.app.dSYM/Contents
+              end
 
               f_path = File.join(path, f.name)
               zip_file.extract(f, f_path) unless File.exist?(f_path)
