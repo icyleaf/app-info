@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+### Added
+
+- Add `platforms`, `platform` and `type` to `AppInfo::MobileProvision`. #[21](https://github.com/icyleaf/app-info/pull/19)
+- Add Enabled Capabilities support for mobileprovision. #[21](https://github.com/icyleaf/app-info/pull/19)
+
 ## [2.1.4] (2020-01-21)
 
 ### Fixed
