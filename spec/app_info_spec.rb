@@ -14,6 +14,11 @@ MATCH_FILE_TYPES = {
   'plist.mobileprovision' => :mobileprovision,
   'profile.mobileprovision' => :mobileprovision,
   'signed_plist.mobileprovision' => :mobileprovision,
+  'ios_adhoc.mobileprovision' => :mobileprovision,
+  'ios_appstore.mobileprovision' => :mobileprovision,
+  'ios_development.mobileprovision' => :mobileprovision,
+  'macos_appstore.provisionprofile' => :mobileprovision,
+  'macos_development.provisionprofile' => :mobileprovision,
   'single_mapping.zip' => :proguard,
   'full_mapping.zip' => :proguard,
 }.freeze
