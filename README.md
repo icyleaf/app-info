@@ -12,7 +12,7 @@ Teardown tool for mobile app(ipa/apk) and dSYM.zip file, analysis metedata like 
 - Android apk file
 - iOS ipa file
   - Info.plist file
-  - .mobileprovision file
+  - .mobileprovision/.provisionprofile file
 - dSYM(.zip) file
 
 ## Installation
@@ -127,6 +127,14 @@ profile.team_name
 # get UDID of devices
 profile.devices
 # => ['18cf53cddee60c5af9c97b1521e7cbf8342628da']
+
+# detect type
+profile.type
+# => :development/:adhoc/:appstore/:inhouse
+
+# get enabled capabilities
+profile.enabled_capabilities
+# => ['Apple Pay', 'iCloud', 'Sign In with Apple', ...]
 ```
 
 ### dSYM
