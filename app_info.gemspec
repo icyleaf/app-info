@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'CFPropertyList', ['< 3.1.0', '>= 2.3.4']
   spec.add_dependency 'image_size', '>= 1.5', '< 2.2'
   spec.add_dependency 'pngdefry', '~> 0.1.2'
-  spec.add_dependency 'ruby-macho', '~> 2.2.0'
+  spec.add_dependency 'ruby-macho', '>= 2.2', '< 2.4'
   spec.add_dependency 'ruby_android', '~> 0.7.7'
   spec.add_dependency 'rubyzip', '>= 1.2', '< 3.0'
   spec.add_dependency 'uuidtools', '>= 2.1.5', '< 2.3.0'
