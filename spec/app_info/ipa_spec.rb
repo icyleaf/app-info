@@ -61,8 +61,8 @@ describe AppInfo::IPA do
     it { expect(subject.device_type).to eq('iPad') }
     it { expect(subject.archs).to eq(%i[armv7 arm64]) }
 
-    it { expect(subject.release_type).to eq('inHouse') }
-    it { expect(subject.build_type).to eq('inHouse') }
+    it { expect(subject.release_type).to eq('Enterprise') }
+    it { expect(subject.build_type).to eq('Enterprise') }
     it { expect(subject.devices).to be_nil }
     it { expect(subject.team_name).to eq('QYER Inc') }
     it { expect(subject.profile_name).to eq('XC: *') }

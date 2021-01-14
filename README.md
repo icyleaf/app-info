@@ -130,7 +130,7 @@ profile.devices
 
 # detect type
 profile.type
-# => :development/:adhoc/:appstore/:inhouse
+# => :development/:adhoc/:appstore/:enterprise
 
 # get enabled capabilities
 profile.enabled_capabilities

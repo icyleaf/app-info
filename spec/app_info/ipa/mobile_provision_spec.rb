@@ -14,6 +14,7 @@ describe AppInfo::MobileProvision do
       it { expect(subject.adhoc?).to be_falsey }
       it { expect(subject.appstore?).to be_falsey }
       it { expect(subject.inhouse?).to be_falsey }
+      it { expect(subject.enterprise?).to be_falsey }
       it { expect(subject.team_identifier).to_not be_empty }
       it { expect(subject.team_name).to_not be_empty }
       it { expect(subject.profile_name).to_not be_empty }
@@ -38,6 +39,7 @@ describe AppInfo::MobileProvision do
       it { expect(subject.adhoc?).to be_truthy }
       it { expect(subject.appstore?).to be_falsey }
       it { expect(subject.inhouse?).to be_falsey }
+      it { expect(subject.enterprise?).to be_falsey }
       it { expect(subject.team_identifier).to_not be_empty }
       it { expect(subject.team_name).to_not be_empty }
       it { expect(subject.profile_name).to_not be_empty }
@@ -62,6 +64,7 @@ describe AppInfo::MobileProvision do
       it { expect(subject.adhoc?).to be_falsey }
       it { expect(subject.appstore?).to be_truthy }
       it { expect(subject.inhouse?).to be_falsey }
+      it { expect(subject.enterprise?).to be_falsey }
       it { expect(subject.team_identifier).to_not be_empty }
       it { expect(subject.team_name).to_not be_empty }
       it { expect(subject.profile_name).to_not be_empty }
@@ -88,6 +91,7 @@ describe AppInfo::MobileProvision do
       it { expect(subject.adhoc?).to be_falsey }
       it { expect(subject.appstore?).to be_falsey }
       it { expect(subject.inhouse?).to be_falsey }
+      it { expect(subject.enterprise?).to be_falsey }
       it { expect(subject.team_identifier).to_not be_empty }
       it { expect(subject.team_name).to_not be_empty }
       it { expect(subject.profile_name).to_not be_empty }
@@ -112,6 +116,7 @@ describe AppInfo::MobileProvision do
       it { expect(subject.adhoc?).to be_falsey }
       it { expect(subject.appstore?).to be_truthy }
       it { expect(subject.inhouse?).to be_falsey }
+      it { expect(subject.enterprise?).to be_falsey }
       it { expect(subject.team_identifier).to_not be_empty }
       it { expect(subject.team_name).to_not be_empty }
       it { expect(subject.profile_name).to_not be_empty }
