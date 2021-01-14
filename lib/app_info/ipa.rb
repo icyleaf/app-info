@@ -18,9 +18,11 @@ module AppInfo
     module ExportType
       DEBUG   = 'Debug'
       ADHOC   = 'AdHoc'
-      INHOUSE = 'inHouse'
+      ENTERPRISE = 'Enterprise'
       RELEASE = 'Release'
       UNKOWN  = nil
+
+      INHOUSE = 'Enterprise' # Rename and Alias to enterprise
     end
 
     def initialize(file)
@@ -60,7 +62,7 @@ module AppInfo
         if devices
           ExportType::ADHOC
         else
-          ExportType::INHOUSE
+          ExportType::ENTERPRISE
         end
       else
         ExportType::DEBUG

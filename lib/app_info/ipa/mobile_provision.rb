@@ -23,7 +23,7 @@ module AppInfo
       return :development if development?
       return :adhoc if adhoc?
       return :appstore if appstore?
-      return :inhouse if inhouse?
+      return :enterprise if enterprise?
     end
 
     def platforms
@@ -110,11 +110,12 @@ module AppInfo
       !development? && !devices.nil?
     end
 
-    def inhouse?
+    def enterprise?
       return false if platform == :macos # macOS no need adhoc
 
       !development? && !adhoc? && !appstore?
     end
+    alias inhouse? enterprise?
 
     # Enabled Capabilites
     #
