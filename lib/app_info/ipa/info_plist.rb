@@ -122,6 +122,8 @@ module AppInfo
     private
 
     def info
+      return unless File.file?(info_path)
+
       @info ||= CFPropertyList.native_types(CFPropertyList::List.new(file: info_path).value)
     end
 

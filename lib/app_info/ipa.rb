@@ -6,6 +6,8 @@ require 'fileutils'
 require 'forwardable'
 require 'cfpropertylist'
 require 'app_info/util'
+require 'app_info/ipa/plugin'
+require 'app_info/ipa/framework'
 
 module AppInfo
   # IPA parser
@@ -86,6 +88,14 @@ module AppInfo
 
     def stored?
       metadata? ? true : false
+    end
+
+    def plugins
+      @plugins ||= Plugin.parse(self)
+    end
+
+    def frameworks
+      @frameworks ||= Framework.parse(self)
     end
 
     def hide_developer_certificates
