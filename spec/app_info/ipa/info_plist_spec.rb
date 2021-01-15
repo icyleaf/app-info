@@ -1,6 +1,5 @@
 describe AppInfo::InfoPlist do
-  let(:file) { File.dirname(__FILE__) + '/../../fixtures/apps/iphone.ipa' }
-  let(:ipa) { AppInfo::IPA.new(file) }
+  let(:ipa) { AppInfo::IPA.new(fixture_path('apps/iphone.ipa')) }
   subject { AppInfo::InfoPlist.new(ipa.app_path) }
 
   it { expect(subject.build_version).to eq('5') }

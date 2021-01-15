@@ -88,6 +88,14 @@ module AppInfo
       metadata? ? true : false
     end
 
+    def plugins
+      @plugins ||= Plugin.parse(app_path)
+    end
+
+    def frameworks
+      @frameworks ||= Framework.parse(app_path)
+    end
+
     def hide_developer_certificates
       mobileprovision.delete('DeveloperCertificates') if mobileprovision?
     end
