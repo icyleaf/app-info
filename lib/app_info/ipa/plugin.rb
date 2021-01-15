@@ -7,7 +7,7 @@ module AppInfo
   class Plugin < Framework
     extend Forwardable
 
-    def self.parse(context, base_path = 'Plugins')
+    def self.parse(path, name = 'PlugIns')
       super
     end
 

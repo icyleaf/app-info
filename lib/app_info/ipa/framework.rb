@@ -7,42 +7,41 @@ module AppInfo
   class Framework
     extend Forwardable
 
-    def self.parse(context, base_path = 'Frameworks')
-      plugins = Dir.glob(File.join(context.app_path, base_path, '*'))
-      return [] if plugins.empty?
+    def self.parse(path, name = 'Frameworks')
+      files = Dir.glob(File.join(path, name.to_s, '*'))
+      return [] if files.empty?
 
-      plugins.each_with_object([]) do |path, obj|
-        obj << new(context, path)
+      files.each_with_object([]) do |file, obj|
+        obj << new(file)
       end
     end
 
-    attr_reader :path
+    attr_reader :file
 
     def_delegators :info, :display_name, :bundle_name, :release_version, :build_version,
                    :identifier, :bundle_id, :min_sdk_version, :device_type
 
-    def initialize(context, path)
-      @context = context
-      @path = path
+    def initialize(file)
+      @file = file
     end
 
     def name
-      File.basename(path)
+      File.basename(file)
     end
 
     def macho
       return unless lib?
 
       require 'macho'
-      MachO.open(path)
+      MachO.open(file)
     end
 
     def lib?
-      File.file?(path)
+      File.file?(file)
     end
 
     def info
-      @info ||= InfoPlist.new(path)
+      @info ||= InfoPlist.new(file)
     end
   end
 end

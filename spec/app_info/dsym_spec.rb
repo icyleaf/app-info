@@ -1,7 +1,6 @@
 describe AppInfo::DSYM do
   describe '#SingleMachO' do
-    let(:file) { File.dirname(__FILE__) + '/../fixtures/dsyms/single_ios.dSYM.zip' }
-    subject { AppInfo::DSYM.new(file) }
+    subject { AppInfo::DSYM.new(fixture_path('dsyms/single_ios.dSYM.zip')) }
 
     context 'parse' do
       data = {
@@ -32,8 +31,7 @@ describe AppInfo::DSYM do
   end
 
   describe '#MultiMachO' do
-    let(:file) { File.dirname(__FILE__) + '/../fixtures/dsyms/multi_ios.dSYM.zip' }
-    subject { AppInfo::DSYM.new(file) }
+    subject { AppInfo::DSYM.new(fixture_path('dsyms/multi_ios.dSYM.zip')) }
 
     context 'parse' do
       data = [

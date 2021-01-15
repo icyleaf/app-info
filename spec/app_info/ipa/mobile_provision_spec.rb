@@ -1,8 +1,7 @@
 describe AppInfo::MobileProvision do
   describe :ios do
     context 'Development' do
-      let(:file) { File.dirname(__FILE__) + '/../../fixtures/mobileprovisions/ios_development.mobileprovision' }
-      subject { AppInfo::MobileProvision.new(file) }
+      subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/ios_development.mobileprovision')) }
 
       it { expect(subject.devices).to be_a Array }
       it { expect(subject.platform).to eq :ios }
