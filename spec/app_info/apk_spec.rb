@@ -1,6 +1,6 @@
 describe AppInfo::APK do
   describe '#PhoneOrTablet' do
-    let(:file) { File.dirname(__FILE__) + '/../fixtures/apps/android.apk' }
+    let(:file) { fixture_path('apps/android.apk') }
     subject { AppInfo::APK.new(file) }
 
     it { expect(subject.size).to eq(3070618) }
@@ -34,7 +34,7 @@ describe AppInfo::APK do
   end
 
   describe '#Wear' do
-    let(:file) { File.dirname(__FILE__) + '/../fixtures/apps/wear.apk' }
+    let(:file) { fixture_path('apps/wear.apk') }
     subject { AppInfo::APK.new(file) }
 
     it { expect(subject.os).to eq 'Android' }
@@ -54,7 +54,7 @@ describe AppInfo::APK do
   end
 
   describe '#TV' do
-    let(:file) { File.dirname(__FILE__) + '/../fixtures/apps/tv.apk' }
+    let(:file) { fixture_path('apps/tv.apk') }
     subject { AppInfo::APK.new(file) }
 
     it { expect(subject.os).to eq 'Android' }

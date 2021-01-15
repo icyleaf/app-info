@@ -8,6 +8,7 @@ MATCH_FILE_TYPES = {
   'wear.apk' => :apk,
   'ipad.ipa' => :ipa,
   'iphone.ipa' => :ipa,
+  'embedded.ipa' => :ipa,
   'multi_ios.dSYM.zip' => :dsym,
   'single_ios.dSYM.zip' => :dsym,
   'bplist.mobileprovision' => :mobileprovision,
@@ -26,6 +27,7 @@ MATCH_FILE_TYPES = {
 describe AppInfo do
   Dir.glob(File.expand_path('fixtures/**/*', __dir__)) do |path|
     next if File.directory? path
+    next if path.include?('payload')
 
     filename = File.basename(path)
     file_type = MATCH_FILE_TYPES[filename] || :unkown

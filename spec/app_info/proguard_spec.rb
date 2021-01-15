@@ -3,8 +3,7 @@ require 'fileutils'
 
 describe AppInfo::Proguard do
   describe '#SingleMapping' do
-    let(:file) { File.dirname(__FILE__) + '/../fixtures/proguards/single_mapping.zip' }
-    subject { AppInfo::Proguard.new(file) }
+    subject { AppInfo::Proguard.new(fixture_path('proguards/single_mapping.zip')) }
 
     context 'parse' do
       it { expect(subject.file_type).to eq AppInfo::Platform::PROGUARD }
@@ -23,8 +22,7 @@ describe AppInfo::Proguard do
   end
 
   describe '#FullMapping' do
-    let(:file) { File.dirname(__FILE__) + '/../fixtures/proguards/full_mapping.zip' }
-    subject { AppInfo::Proguard.new(file) }
+    subject { AppInfo::Proguard.new(fixture_path('proguards/full_mapping.zip')) }
 
     context 'parse' do
       it { expect(subject.file_type).to eq AppInfo::Platform::PROGUARD }
