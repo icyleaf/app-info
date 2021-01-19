@@ -43,5 +43,9 @@ module AppInfo
     def info
       @info ||= InfoPlist.new(file)
     end
+
+    def to_s
+      "<#{self.class}:#{object_id} @name=#{name}>"
+    end
   end
 end

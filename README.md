@@ -101,6 +101,14 @@ ipa.release_type
 ipa.archs
 # => [:armv7, :arm64]
 
+# get built-in frameworks
+ipa.frameworks
+# => [<AppInfo::Framework:520 @name=Masonry.framework>, <AppInfo::Framework:520 @name=libswiftPhotos.dylib>]
+
+# get built-in plugins
+ipa.plugins
+# => [<AppInfo::Plugin:1680 @name=NotificationService>]
+
 # get more propety in Info.plist
 ipa.info[:CFBundleDisplayName]
 # => 'AppInfoDemo'
