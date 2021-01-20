@@ -51,7 +51,7 @@ parser = AppInfo.parse('App.dSYm.zip')
 
 # If detect file type failed, you can parse in other way
 parser = AppInfo::IPA.new('iphone.ipa')
-parser = AppInfo::IPA.new('android.apk')
+parser = AppInfo::APK.new('android.apk')
 parser = AppInfo::InfoPlist.new('App/Info.plist')
 parser = AppInfo::MobileProvision.new('provisioning_profile/uuid.mobileprovision')
 parser = AppInfo::DSYM.new('App.dSYm.zip')
