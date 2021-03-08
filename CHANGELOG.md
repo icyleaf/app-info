@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.4.0] (2021-03-08)
+
+### Changed
+
+- Rename `cleanup` to `clear!` method in ipa.
+
+### Added
+
+- Add `clear!` method to ipa,apk and dsym.
+- Make `contents` to be a public method.
+
 ## [2.3.0] (2021-01-15)
 
 ### Changed
