@@ -74,7 +74,17 @@ module AppInfo
       @app_path
     end
 
-    private
+    def clear!
+      return unless @contents
+
+      FileUtils.rm_rf(@contents)
+
+      @contents = nil
+      @app_path = nil
+      @info = nil
+      @object = nil
+      @macho_type = nil
+    end
 
     def contents
       unless @contents

@@ -147,7 +147,7 @@ module AppInfo
       @app_path ||= Dir.glob(File.join(contents, 'Payload', '*.app')).first
     end
 
-    def cleanup!
+    def clear!
       return unless @contents
 
       FileUtils.rm_rf(@contents)
@@ -160,11 +160,11 @@ module AppInfo
       @info = nil
     end
 
-    private
-
     def contents
       @contents ||= Util.unarchive(@file, path: 'ios')
     end
+
+    private
 
     def icons_root_path
       iphone = 'CFBundleIcons'

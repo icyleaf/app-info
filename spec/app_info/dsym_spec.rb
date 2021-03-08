@@ -2,6 +2,8 @@ describe AppInfo::DSYM do
   describe '#SingleMachO' do
     subject { AppInfo::DSYM.new(fixture_path('dsyms/single_ios.dSYM.zip')) }
 
+    after { subject.clear! }
+
     context 'parse' do
       data = {
         type: :dsym,
@@ -32,6 +34,8 @@ describe AppInfo::DSYM do
 
   describe '#MultiMachO' do
     subject { AppInfo::DSYM.new(fixture_path('dsyms/multi_ios.dSYM.zip')) }
+
+    after { subject.clear! }
 
     context 'parse' do
       data = [

@@ -3,6 +3,8 @@ describe AppInfo::APK do
     let(:file) { fixture_path('apps/android.apk') }
     subject { AppInfo::APK.new(file) }
 
+    after { subject.clear! }
+
     it { expect(subject.size).to eq(3070618) }
     it { expect(subject.size(humanable: true)).to eq('2.93 MB') }
     it { expect(subject.os).to eq 'Android' }
@@ -37,6 +39,8 @@ describe AppInfo::APK do
     let(:file) { fixture_path('apps/wear.apk') }
     subject { AppInfo::APK.new(file) }
 
+    after { subject.clear! }
+
     it { expect(subject.os).to eq 'Android' }
     it { expect(subject.wear?).to be true }
     it { expect(subject.tv?).to be false }
@@ -56,6 +60,8 @@ describe AppInfo::APK do
   describe '#TV' do
     let(:file) { fixture_path('apps/tv.apk') }
     subject { AppInfo::APK.new(file) }
+
+    after { subject.clear! }
 
     it { expect(subject.os).to eq 'Android' }
     it { expect(subject.wear?).to be false }

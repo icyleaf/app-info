@@ -3,6 +3,8 @@ describe AppInfo::IPA do
     let(:file) { fixture_path('apps/iphone.ipa') }
     subject { AppInfo::IPA.new(file) }
 
+    after { subject.clear! }
+
     context 'parse' do
       it { expect(subject.os).to eq 'iOS' }
       it { expect(subject).to be_iphone }
@@ -47,6 +49,8 @@ describe AppInfo::IPA do
   describe '#iPad' do
     let(:file) { fixture_path('apps/ipad.ipa') }
     subject { AppInfo::IPA.new(file) }
+
+    after { subject.clear! }
 
     it { expect(subject.os).to eq 'iOS' }
     it { expect(subject).not_to be_iphone }
@@ -97,6 +101,8 @@ describe AppInfo::IPA do
   describe '#Embedded' do
     let(:file) { fixture_path('apps/embedded.ipa') }
     subject { AppInfo::IPA.new(file) }
+
+    after { subject.clear! }
 
     it { expect(subject.os).to eq 'iOS' }
     it { expect(subject).not_to be_iphone }

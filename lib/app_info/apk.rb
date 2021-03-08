@@ -10,7 +10,7 @@ module AppInfo
   class APK
     extend Forwardable
 
-    attr_reader :file, :apk
+    attr_reader :file
 
     # APK Devices
     module Device
@@ -22,9 +22,6 @@ module AppInfo
 
     def initialize(file)
       @file = file
-
-      Zip.warn_invalid_date = false # fix invaild date format warnings
-      @apk = ::Android::Apk.new(file)
     end
 
     def size(humanable = false)
@@ -36,7 +33,7 @@ module AppInfo
     end
     alias file_type os
 
-    def_delegators :@apk, :manifest, :resource, :dex
+    def_delegators :apk, :manifest, :resource, :dex
 
     def_delegators :manifest, :version_name, :package_name,
                    :use_permissions, :components
@@ -93,13 +90,13 @@ module AppInfo
     end
 
     def signs
-      @apk.signs.each_with_object([]) do |(path, sign), obj|
+      apk.signs.each_with_object([]) do |(path, sign), obj|
         obj << Sign.new(path, sign)
       end
     end
 
     def certificates
-      @apk.certificates.each_with_object([]) do |(path, certificate), obj|
+      apk.certificates.each_with_object([]) do |(path, certificate), obj|
         obj << Certificate.new(path, certificate)
       end
     end
@@ -112,13 +109,17 @@ module AppInfo
       components.select { |c| c.type == 'service' }
     end
 
+    def apk
+      Zip.warn_invalid_date = false # fix invaild date format warnings
+
+      @apk ||= ::Android::Apk.new(@file)
+    end
+
     def icons
       unless @icons
-        tmp_path = File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
-
-        @icons = @apk.icon.each_with_object([]) do |(path, data), obj|
+        @icons = apk.icon.each_with_object([]) do |(path, data), obj|
           icon_name = File.basename(path)
-          icon_path = File.join(tmp_path, File.dirname(path))
+          icon_path = File.join(contents, File.dirname(path))
           icon_file = File.join(icon_path, icon_name)
           FileUtils.mkdir_p icon_path
           File.open(icon_file, 'wb') { |f| f.write(data) }
@@ -132,6 +133,22 @@ module AppInfo
       end
 
       @icons
+    end
+
+    def clear!
+      return unless @contents
+
+      FileUtils.rm_rf(@contents)
+
+      @apk = nil
+      @contents = nil
+      @icons = nil
+      @app_path = nil
+      @info = nil
+    end
+
+    def contents
+      @contents ||= File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
     end
 
     private
