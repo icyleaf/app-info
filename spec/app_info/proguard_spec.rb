@@ -4,6 +4,7 @@ require 'fileutils'
 describe AppInfo::Proguard do
   describe '#SingleMapping' do
     subject { AppInfo::Proguard.new(fixture_path('proguards/single_mapping.zip')) }
+    after { subject.clear! }
 
     context 'parse' do
       it { expect(subject.file_type).to eq AppInfo::Platform::PROGUARD }
@@ -23,6 +24,7 @@ describe AppInfo::Proguard do
 
   describe '#FullMapping' do
     subject { AppInfo::Proguard.new(fixture_path('proguards/full_mapping.zip')) }
+    after { subject.clear! }
 
     context 'parse' do
       it { expect(subject.file_type).to eq AppInfo::Platform::PROGUARD }

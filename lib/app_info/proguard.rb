@@ -86,5 +86,18 @@ module AppInfo
     def contents
       @contents ||= Util.unarchive(@file, path: 'proguard')
     end
+
+    def clear!
+      return unless @contents
+
+      FileUtils.rm_rf(@contents)
+
+      @contents = nil
+      @manifest = nil
+      @mapping_path = nil
+      @metadata_path = nil
+      @manifest_path = nil
+      @symbol_path = nil
+    end
   end
 end
