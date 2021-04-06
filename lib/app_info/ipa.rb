@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'macho'
-require 'pngdefry'
 require 'fileutils'
 require 'forwardable'
 require 'cfpropertylist'

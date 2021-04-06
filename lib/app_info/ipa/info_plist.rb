@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'image_size'
 require 'cfpropertylist'
 require 'app_info/util'
 
@@ -58,7 +59,7 @@ module AppInfo
             dict = {
               name: File.basename(file),
               file: file,
-              dimensions: Pngdefry.dimensions(file)
+              dimensions: ImageSize.path(file).size
             }
 
             @icons.push(dict)
