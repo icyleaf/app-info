@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.4.2] (2021-04-06)
+
+### Changed
+
+- Remove [pngdefry](https://github.com/soffes/pngdefry) gem, install it to decode iOS png file if needs.
+
 ## [2.4.1] (2021-03-08)
 
 ### Changed
@@ -102,8 +108,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.3.0..HEAD
-[2.2.0]: https://github.com/icyleaf/app-info/compare/v2.2.0...v2.3.0
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.4.2..HEAD
+[2.4.2]: https://github.com/icyleaf/app-info/compare/v2.4.1...v2.4.2
+[2.4.1]: https://github.com/icyleaf/app-info/compare/v2.3.0...v2.4.1
+[2.3.0]: https://github.com/icyleaf/app-info/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/icyleaf/app-info/compare/v2.1.4...v2.2.0
 [2.1.4]: https://github.com/icyleaf/app-info/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/icyleaf/app-info/compare/v2.1.2...v2.1.3
