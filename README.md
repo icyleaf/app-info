@@ -239,6 +239,11 @@ apk.tv?
 apk.wear?
 ```
 
+## Best Practice
+
+- [fastlane-plugin-app_info](https://github.com/icyleaf/fastlane-plugin-app_info): fastlane plugin
+- [zealot](https://github.com/tryzealot/zealot/): Over The Air Server for deployment of Android and iOS apps
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -247,7 +252,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/app-info. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/icyleaf/app-info. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
