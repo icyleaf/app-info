@@ -58,8 +58,7 @@ module AppInfo
           Dir.glob(File.join(@app_path, "#{items}*")).find_all.each do |file|
             dict = {
               name: File.basename(file),
-              file: file,
-              dimensions: ImageSize.path(file).size
+              file: file
             }
 
             @icons.push(dict)

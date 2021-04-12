@@ -82,7 +82,7 @@ ipa.bundle_id
 
 # get app icons
 ipa.icons
-# => [{:name=>"AppIcon29x29@2x~ipad.png", :file=>"/var/folders/mb/8cm0fz4d499968yss9y1j8bc0000gp/T/d20160728-69669-1xnub30/AppInfo-ios-a5369339399e62046d7d59c52254dac6/Payload/bundle.app/AppIcon29x29@2x~ipad.png", :dimensions=>[58, 58]}, ...]
+# => [{:name=>"AppIcon29x29@2x~ipad.png", :file=>"/var/folders/mb/8cm0fz4d499968yss9y1j8bc0000gp/T/d20160728-69669-1xnub30/AppInfo-ios-a5369339399e62046d7d59c52254dac6/Payload/bundle.app/AppIcon29x29@2x~ipad.png"}, ...]
 
 # get provisioning profile devices
 ipa.devices
