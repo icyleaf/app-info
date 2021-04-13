@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'image_size'
 require 'cfpropertylist'
+require 'app_info/png_uncrush'
 require 'app_info/util'
 
 module AppInfo
@@ -43,7 +43,7 @@ module AppInfo
       info.try(:[], 'MinimumOSVersion')
     end
 
-    def icons
+    def icons(uncrush = true)
       return @icons if @icons
 
       @icons = []
@@ -56,12 +56,7 @@ module AppInfo
 
         icon_array.each do |items|
           Dir.glob(File.join(@app_path, "#{items}*")).find_all.each do |file|
-            dict = {
-              name: File.basename(file),
-              file: file
-            }
-
-            @icons.push(dict)
+            @icons << icon_info(file, uncrush)
           end
         end
       end
@@ -120,6 +115,25 @@ module AppInfo
     end
 
     private
+
+    def icon_info(file, uncrush = true)
+      filename = File.basename(file, '.*')
+      extname = File.extname(file)
+
+      uncrushed_file = nil
+      if uncrush
+        path = File.dirname(file)
+        uncrushed_file = File.join(path, "#{filename}_uncrushed#{extname}")
+        PngUncrush.decompress(file, uncrushed_file)
+      end
+
+      {
+        name: File.basename(file),
+        file: file,
+        uncrushed_file: uncrushed_file,
+        dimensions: PngUncrush.dimensions(file)
+      }
+    end
 
     def info
       return unless File.file?(info_path)
