@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
-## [2.5.0] (2021-04-13)
+## [2.5.1] (2021-04-14)
 
 ### Add
 
@@ -124,8 +124,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.5.0..HEAD
-[2.5.0]: https://github.com/icyleaf/app-info/compare/v2.4.3...v2.5.0
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.5.1..HEAD
+[2.5.0]: https://github.com/icyleaf/app-info/compare/v2.4.3...v2.5.1
 [2.4.3]: https://github.com/icyleaf/app-info/compare/v2.4.2...v2.4.3
 [2.4.2]: https://github.com/icyleaf/app-info/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/icyleaf/app-info/compare/v2.3.0...v2.4.1
