@@ -117,13 +117,12 @@ module AppInfo
     private
 
     def icon_info(file, uncrush = true)
-      filename = File.basename(file, '.*')
-      extname = File.extname(file)
-
       uncrushed_file = nil
       if uncrush
-        path = File.dirname(file)
-        uncrushed_file = File.join(path, "#{filename}_uncrushed#{extname}")
+        path = File.join(File.dirname(file), 'uncrushed')
+        Dir.mkdir(path, 0700) unless Dir.exist?(path)
+
+        uncrushed_file = File.join(path, File.basename(file))
         PngUncrush.decompress(file, uncrushed_file)
       end
 
