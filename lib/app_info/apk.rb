@@ -48,7 +48,7 @@ module AppInfo
     alias build_version version_code
 
     def name
-      resource.find('@string/app_name')
+      manifest.label || resource.find('@string/app_name')
     end
 
     def device_type
