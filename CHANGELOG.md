@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.5.3] (2021-06-16)
+
+### Fixed
+
+- Fix decompress png error (mostly because of it is a normal png file) [#32](https://github.com/icyleaf/app_info/pull/32) thanks @[莫小七](https://github.com/mxq0923)
+
 ## [2.5.2] (2021-04-15)
 
 ### Fixed
