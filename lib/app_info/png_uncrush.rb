@@ -80,6 +80,9 @@ module AppInfo
       return false unless content
 
       write_file(output, content)
+    rescue Zlib::DataError
+      # perhops thi is a normal png image file
+      return false
     end
 
     private
