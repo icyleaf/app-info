@@ -22,7 +22,7 @@ MATCH_FILE_TYPES = {
   'macos_development.provisionprofile' => :mobileprovision,
   'single_mapping.zip' => :proguard,
   'full_mapping.zip' => :proguard,
-}.freeze
+}
 
 describe AppInfo do
   Dir.glob(File.expand_path('fixtures/**/*', __dir__)) do |path|

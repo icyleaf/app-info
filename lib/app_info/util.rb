@@ -7,7 +7,7 @@ require 'securerandom'
 module AppInfo
   # AppInfo Util
   module Util
-    FILE_SIZE_UNITS = %w[B KB MB GB TB].freeze
+    FILE_SIZE_UNITS = %w[B KB MB GB TB]
 
     def self.format_key(key)
       key = key.to_s

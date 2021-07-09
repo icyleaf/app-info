@@ -124,6 +124,7 @@ module AppInfo
 
         uncrushed_file = File.join(path, File.basename(file))
         PngUncrush.decompress(file, uncrushed_file)
+        uncrushed_file = nil unless File.exists?(uncrushed_file)
       end
 
       {
