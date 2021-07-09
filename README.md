@@ -239,6 +239,19 @@ apk.tv?
 apk.wear?
 ```
 
+## CLI Shell (Interactive console)
+
+It is possible to use this gem as a command line interface to parse mobile app:
+
+```
+> app-info
+
+app-info (0.6.0)> p = AppInfo.parse('/path/to/app')
+=> #<AppInfo::APK::......>
+app-info (0.6.0)> p.name
+=> "AppName"
+```
+
 ## Best Practice
 
 - [fastlane-plugin-app_info](https://github.com/icyleaf/fastlane-plugin-app_info): fastlane plugin
