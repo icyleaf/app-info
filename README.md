@@ -52,8 +52,8 @@ parser = AppInfo.parse('App.dSYm.zip')
 # If detect file type failed, you can parse in other way
 parser = AppInfo::IPA.new('iphone.ipa')
 parser = AppInfo::APK.new('android.apk')
-parser = AppInfo::InfoPlist.new('App/Info.plist')
-parser = AppInfo::MobileProvision.new('provisioning_profile/uuid.mobileprovision')
+parser = AppInfo::InfoPlist.new('Info.plist')
+parser = AppInfo::MobileProvision.new('uuid.mobileprovision')
 parser = AppInfo::DSYM.new('App.dSYm.zip')
 ```
 
@@ -237,6 +237,19 @@ apk.signs
 # detect app type (It's difficult to detect phone or tablet)
 apk.tv?
 apk.wear?
+```
+
+## CLI Shell (Interactive console)
+
+It is possible to use this gem as a command line interface to parse mobile app:
+
+```
+> app-info
+
+app-info (0.6.0)> p = AppInfo.parse('/path/to/app')
+=> #<AppInfo::APK::......>
+app-info (0.6.0)> p.name
+=> "AppName"
 ```
 
 ## Best Practice

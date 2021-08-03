@@ -107,7 +107,7 @@ module AppInfo
     end
 
     def mobileprovision?
-      File.exist?mobileprovision_path
+      File.exist?(mobileprovision_path)
     end
 
     def mobileprovision_path
@@ -139,7 +139,11 @@ module AppInfo
     end
 
     def info
-      @info ||= InfoPlist.new(app_path)
+      @info ||= InfoPlist.new(info_path)
+    end
+
+    def info_path
+      @info_path ||= File.join(app_path, 'Info.plist')
     end
 
     def app_path
@@ -152,11 +156,12 @@ module AppInfo
       FileUtils.rm_rf(@contents)
 
       @contents = nil
-      @icons = nil
       @app_path = nil
-      @metadata = nil
-      @metadata_path = nil
+      @info_path = nil
       @info = nil
+      @metadata_path = nil
+      @metadata = nil
+      @icons = nil
     end
 
     def contents

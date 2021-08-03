@@ -1,6 +1,6 @@
 describe AppInfo::InfoPlist do
   let(:ipa) { AppInfo::IPA.new(fixture_path('apps/ipad.ipa')) }
-  subject { AppInfo::InfoPlist.new(ipa.app_path) }
+  subject { AppInfo::InfoPlist.new(File.join(ipa.app_path, 'Info.plist')) }
 
   it { expect(subject.build_version).to eq('1') }
   it { expect(subject.release_version).to eq('1.0') }
@@ -21,7 +21,6 @@ describe AppInfo::InfoPlist do
   context ".icons" do
     it "should uncrush icons" do
       subject.icons.each do |icon|
-        puts icon
         expect(icon[:uncrushed_file]).not_to be_nil
       end
     end
