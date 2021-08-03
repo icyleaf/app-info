@@ -167,21 +167,5 @@ module AppInfo
     def contents
       @contents ||= Util.unarchive(@file, path: 'ios')
     end
-
-    private
-
-    def icons_root_path
-      iphone = 'CFBundleIcons'
-      ipad = 'CFBundleIcons~ipad'
-
-      case device_type
-      when 'iPhone'
-        [iphone]
-      when 'iPad'
-        [ipad]
-      when 'Universal'
-        [iphone, ipad]
-      end
-    end
   end
 end
