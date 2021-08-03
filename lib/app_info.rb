@@ -10,6 +10,7 @@ require 'app_info/ipa/framework'
 require 'app_info/apk'
 require 'app_info/dsym'
 require 'app_info/proguard'
+require 'app_info/macos'
 
 # AppInfo Module
 module AppInfo
@@ -35,6 +36,7 @@ module AppInfo
     when :mobileprovision then MobileProvision.new(file)
     when :dsym then DSYM.new(file)
     when :proguard then Proguard.new(file)
+    when :macos then Macos.new(file)
     else
       raise UnkownFileTypeError, "Sorry, AppInfo can not detect file type: #{file}"
     end
@@ -64,12 +66,17 @@ module AppInfo
     return :apk unless zip_file.find_entry('AndroidManifest.xml').nil? &&
                        zip_file.find_entry('classes.dex').nil?
 
+    return :macos unless zip_file.glob('*/Contents/MacOS/*').empty? &&
+                         zip_file.glob('*/Contents/Info.plist').empty?
+
     zip_file.each do |f|
       path = f.name
 
       return :ipa if path.include?('Payload/') && path.end_with?('Info.plist')
       return :dsym if path.include?('Contents/Resources/DWARF/')
     end
+  ensure
+    zip_file.close
   end
   private_class_method :detect_zip_file
 

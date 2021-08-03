@@ -29,10 +29,10 @@ module AppInfo
     def platforms
       return unless platforms = mobileprovision.try(:[], 'Platform')
 
-      platforms.map { |v|
+      platforms.map do |v|
         v = 'macOS' if v == 'OSX'
         v.downcase.to_sym
-      }
+      end
     end
 
     def platform
@@ -122,9 +122,7 @@ module AppInfo
     # Related link: https://developer.apple.com/support/app-capabilities/
     def enabled_capabilities
       capabilities = []
-      if adhoc? || appstore?
-        capabilities << 'In-App Purchase' << 'GameKit'
-      end
+      capabilities << 'In-App Purchase' << 'GameKit' if adhoc? || appstore?
 
       entitlements.each do |key, value|
         case key

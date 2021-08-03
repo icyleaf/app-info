@@ -7,8 +7,14 @@ require 'app_info/util'
 module AppInfo
   # iOS Info.plist parser
   class InfoPlist
+    extend Forwardable
+
     def initialize(file)
       @file = file
+    end
+
+    def version
+      release_version || build_version
     end
 
     def build_version
@@ -36,11 +42,22 @@ module AppInfo
       info.try(:[], 'CFBundleName')
     end
 
+    def min_os_version
+      min_sdk_version || min_system_version
+    end
+
     #
-    # Extract the Minimum OS Version from the Info.plist
+    # Extract the Minimum OS Version from the Info.plist (iOS Only)
     #
     def min_sdk_version
       info.try(:[], 'MinimumOSVersion')
+    end
+
+    #
+    # Extract the Minimum OS Version from the Info.plist (macOS Only)
+    #
+    def min_system_version
+      info.try(:[], 'LSMinimumSystemVersion')
     end
 
     def icons(uncrush = true)
@@ -75,6 +92,8 @@ module AppInfo
         end
       elsif device_family.length == 2 && device_family == [1, 2]
         'Universal'
+      elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTPlatformName').nil?
+        'MacOS'
       end
     end
 
@@ -90,6 +109,10 @@ module AppInfo
       device_type == 'Universal'
     end
 
+    def macos?
+      device_type == 'MacOS'
+    end
+
     def release_type
       if stored?
         'Store'
@@ -101,6 +124,8 @@ module AppInfo
     def [](key)
       info.try(:[], key.to_s)
     end
+
+    def_delegators :info, :to_h
 
     def method_missing(method_name, *args, &block)
       info.try(:[], Util.format_key(method_name)) ||
@@ -156,6 +181,10 @@ module AppInfo
         [IPAD_KEY]
       when 'Universal'
         [IPHONE_KEY, IPAD_KEY]
+      when 'MacOS'
+        filename = info.try(:[], 'CFBundleIconFile') || info.try(:[], 'CFBundleIconName')
+        file = File.join('Resources', "#{filename}.icns")
+        [file]
       end
     end
   end
