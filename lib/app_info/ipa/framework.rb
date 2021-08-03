@@ -3,7 +3,7 @@
 require 'forwardable'
 
 module AppInfo
-  # iOS Plugin parser
+  # iOS Framework parser
   class Framework
     extend Forwardable
 
@@ -41,7 +41,7 @@ module AppInfo
     end
 
     def info
-      @info ||= InfoPlist.new(file)
+      @info ||= InfoPlist.new(File.join(file, 'Info.plist'))
     end
 
     def to_s

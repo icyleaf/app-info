@@ -7,8 +7,8 @@ require 'app_info/util'
 module AppInfo
   # iOS Info.plist parser
   class InfoPlist
-    def initialize(app_path)
-      @app_path = app_path
+    def initialize(file)
+      @file = file
     end
 
     def build_version
@@ -55,7 +55,7 @@ module AppInfo
         next if icon_array.nil? || icon_array.empty?
 
         icon_array.each do |items|
-          Dir.glob(File.join(@app_path, "#{items}*")).find_all.each do |file|
+          Dir.glob(File.join(app_path, "#{items}*")).find_all.each do |file|
             @icons << icon_info(file, uncrush)
           end
         end
@@ -124,7 +124,7 @@ module AppInfo
 
         uncrushed_file = File.join(path, File.basename(file))
         PngUncrush.decompress(file, uncrushed_file)
-        uncrushed_file = nil unless File.exists?(uncrushed_file)
+        uncrushed_file = nil unless File.exist?(uncrushed_file)
       end
 
       {
@@ -136,13 +136,13 @@ module AppInfo
     end
 
     def info
-      return unless File.file?(info_path)
+      return unless File.file?(@file)
 
-      @info ||= CFPropertyList.native_types(CFPropertyList::List.new(file: info_path).value)
+      @info ||= CFPropertyList.native_types(CFPropertyList::List.new(file: @file).value)
     end
 
-    def info_path
-      File.join(@app_path, 'Info.plist')
+    def app_path
+      @app_path ||= File.expand_path('../', @file)
     end
 
     IPHONE_KEY = 'CFBundleIcons'
