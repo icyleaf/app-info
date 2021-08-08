@@ -1,20 +1,26 @@
 # app_info
 
-Teardown tool for mobile app(ipa/apk), analysis metedata like version, name, icon etc.
+[![Language](https://img.shields.io/badge/ruby-2.3+-701516.svg)](.travis.yml)
+[![Build Status](https://travis-ci.org/icyleaf/app_info.svg?branch=master)](https://travis-ci.org/icyleaf/app_info)
+[![Gem version](https://img.shields.io/gem/v/app-info.svg?style=flat)](https://rubygems.org/gems/app_info)
+[![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](LICENSE)
+
+Teardown tool for mobile app(ipa/apk) and dSYM.zip file, analysis metedata like version, name, icon etc.
 
 ## Support
 
 - Android apk file
 - iOS ipa file
   - Info.plist file
-  - .mobileprovision file
+  - .mobileprovision/.provisionprofile file
+- dSYM(.zip) file
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'app_info'
+gem 'app-info'
 ```
 
 And then execute:
@@ -26,7 +32,7 @@ $ bundle
 Or install it yourself as:
 
 ```bash
-$ gem install app_info
+$ gem install app-info
 ```
 
 ## Usage
@@ -34,14 +40,21 @@ $ gem install app_info
 ### Initialize
 
 ```ruby
-require 'app_info'
+require 'app-info'
 
 # Automatic detect file extsion and parse
 parser = AppInfo.parse('iphone.ipa')
 parser = AppInfo.parse('ipad.ipa')
-parser = AppInfo.parse('android.ipa')
-parser = AppInfo.parse('App/Info.plist')
-parser = AppInfo.parse('provisioning_profile/uuid.mobileprovision')
+parser = AppInfo.parse('android.apk')
+parser = AppInfo.parse('u-u-i-d.mobileprovision')
+parser = AppInfo.parse('App.dSYm.zip')
+
+# If detect file type failed, you can parse in other way
+parser = AppInfo::IPA.new('iphone.ipa')
+parser = AppInfo::APK.new('android.apk')
+parser = AppInfo::InfoPlist.new('Info.plist')
+parser = AppInfo::MobileProvision.new('uuid.mobileprovision')
+parser = AppInfo::DSYM.new('App.dSYm.zip')
 ```
 
 ### iOS
@@ -50,6 +63,14 @@ Teardown suport iPhone/iPad/Universal.
 
 ```ruby
 ipa = AppInfo.parse('iphone.ipa')
+
+# get app file size
+ipa.size
+# => 3093823
+
+# get app file size in human reable.
+ipa.size(true)
+# => 29 MB
 
 # get app release version
 ipa.release_version
@@ -61,7 +82,7 @@ ipa.bundle_id
 
 # get app icons
 ipa.icons
-# => [{:name=>"AppIcon29x29@2x~ipad.png", :file=>"/var/folders/mb/8cm0fz4d499968yss9y1j8bc0000gp/T/d20160728-69669-1xnub30/AppInfo-ios-a5369339399e62046d7d59c52254dac6/Payload/bundle.app/AppIcon29x29@2x~ipad.png", :dimensions=>[58, 58]}, ...]
+# => [{:name=>"AppIcon29x29@2x~ipad.png", :file=>"/var/folders/mb/8cm0fz4d499968yss9y1j8bc0000gp/T/d20160728-69669-1xnub30/AppInfo-ios-a5369339399e62046d7d59c52254dac6/Payload/bundle.app/AppIcon29x29@2x~ipad.png"}, :dimensions=>[29, 29], :uncrushed_file=>"..." ...]
 
 # get provisioning profile devices
 ipa.devices
@@ -75,6 +96,18 @@ ipa.universal?
 # detect app release type
 ipa.release_type
 # => 'AdHoc'
+
+# detect architecture(s)
+ipa.archs
+# => [:armv7, :arm64]
+
+# get built-in frameworks
+ipa.frameworks
+# => [<AppInfo::Framework:520 @name=Masonry.framework>, <AppInfo::Framework:520 @name=libswiftPhotos.dylib>]
+
+# get built-in plugins
+ipa.plugins
+# => [<AppInfo::Plugin:1680 @name=NotificationService>]
 
 # get more propety in Info.plist
 ipa.info[:CFBundleDisplayName]
@@ -99,9 +132,57 @@ profile.team_id
 profile.team_name
 # => 'Company/Team Name'
 
-# get app icons
+# get UDID of devices
 profile.devices
 # => ['18cf53cddee60c5af9c97b1521e7cbf8342628da']
+
+# detect type
+profile.type
+# => :development/:adhoc/:appstore/:enterprise
+
+# get enabled capabilities
+profile.enabled_capabilities
+# => ['Apple Pay', 'iCloud', 'Sign In with Apple', ...]
+```
+
+### dSYM
+
+```ruby
+dsym = AppInfo.parse('ios.dSYM.zip')
+
+# get object name
+dsym.object
+# => iOS
+
+# get macho size
+dsym.machos.size
+# => 1 or 2
+
+dsym.machos.each do |macho|
+  # get cpu type
+  macho.cpu_type
+  # => :arm
+
+  # get cpu name
+  macho.cpu_name
+  # => armv7
+
+  # get UUID (debug id)
+  macho.uuid
+  # => 26dfc15d-bdce-351f-b5de-6ee9f5dd6d85
+
+  # get macho size
+  macho.size
+  # => 866526
+
+  # get macho size in human reable.
+  macho.size(true)
+  # => 862 KB
+
+  # dump data to Hash
+  macho.to_h
+  # => {uuid:"26dfc15d-bdce-351f-b5de-6ee9f5dd6d85", cpu_type: :arm, cpu_name: :armv7, ...}
+end
 ```
 
 ### Android
@@ -109,12 +190,20 @@ profile.devices
 ```ruby
 apk = AppInfo.parse('android.apk')
 
+# get app file size
+apk.size
+# => 3093823
+
+# get app file size in human reable.
+apk.size(true)
+# => 29 MB
+
 # get app release version
 apk.release_version
 # => 1.0
 
 # get app package name
-apk.package_namebundle_id
+apk.bundle_id
 # => com.icyleaf.AppInfoDemo
 
 # get app icons
@@ -125,10 +214,48 @@ apk.icons
 apk.min_sdk_version
 # => 13
 
+# get use_permissions list
+apk.use_permissions
+# => [...]
+
+# get activitiy list
+apk.activities
+# => [...]
+
+# get service list
+apk.services
+# => [...]
+
+# get certificate list
+apk.certificates
+# => [...]
+
+# get sign list
+apk.signs
+# => [...]
+
 # detect app type (It's difficult to detect phone or tablet)
-ipa.tv?
-ipa.wear?
+apk.tv?
+apk.wear?
 ```
+
+## CLI Shell (Interactive console)
+
+It is possible to use this gem as a command line interface to parse mobile app:
+
+```
+> app-info
+
+app-info (0.6.0)> p = AppInfo.parse('/path/to/app')
+=> #<AppInfo::APK::......>
+app-info (0.6.0)> p.name
+=> "AppName"
+```
+
+## Best Practice
+
+- [fastlane-plugin-app_info](https://github.com/icyleaf/fastlane-plugin-app_info): fastlane plugin
+- [zealot](https://github.com/tryzealot/zealot/): Over The Air Server for deployment of Android and iOS apps
 
 ## Development
 
@@ -138,10 +265,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/app-info. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/icyleaf/app-info. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-

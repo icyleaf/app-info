@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AppInfo
-  VERSION = '1.0.5'.freeze
+  VERSION = '2.5.4'
 end
