@@ -20,6 +20,7 @@ module AppInfo
 
   # App Platform
   module Platform
+    MACOS = 'macOS'
     IOS = 'iOS'
     ANDROID = 'Android'
     DSYM = 'dSYM'
@@ -63,11 +64,11 @@ module AppInfo
     zip_file = Zip::File.open(file)
 
     return :proguard unless zip_file.glob('*mapping*.txt').empty?
-    return :apk unless zip_file.find_entry('AndroidManifest.xml').nil? &&
-                       zip_file.find_entry('classes.dex').nil?
+    return :apk if !zip_file.find_entry('AndroidManifest.xml').nil? &&
+                   !zip_file.find_entry('classes.dex').nil?
 
-    return :macos unless zip_file.glob('*/Contents/MacOS/*').empty? &&
-                         zip_file.glob('*/Contents/Info.plist').empty?
+    return :macos if !zip_file.glob('*/Contents/MacOS/*').empty? &&
+                     !zip_file.glob('*/Contents/Info.plist').empty?
 
     zip_file.each do |f|
       path = f.name

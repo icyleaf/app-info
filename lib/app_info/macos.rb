@@ -13,9 +13,10 @@ module AppInfo
 
     attr_reader :file
 
-    # iOS Export types
+    # macOS Export types
     module ExportType
-      NONAPPSTORE = 'Non-AppStore'
+      DEBUG = 'Debug'
+      RELEASE = 'Release'
       APPSTORE = 'AppStore'
     end
 
@@ -32,11 +33,11 @@ module AppInfo
     end
     alias file_type os
 
-    def_delegators :info, :iphone?, :ipad?, :universal?, :build_version, :name,
+    def_delegators :info, :macos?, :iphone?, :ipad?, :universal?, :build_version, :name,
                    :release_version, :identifier, :bundle_id, :display_name,
-                   :bundle_name, :icons, :min_sdk_version, :device_type
+                   :bundle_name, :icons, :min_os_version, :device_type
 
-    def_delegators :mobileprovision, :devices, :team_name, :team_identifier,
+    def_delegators :mobileprovision, :team_name, :team_identifier,
                    :profile_name, :expired_date
 
     def distribution_name
@@ -45,26 +46,16 @@ module AppInfo
 
     def release_type
       if stored?
+        ExportType::APPSTORE
+      elsif mobileprovision?
         ExportType::RELEASE
       else
-        ExportType::NONAPPSTORE
+        ExportType::DEBUG
       end
     end
 
-    def build_type
-      # if mobileprovision?
-      #   if devices
-      #     ExportType::ADHOC
-      #   else
-      #     ExportType::ENTERPRISE
-      #   end
-      # else
-      #   ExportType::DEBUG
-      # end
-    end
-
     def stored?
-      File.exist?(metadata_path)
+      File.exist?(store_path)
     end
 
     def archs
@@ -81,14 +72,6 @@ module AppInfo
       end
     end
     alias architectures archs
-
-    # def plugins
-    #   @plugins ||= Plugin.parse(app_path)
-    # end
-
-    # def frameworks
-    #   @frameworks ||= Framework.parse(app_path)
-    # end
 
     def hide_developer_certificates
       mobileprovision.delete('DeveloperCertificates') if mobileprovision?
@@ -109,11 +92,17 @@ module AppInfo
     end
 
     def store_path
-      @store_path ||= File.join(contents, 'Contents', '_MASReceipt', 'receipt')
+      @store_path ||= File.join(app_path, 'Contents', '_MASReceipt', 'receipt')
     end
 
     def binary_path
-      @binary_path ||= Dir.glob(File.join(contents, 'Contents', 'MacOS', '*.app')).first
+      return @binary_path if @binary_path
+
+      base_path = File.join(app_path, 'Contents', 'MacOS')
+      binary = info['CFBundleExecutable']
+      return File.join(base_path, binary) if binary
+
+      @binary_path ||= Dir.glob(File.join(base_path, '*')).first
     end
 
     def info
@@ -135,6 +124,7 @@ module AppInfo
 
       @contents = nil
       @app_path = nil
+      @binrary_path = nil
       @info_path = nil
       @info = nil
       @icons = nil
@@ -142,22 +132,6 @@ module AppInfo
 
     def contents
       @contents ||= Util.unarchive(@file, path: 'macos')
-    end
-
-    private
-
-    def icons_root_path
-      iphone = 'CFBundleIcons'
-      ipad = 'CFBundleIcons~ipad'
-
-      case device_type
-      when 'iPhone'
-        [iphone]
-      when 'iPad'
-        [ipad]
-      when 'Universal'
-        [iphone, ipad]
-      end
     end
   end
 end

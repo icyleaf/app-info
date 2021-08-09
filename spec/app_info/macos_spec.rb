@@ -1,0 +1,72 @@
+describe AppInfo::Macos do
+  describe '#macOS' do
+    context 'when has a unsigned app' do
+      let(:file) { fixture_path('apps/macos.zip') }
+      subject { AppInfo::Macos.new(file) }
+
+      after { subject.clear! }
+
+      context 'parse' do
+        it { expect(subject.os).to eq 'macOS' }
+        it { expect(subject).to be_macos }
+        it { expect(subject).not_to be_iphone }
+        it { expect(subject).not_to be_ipad }
+        it { expect(subject).not_to be_universal }
+        it { expect(subject.file).to eq file }
+        it { expect(subject.build_version).to eq('1') }
+        it { expect(subject.release_version).to eq('1.0') }
+        it { expect(subject.name).to eq('GuiApp') }
+        it { expect(subject.bundle_name).to eq('GuiApp') }
+        it { expect(subject.display_name).to be_nil }
+        it { expect(subject.identifier).to eq('com.icyleaf.macos.GUIApp') }
+        it { expect(subject.bundle_id).to eq('com.icyleaf.macos.GUIApp') }
+        it { expect(subject.device_type).to eq('MacOS') }
+        it { expect(subject.min_os_version).to eq('11.3') }
+        it { expect(subject.info['CFBundleVersion']).to eq('1') }
+        it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.0') }
+        it { expect(subject.archs).to eq(%i[x86_64 arm64]) }
+        it { expect(subject.release_type).to eq('Debug') }
+        it { expect(subject.mobileprovision?).to be false }
+        it { expect(subject.stored?).to be false }
+        it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
+      end
+    end
+
+    context 'when has a signed app' do
+      let(:file) { fixture_path('apps/macos-signed.zip') }
+      subject { AppInfo::Macos.new(file) }
+
+      after { subject.clear! }
+
+      context 'parse' do
+        it { expect(subject.os).to eq 'macOS' }
+        it { expect(subject).to be_macos }
+        it { expect(subject).not_to be_iphone }
+        it { expect(subject).not_to be_ipad }
+        it { expect(subject).not_to be_universal }
+        it { expect(subject.file).to eq file }
+        it { expect(subject.build_version).to eq('1') }
+        it { expect(subject.release_version).to eq('1.0') }
+        it { expect(subject.name).to eq('GuiApp') }
+        it { expect(subject.bundle_name).to eq('GuiApp') }
+        it { expect(subject.display_name).to be_nil }
+        it { expect(subject.identifier).to eq('com.icyleaf.macos.GUIApp') }
+        it { expect(subject.bundle_id).to eq('com.icyleaf.macos.GUIApp') }
+        it { expect(subject.device_type).to eq('MacOS') }
+        it { expect(subject.min_os_version).to eq('11.3') }
+        it { expect(subject.info['CFBundleVersion']).to eq('1') }
+        it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.0') }
+        it { expect(subject.archs).to eq(%i[x86_64 arm64]) }
+        it { expect(subject.release_type).to eq('Release') }
+        it { expect(subject.stored?).to be false }
+        it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
+        it { expect(subject.mobileprovision).to be_kind_of AppInfo::MobileProvision }
+        it { expect(subject.mobileprovision?).to be true }
+        it { expect(subject.team_name).to eq('Samuel Sharps') }
+        it { expect(subject.profile_name).to eq('Layouts') }
+        it { expect(subject.expired_date).not_to be_nil }
+        it { expect(subject.distribution_name).not_to be_nil }
+      end
+    end
+  end
+end

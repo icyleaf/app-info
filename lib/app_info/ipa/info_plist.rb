@@ -63,34 +63,24 @@ module AppInfo
     def icons(uncrush = true)
       return @icons if @icons
 
-      @icons = []
-      icons_root_path.each do |name|
-        icon_array = info.try(:[], name)
-                         .try(:[], 'CFBundlePrimaryIcon')
-                         .try(:[], 'CFBundleIconFiles')
-
-        next if icon_array.nil? || icon_array.empty?
-
-        icon_array.each do |items|
-          Dir.glob(File.join(app_path, "#{items}*")).find_all.each do |file|
-            @icons << icon_info(file, uncrush)
-          end
-        end
-      end
-
-      @icons
+      @icons ||= case device_type
+                 when 'MacOS'
+                   parse_macos_icons(uncrush)
+                 else
+                   parse_ios_icons(uncrush)
+                 end
     end
 
     def device_type
       device_family = info.try(:[], 'UIDeviceFamily')
-      if device_family.length == 1
+      if device_family&.length == 1
         case device_family
         when [1]
           'iPhone'
         when [2]
           'iPad'
         end
-      elsif device_family.length == 2 && device_family == [1, 2]
+      elsif device_family&.length == 2 && device_family == [1, 2]
         'Universal'
       elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTPlatformName').nil?
         'MacOS'
@@ -141,23 +131,63 @@ module AppInfo
 
     private
 
-    def icon_info(file, uncrush = true)
-      uncrushed_file = nil
-      if uncrush
-        path = File.join(File.dirname(file), 'uncrushed')
-        Dir.mkdir(path, 0700) unless Dir.exist?(path)
+    def parse_ios_icons(uncrush)
+      icons_root_path.each_with_object([]) do |name, obj|
+        icon_array = info.try(:[], name)
+                         .try(:[], 'CFBundlePrimaryIcon')
+                         .try(:[], 'CFBundleIconFiles')
 
-        uncrushed_file = File.join(path, File.basename(file))
-        PngUncrush.decompress(file, uncrushed_file)
-        uncrushed_file = nil unless File.exist?(uncrushed_file)
+        next if icon_array.nil? || icon_array.empty?
+
+        icon_array.each do |items|
+          Dir.glob(File.join(app_path, "#{items}*")).find_all.each do |file|
+            obj << icon_info(file, uncrush: uncrush)
+          end
+        end
       end
+    end
+
+    def parse_macos_icons(uncrush)
+      return [] if icons_root_path.empty?
+
+      icons_root_path.each_with_object([]) do |filename, obj|
+        file = File.join(app_path, filename)
+        obj << icon_info(file, uncrush: uncrush)
+      end
+    end
+
+    def icon_info(file, uncrush: true)
+      uncrushed_file = nil
+      uncrushed_file = device_type == 'MacOS' ? convert_iconv(file) : uncrush_png(file) if uncrush
 
       {
         name: File.basename(file),
         file: file,
         uncrushed_file: uncrushed_file,
-        dimensions: PngUncrush.dimensions(file)
+        # dimensions: PngUncrush.dimensions(file) # only use in ios
       }
+    end
+
+    # Convert iconv to png file (macOS)
+    def convert_iconv(src_file)
+      dest_file = tempdir(src_file, prefix: 'converted')
+      # FIXME: convert code!
+    end
+
+    # Uncrush png to normal png file (iOS)
+    def uncrush_png(src_file)
+      dest_file = tempdir(src_file, prefix: 'uncrushed')
+      PngUncrush.decompress(src_file, dest_file)
+      File.exist?(dest_file) ? dest_file : nil
+    end
+
+    def tempdir(file, prefix: )
+      dest_path ||= File.join(File.dirname(file), prefix)
+      dest_file = File.join(dest_path, File.basename(file))
+
+      Dir.mkdir(dest_path, 0700) unless Dir.exist?(dest_path)
+
+      dest_file
     end
 
     def info
@@ -167,7 +197,12 @@ module AppInfo
     end
 
     def app_path
-      @app_path ||= File.expand_path('../', @file)
+      @app_path ||= case device_type
+                    when 'macOS'
+                      File.dirname(@file)
+                    else
+                      File.expand_path('../', @file)
+                    end
     end
 
     IPHONE_KEY = 'CFBundleIcons'
@@ -183,8 +218,7 @@ module AppInfo
         [IPHONE_KEY, IPAD_KEY]
       when 'MacOS'
         filename = info.try(:[], 'CFBundleIconFile') || info.try(:[], 'CFBundleIconName')
-        file = File.join('Resources', "#{filename}.icns")
-        [file]
+        filename ? ["#{filename}.icns"] : []
       end
     end
   end
