@@ -61,8 +61,6 @@ module AppInfo
     end
 
     def icons(uncrush = true)
-      return @icons if @icons
-
       @icons ||= case device_type
                  when 'MacOS'
                    parse_macos_icons(uncrush)
@@ -141,7 +139,7 @@ module AppInfo
 
         icon_array.each do |items|
           Dir.glob(File.join(app_path, "#{items}*")).find_all.each do |file|
-            obj << icon_info(file, uncrush: uncrush)
+            obj << ios_icon_info(file, uncrush: uncrush)
           end
         end
       end
@@ -150,28 +148,49 @@ module AppInfo
     def parse_macos_icons(uncrush)
       return [] if icons_root_path.empty?
 
-      icons_root_path.each_with_object([]) do |filename, obj|
-        file = File.join(app_path, filename)
-        obj << icon_info(file, uncrush: uncrush)
+      filename = icons_root_path[0]
+      file = File.join(app_path, 'Resources', filename)
+
+      data = {
+        name: File.basename(file),
+        file: file,
+        icons: []
+      }
+      mac_icon_info(data) if uncrush
+      data
+    end
+
+    MAC_ICON_SIZE = [32, 64, 256, 512, 1024]
+    # Convert iconv to png file (macOS)
+    def mac_icon_info(data)
+      require 'icns'
+      require 'image_size'
+
+      file = data[:file]
+      reader = Icns::Reader.new(file)
+      MAC_ICON_SIZE.each do |size|
+        dest_filename = "#{File.basename(file, '.icns')}_#{size}x#{size}.png"
+        dest_file = tempdir(File.join(File.dirname(file), dest_filename), prefix: 'converted')
+        icon_data = reader.image(size: size)
+        File.write(dest_file, icon_data)
+
+        data[:icons] << {
+          name: File.basename(dest_filename),
+          file: dest_file,
+          dimensions: ImageSize.path(dest_file).size
+        }
       end
     end
 
-    def icon_info(file, uncrush: true)
-      uncrushed_file = nil
-      uncrushed_file = device_type == 'MacOS' ? convert_iconv(file) : uncrush_png(file) if uncrush
+    def ios_icon_info(file, uncrush: true)
+      uncrushed_file = uncrush ? uncrush_png(file) : nil
 
       {
         name: File.basename(file),
         file: file,
         uncrushed_file: uncrushed_file,
-        # dimensions: PngUncrush.dimensions(file) # only use in ios
+        dimensions: PngUncrush.dimensions(file)
       }
-    end
-
-    # Convert iconv to png file (macOS)
-    def convert_iconv(src_file)
-      dest_file = tempdir(src_file, prefix: 'converted')
-      # FIXME: convert code!
     end
 
     # Uncrush png to normal png file (iOS)
@@ -181,7 +200,7 @@ module AppInfo
       File.exist?(dest_file) ? dest_file : nil
     end
 
-    def tempdir(file, prefix: )
+    def tempdir(file, prefix:)
       dest_path ||= File.join(File.dirname(file), prefix)
       dest_file = File.join(dest_path, File.basename(file))
 
