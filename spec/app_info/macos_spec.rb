@@ -22,6 +22,7 @@ describe AppInfo::Macos do
         it { expect(subject.bundle_id).to eq('com.icyleaf.macos.GUIApp') }
         it { expect(subject.device_type).to eq(AppInfo::Device::MACOS) }
         it { expect(subject.min_os_version).to eq('11.3') }
+        it { expect(subject.min_system_version).to eq('11.3') }
         it { expect(subject.info['CFBundleVersion']).to eq('1') }
         it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.0') }
         it { expect(subject.archs).to eq(%i[x86_64 arm64]) }
@@ -63,6 +64,7 @@ describe AppInfo::Macos do
         it { expect(subject.bundle_id).to eq('com.icyleaf.macos.GUIApp') }
         it { expect(subject.device_type).to eq(AppInfo::Device::MACOS) }
         it { expect(subject.min_os_version).to eq('11.3') }
+        it { expect(subject.min_system_version).to eq('11.3') }
         it { expect(subject.info['CFBundleVersion']).to eq('1') }
         it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.0') }
         it { expect(subject.archs).to eq(%i[x86_64 arm64]) }

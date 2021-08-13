@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'forwardable'
 require 'cfpropertylist'
 require 'app_info/png_uncrush'
 

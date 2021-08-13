@@ -3,14 +3,14 @@
 require 'app_info/util'
 require 'app_info/core_ext/object/try'
 require 'app_info/version'
+require 'app_info/info_plist'
+require 'app_info/mobile_provision'
 require 'app_info/ipa'
-require 'app_info/ipa/info_plist'
-require 'app_info/ipa/mobile_provision'
 require 'app_info/ipa/plugin'
 require 'app_info/ipa/framework'
 require 'app_info/apk'
-require 'app_info/dsym'
 require 'app_info/proguard'
+require 'app_info/dsym'
 require 'app_info/macos'
 
 # AppInfo Module

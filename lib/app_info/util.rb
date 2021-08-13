@@ -26,9 +26,6 @@ module AppInfo
     UNIVERSAL = 'Universal'
   end
 
-  # macOS 2x icon sets
-  MAC_ICON_SIZE = [32, 64, 256, 512, 1024].freeze
-
   # Icon Key
   ICON_KEYS = {
     AppInfo::Device::IPHONE => ['CFBundleIcons'],

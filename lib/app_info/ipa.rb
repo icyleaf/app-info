@@ -38,7 +38,7 @@ module AppInfo
 
     def_delegators :info, :iphone?, :ipad?, :universal?, :build_version, :name,
                    :release_version, :identifier, :bundle_id, :display_name,
-                   :bundle_name, :icons, :min_sdk_version, :device_type
+                   :bundle_name, :icons, :min_sdk_version, :min_os_version, :device_type
 
     def_delegators :mobileprovision, :devices, :team_name, :team_identifier,
                    :profile_name, :expired_date
