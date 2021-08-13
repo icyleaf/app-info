@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'macho'
-require 'app_info/util'
 
 module AppInfo
   # DSYM parser

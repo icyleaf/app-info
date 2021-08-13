@@ -7,7 +7,7 @@ describe AppInfo::Macos do
       after { subject.clear! }
 
       context 'parse' do
-        it { expect(subject.os).to eq 'macOS' }
+        it { expect(subject.os).to eq AppInfo::Platform::MACOS }
         it { expect(subject).to be_macos }
         it { expect(subject).not_to be_iphone }
         it { expect(subject).not_to be_ipad }
@@ -20,7 +20,7 @@ describe AppInfo::Macos do
         it { expect(subject.display_name).to be_nil }
         it { expect(subject.identifier).to eq('com.icyleaf.macos.GUIApp') }
         it { expect(subject.bundle_id).to eq('com.icyleaf.macos.GUIApp') }
-        it { expect(subject.device_type).to eq('MacOS') }
+        it { expect(subject.device_type).to eq(AppInfo::Device::MACOS) }
         it { expect(subject.min_os_version).to eq('11.3') }
         it { expect(subject.info['CFBundleVersion']).to eq('1') }
         it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.0') }
@@ -29,6 +29,15 @@ describe AppInfo::Macos do
         it { expect(subject.mobileprovision?).to be false }
         it { expect(subject.stored?).to be false }
         it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
+
+        it "should has icons" do
+          icons = subject.icons
+          expect(icons).not_to be_nil
+
+          expect(icons[:name]).to eq 'AppIcon.icns'
+          expect(icons[:file]).not_to be_nil
+          expect(icons[:sets]).to be_kind_of Array
+        end
       end
     end
 
@@ -39,7 +48,7 @@ describe AppInfo::Macos do
       after { subject.clear! }
 
       context 'parse' do
-        it { expect(subject.os).to eq 'macOS' }
+        it { expect(subject.os).to eq AppInfo::Platform::MACOS }
         it { expect(subject).to be_macos }
         it { expect(subject).not_to be_iphone }
         it { expect(subject).not_to be_ipad }
@@ -52,7 +61,7 @@ describe AppInfo::Macos do
         it { expect(subject.display_name).to be_nil }
         it { expect(subject.identifier).to eq('com.icyleaf.macos.GUIApp') }
         it { expect(subject.bundle_id).to eq('com.icyleaf.macos.GUIApp') }
-        it { expect(subject.device_type).to eq('MacOS') }
+        it { expect(subject.device_type).to eq(AppInfo::Device::MACOS) }
         it { expect(subject.min_os_version).to eq('11.3') }
         it { expect(subject.info['CFBundleVersion']).to eq('1') }
         it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.0') }
@@ -66,6 +75,7 @@ describe AppInfo::Macos do
         it { expect(subject.profile_name).to eq('Layouts') }
         it { expect(subject.expired_date).not_to be_nil }
         it { expect(subject.distribution_name).not_to be_nil }
+        it { expect(subject.icons).to be_nil }
       end
     end
   end

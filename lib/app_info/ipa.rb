@@ -4,7 +4,6 @@ require 'macho'
 require 'fileutils'
 require 'forwardable'
 require 'cfpropertylist'
-require 'app_info/util'
 
 module AppInfo
   # IPA parser

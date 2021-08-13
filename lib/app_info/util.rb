@@ -5,10 +5,42 @@ require 'fileutils'
 require 'securerandom'
 
 module AppInfo
+  class Error < StandardError; end
+  class NotFoundError < Error; end
+  class UnkownFileTypeError < Error; end
+
+  # App Platform
+  module Platform
+    MACOS = 'macOS'
+    IOS = 'iOS'
+    ANDROID = 'Android'
+    DSYM = 'dSYM'
+    PROGUARD = 'Proguard'
+  end
+
+  # Device Type
+  module Device
+    MACOS = 'macOS'
+    IPHONE = 'iPhone'
+    IPAD = 'iPad'
+    UNIVERSAL = 'Universal'
+  end
+
+  # macOS 2x icon sets
+  MAC_ICON_SIZE = [32, 64, 256, 512, 1024].freeze
+
+  # Icon Key
+  ICON_KEYS = {
+    AppInfo::Device::IPHONE => ['CFBundleIcons'],
+    AppInfo::Device::IPAD => ['CFBundleIcons~ipad'],
+    AppInfo::Device::UNIVERSAL => ['CFBundleIcons', 'CFBundleIcons~ipad'],
+    AppInfo::Device::MACOS => ['CFBundleIconFile', 'CFBundleIconName']
+  }
+
+  FILE_SIZE_UNITS = %w[B KB MB GB TB]
+
   # AppInfo Util
   module Util
-    FILE_SIZE_UNITS = %w[B KB MB GB TB]
-
     def self.format_key(key)
       key = key.to_s
       return key unless key.include?('_')
@@ -53,6 +85,15 @@ module AppInfo
       end
 
       root_path
+    end
+
+    def self.tempdir(file, prefix:)
+      dest_path ||= File.join(File.dirname(file), prefix)
+      dest_file = File.join(dest_path, File.basename(file))
+
+      Dir.mkdir(dest_path, 0700) unless Dir.exist?(dest_path)
+
+      dest_file
     end
   end
 end

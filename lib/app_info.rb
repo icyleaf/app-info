@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'app_info/util'
 require 'app_info/core_ext/object/try'
 require 'app_info/version'
 require 'app_info/ipa'
@@ -14,19 +15,6 @@ require 'app_info/macos'
 
 # AppInfo Module
 module AppInfo
-  class Error < StandardError; end
-  class NotFoundError < Error; end
-  class UnkownFileTypeError < Error; end
-
-  # App Platform
-  module Platform
-    MACOS = 'macOS'
-    IOS = 'iOS'
-    ANDROID = 'Android'
-    DSYM = 'dSYM'
-    PROGUARD = 'Proguard'
-  end
-
   # Get a new parser for automatic
   def self.parse(file)
     raise NotFoundError, file unless File.exist?(file)
@@ -83,13 +71,14 @@ module AppInfo
 
   # :nodoc:
   def self.detect_mobileprovision(hex)
-    if hex =~ /^\x3C\x3F\x78\x6D\x6C/
+    case hex
+    when /^\x3C\x3F\x78\x6D\x6C/
       # plist
       :mobileprovision
-    elsif hex =~ /^\x62\x70\x6C\x69\x73\x74/
+    when /^\x62\x70\x6C\x69\x73\x74/
       # bplist
       :mobileprovision
-    elsif hex =~ /\x3C\x3F\x78\x6D\x6C/
+    when /\x3C\x3F\x78\x6D\x6C/
       # signed plist
       :mobileprovision
     end

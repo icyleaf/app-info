@@ -2,7 +2,6 @@
 
 require 'cfpropertylist'
 require 'app_info/png_uncrush'
-require 'app_info/util'
 
 module AppInfo
   # iOS Info.plist parser
@@ -60,45 +59,41 @@ module AppInfo
       info.try(:[], 'LSMinimumSystemVersion')
     end
 
-    def icons(uncrush = true)
-      @icons ||= case device_type
-                 when 'MacOS'
-                   parse_macos_icons(uncrush)
-                 else
-                   parse_ios_icons(uncrush)
-                 end
+    def icons
+      @icons ||= ICON_KEYS[device_type]
     end
 
     def device_type
       device_family = info.try(:[], 'UIDeviceFamily')
-      if device_family&.length == 1
-        case device_family
-        when [1]
-          'iPhone'
-        when [2]
-          'iPad'
-        end
-      elsif device_family&.length == 2 && device_family == [1, 2]
-        'Universal'
+      if device_family == [1]
+        AppInfo::Device::IPHONE
+      elsif device_family == [2]
+        AppInfo::Device::IPAD
+      elsif device_family == [1, 2]
+        AppInfo::Device::UNIVERSAL
       elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTPlatformName').nil?
-        'MacOS'
+        AppInfo::Device::MACOS
       end
     end
 
     def iphone?
-      device_type == 'iPhone'
+      device_type == Device::IPHONE
     end
 
     def ipad?
-      device_type == 'iPad'
+      device_type == Device::IPAD
     end
 
     def universal?
-      device_type == 'Universal'
+      device_type == Device::UNIVERSAL
     end
 
     def macos?
-      device_type == 'MacOS'
+      device_type == Device::MACOS
+    end
+
+    def device_family
+      info.try(:[], 'UIDeviceFamily') || []
     end
 
     def release_type
@@ -145,43 +140,6 @@ module AppInfo
       end
     end
 
-    def parse_macos_icons(uncrush)
-      return [] if icons_root_path.empty?
-
-      filename = icons_root_path[0]
-      file = File.join(app_path, 'Resources', filename)
-
-      data = {
-        name: File.basename(file),
-        file: file,
-        icons: []
-      }
-      mac_icon_info(data) if uncrush
-      data
-    end
-
-    MAC_ICON_SIZE = [32, 64, 256, 512, 1024]
-    # Convert iconv to png file (macOS)
-    def mac_icon_info(data)
-      require 'icns'
-      require 'image_size'
-
-      file = data[:file]
-      reader = Icns::Reader.new(file)
-      MAC_ICON_SIZE.each do |size|
-        dest_filename = "#{File.basename(file, '.icns')}_#{size}x#{size}.png"
-        dest_file = tempdir(File.join(File.dirname(file), dest_filename), prefix: 'converted')
-        icon_data = reader.image(size: size)
-        File.write(dest_file, icon_data)
-
-        data[:icons] << {
-          name: File.basename(dest_filename),
-          file: dest_file,
-          dimensions: ImageSize.path(dest_file).size
-        }
-      end
-    end
-
     def ios_icon_info(file, uncrush: true)
       uncrushed_file = uncrush ? uncrush_png(file) : nil
 
@@ -200,15 +158,6 @@ module AppInfo
       File.exist?(dest_file) ? dest_file : nil
     end
 
-    def tempdir(file, prefix:)
-      dest_path ||= File.join(File.dirname(file), prefix)
-      dest_file = File.join(dest_path, File.basename(file))
-
-      Dir.mkdir(dest_path, 0700) unless Dir.exist?(dest_path)
-
-      dest_file
-    end
-
     def info
       return unless File.file?(@file)
 
@@ -217,7 +166,7 @@ module AppInfo
 
     def app_path
       @app_path ||= case device_type
-                    when 'macOS'
+                    when Device::MACOS
                       File.dirname(@file)
                     else
                       File.expand_path('../', @file)
