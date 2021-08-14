@@ -1,11 +1,11 @@
 # app_info
 
-[![Language](https://img.shields.io/badge/ruby-2.3+-701516.svg)](.travis.yml)
+[![Language](https://img.shields.io/badge/ruby-2.5+-701516.svg)](.github/workflows/ci.yml)
 [![Build Status](https://travis-ci.org/icyleaf/app_info.svg?branch=master)](https://travis-ci.org/icyleaf/app_info)
 [![Gem version](https://img.shields.io/gem/v/app-info.svg?style=flat)](https://rubygems.org/gems/app_info)
 [![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](LICENSE)
 
-Teardown tool for mobile app(ipa/apk) and dSYM.zip file, analysis metedata like version, name, icon etc.
+Teardown tool for mobile(ipa/apk) app, macOS app and dSYM.zip file, analysis metedata like version, name, icon etc.
 
 ## Support
 
@@ -13,6 +13,7 @@ Teardown tool for mobile app(ipa/apk) and dSYM.zip file, analysis metedata like 
 - iOS ipa file
   - Info.plist file
   - .mobileprovision/.provisionprofile file
+- macOS App(.zip) file
 - dSYM(.zip) file
 
 ## Installation
@@ -47,6 +48,7 @@ parser = AppInfo.parse('iphone.ipa')
 parser = AppInfo.parse('ipad.ipa')
 parser = AppInfo.parse('android.apk')
 parser = AppInfo.parse('u-u-i-d.mobileprovision')
+parser = AppInfo.parse('macOS.App.zip')
 parser = AppInfo.parse('App.dSYm.zip')
 
 # If detect file type failed, you can parse in other way
@@ -54,6 +56,7 @@ parser = AppInfo::IPA.new('iphone.ipa')
 parser = AppInfo::APK.new('android.apk')
 parser = AppInfo::InfoPlist.new('Info.plist')
 parser = AppInfo::MobileProvision.new('uuid.mobileprovision')
+parser = AppInfo::Macos.new('App.dSYm.zip')
 parser = AppInfo::DSYM.new('App.dSYm.zip')
 ```
 
@@ -80,9 +83,9 @@ ipa.release_version
 ipa.bundle_id
 # => com.icyleaf.AppInfoDemo
 
-# get app icons
+# get app icons (uncrushed png by default)
 ipa.icons
-# => [{:name=>"AppIcon29x29@2x~ipad.png", :file=>"/var/folders/mb/8cm0fz4d499968yss9y1j8bc0000gp/T/d20160728-69669-1xnub30/AppInfo-ios-a5369339399e62046d7d59c52254dac6/Payload/bundle.app/AppIcon29x29@2x~ipad.png"}, :dimensions=>[29, 29], :uncrushed_file=>"..." ...]
+# => [{:name=>"AppIcon29x29@2x~ipad.png", :file=>"temp/dir/app/AppIcon29x29@2x~ipad.png"}, :dimensions=>[29, 29], :uncrushed_file=>"..." ...]
 
 # get provisioning profile devices
 ipa.devices
@@ -145,6 +148,104 @@ profile.enabled_capabilities
 # => ['Apple Pay', 'iCloud', 'Sign In with Apple', ...]
 ```
 
+### Android
+
+```ruby
+apk = AppInfo.parse('android.apk')
+
+# get app file size
+apk.size
+# => 3093823
+
+# get app file size in human reable.
+apk.size(true)
+# => 29 MB
+
+# get app release version
+apk.release_version
+# => 1.0
+
+# get app package name
+apk.bundle_id
+# => com.icyleaf.AppInfoDemo
+
+# get app icons
+apk.icons
+# => [{:name=>"ic_launcher.png", :file=> "/temp/dir/app/ic_launcher.png", :dimensions=>[48, 48]}, ...]
+
+# get app support min sdk version
+apk.min_sdk_version
+# => 13
+
+# get use_permissions list
+apk.use_permissions
+# => [...]
+
+# get activitiy list
+apk.activities
+# => [...]
+
+# get service list
+apk.services
+# => [...]
+
+# get certificate list
+apk.certificates
+# => [...]
+
+# get sign list
+apk.signs
+# => [...]
+
+# detect app type (It's difficult to detect phone or tablet)
+apk.tv?
+apk.wear?
+```
+
+### macOS
+
+Only accept zipped macOS file.
+
+```ruby
+macos = AppInfo.parse('macos_app.zip')
+
+# get app file size
+macos.size
+# => 3093823
+
+# get app file size in human reable.
+macos.size(true)
+# => 29 MB
+
+# get app release version
+macos.release_version
+# => 1.0
+
+# get app bundle id
+macos.bundle_id
+# => com.icyleaf.AppInfoDemo
+
+# Get minimize os version
+macos.min_os_version
+# => 11.3
+
+# get app icons(convertd icns to png icon sets by default)
+macos.icons
+# => [{:name=>"AppIcon.icns", :file=>"/temp/dir/app/AppIcon.icns"}, :sets=>[{:name=>"64x64_AppIcon.png", :file=>"/temp/dir/app/64x64_AppIcon.png", :dimensions=>[64, 64]}, ...]
+
+# detect publish on mac app store
+macos.stored?
+# => true/false
+
+# detect architecture(s)
+macos.archs
+# => [:x86_64, :arm64]
+
+# get more propety in Info.plist
+macos.info[:CFBundleDisplayName]
+# => 'AppInfoDemo'
+```
+
 ### dSYM
 
 ```ruby
@@ -183,60 +284,6 @@ dsym.machos.each do |macho|
   macho.to_h
   # => {uuid:"26dfc15d-bdce-351f-b5de-6ee9f5dd6d85", cpu_type: :arm, cpu_name: :armv7, ...}
 end
-```
-
-### Android
-
-```ruby
-apk = AppInfo.parse('android.apk')
-
-# get app file size
-apk.size
-# => 3093823
-
-# get app file size in human reable.
-apk.size(true)
-# => 29 MB
-
-# get app release version
-apk.release_version
-# => 1.0
-
-# get app package name
-apk.bundle_id
-# => com.icyleaf.AppInfoDemo
-
-# get app icons
-apk.icons
-# => [{:name=>"ic_launcher.png", :file=> "/var/folders/mb/8cm0fz4d499968yss9y1j8bc0000gp/T/d20160728-70163-10d47fl/AppInfo-android-cccbf89a889eb592c5c6f342d56b9a49/res/mipmap-mdpi-v4/ic_launcher.png/ic_launcher.png", :dimensions=>[48, 48]}, ...]
-
-# get app support min sdk version
-apk.min_sdk_version
-# => 13
-
-# get use_permissions list
-apk.use_permissions
-# => [...]
-
-# get activitiy list
-apk.activities
-# => [...]
-
-# get service list
-apk.services
-# => [...]
-
-# get certificate list
-apk.certificates
-# => [...]
-
-# get sign list
-apk.signs
-# => [...]
-
-# detect app type (It's difficult to detect phone or tablet)
-apk.tv?
-apk.wear?
 ```
 
 ## CLI Shell (Interactive console)
