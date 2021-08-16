@@ -5,6 +5,9 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in app-info.gemspec
 gemspec
 
-gem 'awesome_print'
-gem 'debase'
-gem 'ruby-debug-ide'
+
+group :development do
+  gem 'awesome_print'
+  gem 'debase'
+  gem 'ruby-debug-ide'
+end
