@@ -125,40 +125,6 @@ module AppInfo
 
     private
 
-    def parse_ios_icons(uncrush)
-      icons_root_path.each_with_object([]) do |name, obj|
-        icon_array = info.try(:[], name)
-                         .try(:[], 'CFBundlePrimaryIcon')
-                         .try(:[], 'CFBundleIconFiles')
-
-        next if icon_array.nil? || icon_array.empty?
-
-        icon_array.each do |items|
-          Dir.glob(File.join(app_path, "#{items}*")).find_all.each do |file|
-            obj << ios_icon_info(file, uncrush: uncrush)
-          end
-        end
-      end
-    end
-
-    def ios_icon_info(file, uncrush: true)
-      uncrushed_file = uncrush ? uncrush_png(file) : nil
-
-      {
-        name: File.basename(file),
-        file: file,
-        uncrushed_file: uncrushed_file,
-        dimensions: PngUncrush.dimensions(file)
-      }
-    end
-
-    # Uncrush png to normal png file (iOS)
-    def uncrush_png(src_file)
-      dest_file = tempdir(src_file, prefix: 'uncrushed')
-      PngUncrush.decompress(src_file, dest_file)
-      File.exist?(dest_file) ? dest_file : nil
-    end
-
     def info
       return unless File.file?(@file)
 
@@ -172,23 +138,6 @@ module AppInfo
                     else
                       File.expand_path('../', @file)
                     end
-    end
-
-    IPHONE_KEY = 'CFBundleIcons'
-    IPAD_KEY = 'CFBundleIcons~ipad'
-
-    def icons_root_path
-      case device_type
-      when 'iPhone'
-        [IPHONE_KEY]
-      when 'iPad'
-        [IPAD_KEY]
-      when 'Universal'
-        [IPHONE_KEY, IPAD_KEY]
-      when 'MacOS'
-        filename = info.try(:[], 'CFBundleIconFile') || info.try(:[], 'CFBundleIconName')
-        filename ? ["#{filename}.icns"] : []
-      end
     end
   end
 end

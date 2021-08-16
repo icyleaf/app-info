@@ -156,8 +156,8 @@ module AppInfo
 
           data = deflate(newdata)
           length = data.length
-          crc = crc32(type)
-          crc = crc32(data, crc)
+          crc = Zlib.crc32(type)
+          crc = Zlib.crc32(data, crc)
           crc = (crc + 0x100000000) % 0x100000000
         end
 
