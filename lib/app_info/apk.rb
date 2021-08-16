@@ -23,8 +23,8 @@ module AppInfo
       @file = file
     end
 
-    def size(humanable = false)
-      AppInfo::Util.file_size(@file, humanable)
+    def size(human_size: false)
+      AppInfo::Util.file_size(@file, human_size)
     end
 
     def os
@@ -109,8 +109,6 @@ module AppInfo
     end
 
     def apk
-      Zip.warn_invalid_date = false # fix invaild date format warnings
-
       @apk ||= ::Android::Apk.new(@file)
     end
 

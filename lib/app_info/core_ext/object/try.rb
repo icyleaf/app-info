@@ -4,7 +4,7 @@
 # Copy from https://github.com/rails/rails/blob/master/activesupport/lib/active_support/core_ext/object/try.rb
 
 module AppInfo
-  module Tryable #:nodoc:
+  module Tryable # :nodoc:
     ##
     # :method: try
     #

@@ -72,7 +72,7 @@ ipa.size
 # => 3093823
 
 # get app file size in human reable.
-ipa.size(true)
+ipa.size(human_size: true)
 # => 29 MB
 
 # get app release version
@@ -158,7 +158,7 @@ apk.size
 # => 3093823
 
 # get app file size in human reable.
-apk.size(true)
+apk.size(human_size: true)
 # => 29 MB
 
 # get app release version
@@ -214,7 +214,7 @@ macos.size
 # => 3093823
 
 # get app file size in human reable.
-macos.size(true)
+macos.size(human_size: true)
 # => 29 MB
 
 # get app release version
@@ -255,8 +255,8 @@ dsym = AppInfo.parse('ios.dSYM.zip')
 dsym.object
 # => iOS
 
-# get macho size
-dsym.machos.size
+# get total count of macho
+dsym.machos.count
 # => 1 or 2
 
 dsym.machos.each do |macho|
@@ -277,7 +277,7 @@ dsym.machos.each do |macho|
   # => 866526
 
   # get macho size in human reable.
-  macho.size(true)
+  macho.size(human_size: true)
   # => 862 KB
 
   # dump data to Hash

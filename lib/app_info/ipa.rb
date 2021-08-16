@@ -27,8 +27,8 @@ module AppInfo
       @file = file
     end
 
-    def size(humanable = false)
-      AppInfo::Util.file_size(@file, humanable)
+    def size(human_size: false)
+      AppInfo::Util.file_size(@file, human_size)
     end
 
     def os
@@ -83,7 +83,7 @@ module AppInfo
     alias architectures archs
 
     def stored?
-      metadata? ? true : false
+      !!metadata?
     end
 
     def plugins

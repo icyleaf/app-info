@@ -129,8 +129,8 @@ module AppInfo
         @file.filetype
       end
 
-      def size(humanable = false)
-        return Util.size_to_humanable(@size) if humanable
+      def size(human_size: false)
+        return Util.size_to_human_size(@size) if human_size
 
         @size
       end
@@ -151,7 +151,7 @@ module AppInfo
           cpu_name: cpu_name,
           cpu_type: cpu_type,
           size: size,
-          humanable_size: size(true)
+          human_size: size(human_size: true)
         }
       end
     end

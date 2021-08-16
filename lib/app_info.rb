@@ -13,6 +13,9 @@ require 'app_info/proguard'
 require 'app_info/dsym'
 require 'app_info/macos'
 
+# fix invaild date format warnings
+Zip.warn_invalid_date = false
+
 # AppInfo Module
 module AppInfo
   # Get a new parser for automatic
@@ -69,17 +72,13 @@ module AppInfo
   end
   private_class_method :detect_zip_file
 
+  PLIST_REGEX = /\x3C\x3F\x78\x6D\x6C/.freeze
+  BPLIST_REGEX = /^\x62\x70\x6C\x69\x73\x74/.freeze
+
   # :nodoc:
   def self.detect_mobileprovision(hex)
     case hex
-    when /^\x3C\x3F\x78\x6D\x6C/
-      # plist
-      :mobileprovision
-    when /^\x62\x70\x6C\x69\x73\x74/
-      # bplist
-      :mobileprovision
-    when /\x3C\x3F\x78\x6D\x6C/
-      # signed plist
+    when PLIST_REGEX, BPLIST_REGEX
       :mobileprovision
     end
   end
