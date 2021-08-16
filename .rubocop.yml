@@ -9,22 +9,35 @@
 #
 # See https://github.com/rubocop-hq/rubocop/blob/master/manual/configuration.md
 
+inherit_mode:
+  merge:
+    - Exclude
+
 AllCops:
   TargetRubyVersion: 2.7
+  NewCops: enable
+  SuggestExtensions: false
   Exclude:
-  - 'spec/**/*'
-  - 'Rakefile'
-  - 'app_info.gemspec'
-  - 'lib/app-info.rb'
+    - 'bin/*'
+    - 'spec/**/*'
+    - vendor/bundle/**/*
+    - 'Rakefile'
+    - 'app_info.gemspec'
+    - 'lib/app-info.rb'
 
 Metrics/AbcSize:
   Max: 100
 
 Metrics/BlockLength:
   Max: 35
+  Exclude:
+    - 'lib/app_info/mobile_provision.rb'
 
 Metrics/MethodLength:
   Max: 20
+  Exclude:
+    - 'lib/app_info/png_uncrush.rb'
+    - 'lib/app_info/mobile_provision.rb'
 
 Layout/LineLength:
   Max: 100
@@ -34,7 +47,13 @@ Metrics/ClassLength:
   Max: 300
 
 Metrics/CyclomaticComplexity:
-  Max: 10
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Max: 18
+
+Lint/AssignmentInCondition:
+  Enabled: false
 
 Style/Documentation:
   Enabled: false

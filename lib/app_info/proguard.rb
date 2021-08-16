@@ -2,7 +2,6 @@
 
 require 'uuidtools'
 require 'rexml/document'
-require 'app_info/util'
 
 module AppInfo
   # Proguard parser

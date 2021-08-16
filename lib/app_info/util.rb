@@ -5,23 +5,54 @@ require 'fileutils'
 require 'securerandom'
 
 module AppInfo
+  class Error < StandardError; end
+
+  class NotFoundError < Error; end
+
+  class UnkownFileTypeError < Error; end
+
+  # App Platform
+  module Platform
+    MACOS = 'macOS'
+    IOS = 'iOS'
+    ANDROID = 'Android'
+    DSYM = 'dSYM'
+    PROGUARD = 'Proguard'
+  end
+
+  # Device Type
+  module Device
+    MACOS = 'macOS'
+    IPHONE = 'iPhone'
+    IPAD = 'iPad'
+    UNIVERSAL = 'Universal'
+  end
+
+  # Icon Key
+  ICON_KEYS = {
+    AppInfo::Device::IPHONE => ['CFBundleIcons'],
+    AppInfo::Device::IPAD => ['CFBundleIcons~ipad'],
+    AppInfo::Device::UNIVERSAL => ['CFBundleIcons', 'CFBundleIcons~ipad'],
+    AppInfo::Device::MACOS => %w[CFBundleIconFile CFBundleIconName]
+  }.freeze
+
+  FILE_SIZE_UNITS = %w[B KB MB GB TB].freeze
+
   # AppInfo Util
   module Util
-    FILE_SIZE_UNITS = %w[B KB MB GB TB]
-
     def self.format_key(key)
       key = key.to_s
       return key unless key.include?('_')
 
-      key.split('_').map(&:capitalize).join('')
+      key.split('_').map(&:capitalize).join
     end
 
-    def self.file_size(file, humanable)
+    def self.file_size(file, human_size)
       file_size = File.size(file)
-      humanable ? size_to_humanable(file_size) : file_size
+      human_size ? size_to_human_size(file_size) : file_size
     end
 
-    def self.size_to_humanable(number)
+    def self.size_to_human_size(number)
       if number.to_i < 1024
         exponent = 0
       else
@@ -53,6 +84,15 @@ module AppInfo
       end
 
       root_path
+    end
+
+    def self.tempdir(file, prefix:)
+      dest_path ||= File.join(File.dirname(file), prefix)
+      dest_file = File.join(dest_path, File.basename(file))
+
+      Dir.mkdir(dest_path, 0_700) unless Dir.exist?(dest_path)
+
+      dest_file
     end
   end
 end
