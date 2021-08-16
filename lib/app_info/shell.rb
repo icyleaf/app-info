@@ -12,7 +12,7 @@ module AppInfo
       PROMPT_C: "#{PREFIX}> ",
       PROMPT_N: "#{PREFIX}> ",
       RETURN: "=> %s\n"
-    }
+    }.freeze
 
     class << self
       def run
@@ -32,4 +32,3 @@ module AppInfo
     end
   end
 end
-

@@ -22,6 +22,8 @@ MATCH_FILE_TYPES = {
   'macos_development.provisionprofile' => :mobileprovision,
   'single_mapping.zip' => :proguard,
   'full_mapping.zip' => :proguard,
+  'macos.zip' => :macos,
+  'macos-signed.zip' => :macos
 }
 
 describe AppInfo do
@@ -54,6 +56,8 @@ describe AppInfo do
             expect(parse).to be_a(AppInfo::DSYM)
           when :mobileprovision
             expect(parse).to be_a(AppInfo::MobileProvision)
+          when :macos
+            expect(parse).to be_a(AppInfo::Macos)
           end
         end
       end
