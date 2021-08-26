@@ -175,7 +175,7 @@ module AppInfo
         dest_file = Util.tempdir(File.join(File.dirname(file), dest_filename), prefix: 'converted')
         next unless icon_data = reader.image(size: size)
 
-        File.write(dest_file, icon_data)
+        File.write(dest_file, icon_data, encoding: Encoding::BINARY)
 
         data[:sets] << {
           name: File.basename(dest_filename),
