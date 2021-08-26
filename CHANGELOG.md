@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.6.1] (2021-08-26)
+
+### Fixed
+
+- Force write macOS icon data with `ASCII-8BIT`
+
 ## [2.6.0] (2021-08-24)
 
 ### Changed
