@@ -245,7 +245,7 @@ module AppInfo
       end
 
       def name
-        @raw.subject.to_a.find { |name, _, _| name == 'CN' }[1]
+        @raw.subject.to_a.find { |name, _, _| name == 'CN' }[1].force_encoding('UTF-8')
       end
 
       def created_date
