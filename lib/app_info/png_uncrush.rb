@@ -125,10 +125,7 @@ module AppInfo
     end
 
     def write_file(path, content)
-      File.open(path, 'wb') do |file|
-        file.puts content
-      end
-
+      File.write(path, content, encoding: Encoding::BINARY)
       true
     end
 

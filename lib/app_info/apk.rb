@@ -76,6 +76,7 @@ module AppInfo
     def min_sdk_version
       manifest.min_sdk_ver
     end
+    alias min_os_version min_sdk_version
 
     def target_sdk_version
       manifest.doc
@@ -118,7 +119,7 @@ module AppInfo
         icon_path = File.join(contents, File.dirname(path))
         icon_file = File.join(icon_path, icon_name)
         FileUtils.mkdir_p icon_path
-        File.open(icon_file, 'wb') { |f| f.write(data) }
+        File.write(icon_file, data, encoding: Encoding::BINARY)
 
         obj << {
           name: icon_name,
