@@ -9,12 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
-## [2.6.2] (2021-08-27)
+## [2.6.3] (2021-08-27)
 
 ### Fixed
 
 - Force write all icon data with `ASCII-8BIT`
-
+- Force convert developer cert name to `UTF-8`
 ## [2.6.1] (2021-08-26)
 
 ### Fixed
@@ -173,8 +173,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.6.1..HEAD
-[2.6.2]: https://github.com/icyleaf/app-info/compare/v2.6.1...v2.6.2
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.6.3..HEAD
+[2.6.3]: https://github.com/icyleaf/app-info/compare/v2.6.1...v2.6.3
 [2.6.1]: https://github.com/icyleaf/app-info/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/icyleaf/app-info/compare/v2.5.4...v2.6.0
 [2.5.4]: https://github.com/icyleaf/app-info/compare/v2.5.3...v2.5.4
