@@ -95,11 +95,13 @@ module AppInfo
             zip_file.each do |f|
               unless dsym_dir
                 dsym_dir = f.name
-                dsym_dir = dsym_dir.split('/')[0] # fix filename is xxx.app.dSYM/Contents
+                # fix filename is xxx.app.dSYM/Contents
+                dsym_dir = dsym_dir.split('/')[0] if dsym_dir.include?('/')
               end
 
               f_path = File.join(path, f.name)
-              zip_file.extract(f, f_path) unless File.exist?(f_path)
+              FileUtils.mkdir_p(File.dirname(f_path))
+              f.extract(f_path) unless File.exist?(f_path)
             end
           end
 
