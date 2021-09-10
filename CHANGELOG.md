@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.6.4] (2021-09-10)
+
+### Fixed
+
+- Error on extract dSYM zipped file occasionally
+
 ## [2.6.3] (2021-08-27)
 
 ### Fixed
@@ -173,7 +179,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.6.3..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.6.4..HEAD
+[2.6.4]: https://github.com/icyleaf/app-info/compare/v2.6.3...v2.6.4
 [2.6.3]: https://github.com/icyleaf/app-info/compare/v2.6.1...v2.6.3
 [2.6.1]: https://github.com/icyleaf/app-info/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/icyleaf/app-info/compare/v2.5.4...v2.6.0
