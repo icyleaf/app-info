@@ -2,8 +2,8 @@
 # source: Resources.proto
 
 require 'google/protobuf'
-
 require 'app_info/aab/proto/Configuration_pb'
+
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_file("Resources.proto", :syntax => :proto3) do
     add_message "aapt.pb.StringPool" do
