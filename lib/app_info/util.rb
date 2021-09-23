@@ -11,23 +11,6 @@ module AppInfo
 
   class UnkownFileTypeError < Error; end
 
-  # App Platform
-  module Platform
-    MACOS = 'macOS'
-    IOS = 'iOS'
-    ANDROID = 'Android'
-    DSYM = 'dSYM'
-    PROGUARD = 'Proguard'
-  end
-
-  # Device Type
-  module Device
-    MACOS = 'macOS'
-    IPHONE = 'iPhone'
-    IPAD = 'iPad'
-    UNIVERSAL = 'Universal'
-  end
-
   # Icon Key
   ICON_KEYS = {
     AppInfo::Device::IPHONE => ['CFBundleIcons'],
