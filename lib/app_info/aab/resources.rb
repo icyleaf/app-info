@@ -61,7 +61,7 @@ module AppInfo
       parse(doc)
     end
 
-    def value(locale: )
+    def value(locale:)
       values = @values.select { |v| v.locale == locale }
       return default_value if values.empty?
 
@@ -104,7 +104,7 @@ module AppInfo
     end
 
     def parsed_value(raw)
-      value = raw.send(raw.value.to_sym)
+      raw.send(raw.value.to_sym)
 
       # case value
       # when Aapt::Pb::Item

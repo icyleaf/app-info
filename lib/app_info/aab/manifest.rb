@@ -7,14 +7,14 @@ require 'app_info/aab/resources'
 module AppInfo
   class Manifest
     def self.parse(io, resources)
-      pb = Aapt::Pb::XmlNode.decode(io)
-      instance = new(pb, resources)
+      doc = Aapt::Pb::XmlNode.decode(io)
+      instance = new(doc, resources)
       instance.parse
       instance
     end
 
-    def initialize(pb, resources)
-      @doc = Node.parse(pb)
+    def initialize(doc, resources)
+      @doc = Node.parse(doc)
       @resources = resources
     end
 
@@ -71,10 +71,7 @@ module AppInfo
       end
     end
 
-
     class Node < Base
-      attr_reader :name
-
       def parse
         # do nothing
       end

@@ -28,7 +28,7 @@ module AppInfo
 
   module Helper
     module HumanFileSize
-      def file_size(file, human_size: )
+      def file_size(file, human_size:)
         file_size = File.size(file)
         human_size ? number_to_human_size(file_size) : file_size
       end
@@ -83,7 +83,6 @@ module AppInfo
 
         dest_file
       end
-
     end
 
     module DefineMethod

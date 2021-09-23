@@ -20,10 +20,12 @@ AllCops:
   Exclude:
     - 'bin/*'
     - 'spec/**/*'
-    - vendor/bundle/**/*
+    - 'vendor/bundle/**/*'
     - 'Rakefile'
     - 'app_info.gemspec'
     - 'lib/app-info.rb'
+    - 'lib/app_info/aab/proto/*_pb.rb'
+    - 'main.rb'
 
 Metrics/AbcSize:
   Max: 100
@@ -57,3 +59,7 @@ Lint/AssignmentInCondition:
 
 Style/Documentation:
   Enabled: false
+
+Style/PerlBackrefs:
+  Exclude:
+    - 'lib/app_info/core_ext/object/try.rb'

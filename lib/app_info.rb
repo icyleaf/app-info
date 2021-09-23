@@ -42,7 +42,7 @@ module AppInfo
         raise UnkownFileTypeError, "Do not detect file type: #{file}"
       end
     end
-    alias_method :dump, :parse
+    alias dump parse
 
     # Detect file type by read file header
     #
@@ -50,10 +50,10 @@ module AppInfo
     def file_type(file)
       header_hex = IO.read(file, 100)
       type = if header_hex =~ /^\x50\x4b\x03\x04/
-              detect_zip_file(file)
-            else
-              detect_mobileprovision(header_hex)
-            end
+               detect_zip_file(file)
+             else
+               detect_mobileprovision(header_hex)
+             end
 
       type || :unkown
     end
@@ -67,13 +67,13 @@ module AppInfo
 
       return :proguard unless zip_file.glob('*mapping*.txt').empty?
       return :apk if !zip_file.find_entry('AndroidManifest.xml').nil? &&
-                    !zip_file.find_entry('classes.dex').nil?
+                     !zip_file.find_entry('classes.dex').nil?
 
       return :aab if !zip_file.find_entry('base/manifest/AndroidManifest.xml').nil? &&
-                    !zip_file.find_entry('BundleConfig.pb').nil?
+                     !zip_file.find_entry('BundleConfig.pb').nil?
 
       return :macos if !zip_file.glob('*/Contents/MacOS/*').empty? &&
-                      !zip_file.glob('*/Contents/Info.plist').empty?
+                       !zip_file.glob('*/Contents/Info.plist').empty?
 
       zip_file.each do |f|
         path = f.name
