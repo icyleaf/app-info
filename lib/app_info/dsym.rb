@@ -5,6 +5,8 @@ require 'macho'
 module AppInfo
   # DSYM parser
   class DSYM
+    include Helper::Archive
+
     attr_reader :file
 
     def initialize(file)
@@ -12,7 +14,7 @@ module AppInfo
     end
 
     def file_type
-      AppInfo::Platform::DSYM
+      Platform::DSYM
     end
 
     def object
@@ -91,7 +93,7 @@ module AppInfo
           @contents = @file
         else
           dsym_dir = nil
-          @contents = Util.unarchive(@file, path: 'dsym') do |path, zip_file|
+          @contents = unarchive(@file, path: 'dsym') do |path, zip_file|
             zip_file.each do |f|
               unless dsym_dir
                 dsym_dir = f.name
@@ -114,6 +116,8 @@ module AppInfo
 
     # DSYM Mach-O
     class MachO
+      include Helper::HumanFileSize
+
       def initialize(file, size = 0)
         @file = file
         @size = size
@@ -132,7 +136,7 @@ module AppInfo
       end
 
       def size(human_size: false)
-        return Util.size_to_human_size(@size) if human_size
+        return number_to_human_size(@size) if human_size
 
         @size
       end

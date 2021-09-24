@@ -24,7 +24,7 @@ AllCops:
     - 'Rakefile'
     - 'app_info.gemspec'
     - 'lib/app-info.rb'
-    - 'lib/app_info/aab/proto/*_pb.rb'
+    - 'lib/app_info/protobuf/models/*_pb.rb'
     - 'main.rb'
 
 Metrics/AbcSize:
@@ -62,4 +62,11 @@ Style/Documentation:
 
 Style/PerlBackrefs:
   Exclude:
-    - 'lib/app_info/core_ext/object/try.rb'
+    - 'lib/app_info/core_ext/string/inflector.rb'
+
+Style/DocumentDynamicEvalDefinition:
+  Enabled: false
+
+Metrics/BlockNesting:
+  Exclude:
+    - 'lib/app_info/dsym.rb'

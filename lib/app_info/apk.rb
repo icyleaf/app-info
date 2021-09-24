@@ -7,6 +7,7 @@ require 'forwardable'
 module AppInfo
   # Parse APK file
   class APK
+    include Helper::HumanFileSize
     extend Forwardable
 
     attr_reader :file
@@ -24,11 +25,11 @@ module AppInfo
     end
 
     def size(human_size: false)
-      AppInfo::Util.file_size(@file, human_size)
+      file_to_human_size(@file, human_size: human_size)
     end
 
     def os
-      AppInfo::Platform::ANDROID
+      Platform::ANDROID
     end
     alias file_type os
 

@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-require 'app_info/aab/manifest'
+require 'app_info/protobuf/manifest'
 require 'image_size'
 require 'forwardable'
 
 module AppInfo
   # Parse APK file
   class AAB
+    include Helper::HumanFileSize
     extend Forwardable
 
     attr_reader :file
@@ -24,11 +25,11 @@ module AppInfo
     end
 
     def size(human_size: false)
-      AppInfo::Util.file_size(@file, human_size)
+      file_to_human_size(@file, human_size: human_size)
     end
 
     def os
-      AppInfo::Platform::ANDROID
+      Platform::ANDROID
     end
     alias file_type os
 
@@ -109,12 +110,12 @@ module AppInfo
 
     def manifest
       io = zip.read(zip.find_entry('base/manifest/AndroidManifest.xml'))
-      @manifest ||= AppInfo::Manifest.parse(io, resources)
+      @manifest ||= Protobuf::Manifest.parse(io, resources)
     end
 
     def resources
       io = zip.read(zip.find_entry('base/resources.pb'))
-      @resources ||= AppInfo::Resources.parse(io)
+      @resources ||= Resources.parse(io)
     end
 
     def zip

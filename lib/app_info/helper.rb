@@ -20,17 +20,17 @@ module AppInfo
 
   # Icon Key
   ICON_KEYS = {
-    AppInfo::Device::IPHONE => ['CFBundleIcons'],
-    AppInfo::Device::IPAD => ['CFBundleIcons~ipad'],
-    AppInfo::Device::UNIVERSAL => ['CFBundleIcons', 'CFBundleIcons~ipad'],
-    AppInfo::Device::MACOS => %w[CFBundleIconFile CFBundleIconName]
+    Device::IPHONE => ['CFBundleIcons'],
+    Device::IPAD => ['CFBundleIcons~ipad'],
+    Device::UNIVERSAL => ['CFBundleIcons', 'CFBundleIcons~ipad'],
+    Device::MACOS => %w[CFBundleIconFile CFBundleIconName]
   }.freeze
 
   module Helper
     module HumanFileSize
-      def file_size(file, human_size:)
-        file_size = File.size(file)
-        human_size ? number_to_human_size(file_size) : file_size
+      def file_to_human_size(file, human_size:)
+        number = File.size(file)
+        human_size ? number_to_human_size(number) : number
       end
 
       FILE_SIZE_UNITS = %w[B KB MB GB TB].freeze
@@ -85,15 +85,26 @@ module AppInfo
       end
     end
 
-    module DefineMethod
+    module Defines
+      def create_class(klass_name, parent_class, namespace:)
+        klass = Class.new(parent_class) do
+          yield if block_given?
+        end
+
+        name = namespace.to_s.empty? ? klass_name : "#{namespace}::#{klass_name}"
+        if Object.const_defined?(name)
+          Object.const_get(name)
+        else
+          Object.const_get(namespace).const_set(klass_name, klass)
+        end
+      end
+
       def define_instance_method(key, value)
         instance_variable_set("@#{key}", value)
         self.class.class_eval <<-RUBY, __FILE__, __LINE__ + 1
-          def #{key}                      # def package
-            return @#{key} if @#{key}     #   return @package if @package
-                                          #
-            @#{key} ||= value             #   @package ||= value
-          end                             # end
+          def #{key}
+            @#{key}
+          end
         RUBY
       end
     end

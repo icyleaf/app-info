@@ -8,6 +8,8 @@ require 'cfpropertylist'
 module AppInfo
   # MacOS App parser
   class Macos
+    include Helper::HumanFileSize
+    include Helper::Archive
     extend Forwardable
 
     attr_reader :file
@@ -24,11 +26,11 @@ module AppInfo
     end
 
     def size(human_size: false)
-      AppInfo::Util.file_size(@file, human_size)
+      file_to_human_size(@file, human_size: human_size)
     end
 
     def os
-      AppInfo::Platform::MACOS
+      Platform::MACOS
     end
     alias file_type os
 
@@ -142,7 +144,7 @@ module AppInfo
     end
 
     def contents
-      @contents ||= Util.unarchive(@file, path: 'macos')
+      @contents ||= unarchive(@file, path: 'macos')
     end
 
     private
@@ -172,7 +174,7 @@ module AppInfo
       reader = Icns::Reader.new(file)
       Icns::SIZE_TO_TYPE.each do |size, _|
         dest_filename = "#{File.basename(file, '.icns')}_#{size}x#{size}.png"
-        dest_file = Util.tempdir(File.join(File.dirname(file), dest_filename), prefix: 'converted')
+        dest_file = tempdir(File.join(File.dirname(file), dest_filename), prefix: 'converted')
         next unless icon_data = reader.image(size: size)
 
         File.write(dest_file, icon_data, encoding: Encoding::BINARY)

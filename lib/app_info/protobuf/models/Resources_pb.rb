@@ -2,7 +2,7 @@
 # source: Resources.proto
 
 require 'google/protobuf'
-require 'app_info/aab/proto/Configuration_pb'
+require 'app_info/protobuf/models/Configuration_pb'
 
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_file("Resources.proto", :syntax => :proto3) do

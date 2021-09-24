@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'app_info/helper'
-require 'app_info/util'
-require 'app_info/core_ext/object/try'
 require 'app_info/version'
+require 'app_info/error'
+require 'app_info/core_ext'
+require 'app_info/helper'
 
 require 'app_info/info_plist'
 require 'app_info/mobile_provision'
