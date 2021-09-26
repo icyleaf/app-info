@@ -15,14 +15,6 @@ describe AppInfo::Protobuf::Manifest do
   it { expect(subject.attributes.keys).to eq(ATTRIBUTES) }
   it { expect(subject.children.keys).to eq(CHILDREN) }
 
-  it { expect(subject.attributes.values.map(&:class)).to eq([AppInfo::Protobuf::Attribute] * ATTRIBUTES.size) }
-  it { expect(subject.children.values.map(&:class)).to eq([
-    AppInfo::Protobuf::Manifest::UsesSdk,
-    AppInfo::Protobuf::Manifest::UsesPermission,
-    AppInfo::Protobuf::Manifest::UsesFeature,
-    AppInfo::Protobuf::Manifest::Application
-  ])}
-
   ATTRIBUTES.each do |attr_name|
     context ".#{attr_name}" do
       it { expect(subject.respond_to?(attr_name.to_sym)).to be_truthy }
@@ -51,10 +43,9 @@ describe AppInfo::Protobuf::Manifest do
   CHILDREN.each do |child_name|
     context ".#{child_name}" do
       it { expect(subject.respond_to?(child_name.to_sym)).to be_truthy }
-      it { expect(subject.send(child_name.to_sym)).to be_kind_of Object.const_get('AppInfo::Protobuf::Manifest').const_get(child_name.camelcase) }
-      it { expect(subject.send(child_name.to_sym)).to be_kind_of AppInfo::Protobuf::Node }
     end
   end
 
-  # it { expect(subject.label.value.send(:value).value).to eq('AABDemo') }
+  it { expect(subject.label).to eq('AABDemo') }
+  it { expect(subject.label(locale: 'zh-CN')).to eq('AAB演示') }
 end

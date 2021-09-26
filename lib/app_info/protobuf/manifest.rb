@@ -24,14 +24,14 @@ module AppInfo
     class Attribute < Base
       attr_reader :namespace, :name, :value, :resource_id
 
+      private
+
       def parse(doc)
         @namespace = doc.namespace_uri
         @name = doc.name
         @value = parsed_value(doc)
         @resource_id = doc&.resource_id
       end
-
-      private
 
       def parsed_value(doc)
         if prim = doc&.compiled_item&.prim
@@ -50,6 +50,8 @@ module AppInfo
     class Node < Base
       attr_reader :name, :attributes, :children
 
+      private
+
       def parse(doc)
         define_name(doc)
         define_attributes(doc)
@@ -61,8 +63,6 @@ module AppInfo
 
         @name = element.name
       end
-
-      private
 
       def define_attributes(doc)
         @attributes = {}
@@ -78,6 +78,8 @@ module AppInfo
         end
       end
 
+      UNIQUE_KEY = %w[uses_sdk application].freeze
+
       def define_children(doc)
         @children = {}
         return unless element = doc.element
@@ -90,8 +92,16 @@ module AppInfo
           node = klass.new(item)
 
           method_name = item_element.name.snakecase
-          obj[method_name] = node
-          define_instance_method(method_name, node)
+          if UNIQUE_KEY.include?(method_name)
+            obj[method_name] = node
+          else
+            obj[method_name] ||= []
+            obj[method_name] << node
+          end
+        end
+
+        @children.each do |name, value|
+          define_instance_method(name, value)
         end
       end
     end
@@ -102,8 +112,32 @@ module AppInfo
         new(doc, resources)
       end
 
-      def label(locale: nil)
-        @resources.find(application.label, locale: locale) || application.label
+      COMPONENTS = %w[activity activity-alias service receiver provider application].freeze
+
+      def package_name
+        @package_name ||= package
+      end
+
+      def label(locale: '')
+        @resources.find(application.label, locale: locale).value || application.label
+      end
+
+      def components
+        application.children.select do |name, _|
+          COMPONENTS.include?(name.downcase)
+        end
+      end
+
+      def activities
+        application.activity
+      end
+
+      def services
+        application.service
+      end
+
+      def icons
+        @resources.find(application.icon)
       end
     end
   end

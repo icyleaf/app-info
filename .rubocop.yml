@@ -70,3 +70,7 @@ Style/DocumentDynamicEvalDefinition:
 Metrics/BlockNesting:
   Exclude:
     - 'lib/app_info/dsym.rb'
+
+
+Style/SlicingWithRange:
+  Enabled: false

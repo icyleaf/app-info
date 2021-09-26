@@ -18,6 +18,13 @@ module AppInfo
     UNIVERSAL = 'Universal'
   end
 
+  module AndroidDevice
+    PHONE   = 'Phone'
+    TABLET  = 'Tablet'
+    WATCH   = 'Watch'
+    TV      = 'Television'
+  end
+
   # Icon Key
   ICON_KEYS = {
     Device::IPHONE => ['CFBundleIcons'],
@@ -106,6 +113,15 @@ module AppInfo
             @#{key}
           end
         RUBY
+      end
+    end
+
+    module ReferenceParser
+      def reference_segments(value)
+        new_value = value.is_a?(Aapt::Pb::Reference) ? value.name : value
+        return new_value.split('/', 2) if new_value.include?('/')
+
+        [nil, new_value]
       end
     end
   end
