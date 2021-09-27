@@ -133,7 +133,7 @@ module AppInfo
       new_png = String.new(@io.header)
       sections.map do |(type, length, data, crc, width, height)|
         if type == 'IDAT'
-          buff_size = width * height * 4 + height
+          buff_size = (width * height * 4) + height
           data = inflate(data[0, buff_size])
           # duplicate the content of old data at first to avoid creating too many string objects
           newdata = String.new(data)
