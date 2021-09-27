@@ -9,12 +9,14 @@ Teardown tool for mobile(ipa/apk) app, macOS app and dSYM.zip file, analysis met
 
 ## Support
 
-- Android apk file
+- Android file
+  - `.apk`
+  - `.aab` (Androld App Bundle)
 - iOS ipa file
-  - Info.plist file
-  - .mobileprovision/.provisionprofile file
-- macOS App(.zip) file
-- dSYM(.zip) file
+  - `Info.plist` file
+  - `.mobileprovision`/`.provisionprofile` file
+- Zipped macOS App file
+- Zipped dSYMs file
 
 ## Installation
 
@@ -54,6 +56,7 @@ parser = AppInfo.parse('App.dSYm.zip')
 # If detect file type failed, you can parse in other way
 parser = AppInfo::IPA.new('iphone.ipa')
 parser = AppInfo::APK.new('android.apk')
+parser = AppInfo::AAB.new('android.aab')
 parser = AppInfo::InfoPlist.new('Info.plist')
 parser = AppInfo::MobileProvision.new('uuid.mobileprovision')
 parser = AppInfo::Macos.new('App.dSYm.zip')
