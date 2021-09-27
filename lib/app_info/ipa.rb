@@ -8,6 +8,8 @@ require 'cfpropertylist'
 module AppInfo
   # IPA parser
   class IPA
+    include Helper::HumanFileSize
+    include Helper::Archive
     extend Forwardable
 
     attr_reader :file
@@ -28,11 +30,11 @@ module AppInfo
     end
 
     def size(human_size: false)
-      AppInfo::Util.file_size(@file, human_size)
+      file_to_human_size(@file, human_size: human_size)
     end
 
     def os
-      AppInfo::Platform::IOS
+      Platform::IOS
     end
     alias file_type os
 
@@ -195,7 +197,7 @@ module AppInfo
     end
 
     def contents
-      @contents ||= Util.unarchive(@file, path: 'ios')
+      @contents ||= unarchive(@file, path: 'ios')
     end
 
     private
@@ -213,7 +215,7 @@ module AppInfo
 
     # Uncrush png to normal png file (iOS)
     def uncrush_png(src_file)
-      dest_file = Util.tempdir(src_file, prefix: 'uncrushed')
+      dest_file = tempdir(src_file, prefix: 'uncrushed')
       PngUncrush.decompress(src_file, dest_file)
       File.exist?(dest_file) ? dest_file : nil
     end

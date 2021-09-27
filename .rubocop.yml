@@ -20,10 +20,12 @@ AllCops:
   Exclude:
     - 'bin/*'
     - 'spec/**/*'
-    - vendor/bundle/**/*
+    - 'vendor/bundle/**/*'
     - 'Rakefile'
     - 'app_info.gemspec'
     - 'lib/app-info.rb'
+    - 'lib/app_info/protobuf/models/*_pb.rb'
+    - 'main.rb'
 
 Metrics/AbcSize:
   Max: 100
@@ -56,4 +58,19 @@ Lint/AssignmentInCondition:
   Enabled: false
 
 Style/Documentation:
+  Enabled: false
+
+Style/PerlBackrefs:
+  Exclude:
+    - 'lib/app_info/core_ext/string/inflector.rb'
+
+Style/DocumentDynamicEvalDefinition:
+  Enabled: false
+
+Metrics/BlockNesting:
+  Exclude:
+    - 'lib/app_info/dsym.rb'
+
+
+Style/SlicingWithRange:
   Enabled: false

@@ -67,13 +67,13 @@ module AppInfo
     def device_type
       device_family = info.try(:[], 'UIDeviceFamily')
       if device_family == [1]
-        AppInfo::Device::IPHONE
+        Device::IPHONE
       elsif device_family == [2]
-        AppInfo::Device::IPAD
+        Device::IPAD
       elsif device_family == [1, 2]
-        AppInfo::Device::UNIVERSAL
+        Device::UNIVERSAL
       elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTPlatformName').nil?
-        AppInfo::Device::MACOS
+        Device::MACOS
       end
     end
 
@@ -112,13 +112,13 @@ module AppInfo
     def_delegators :info, :to_h
 
     def method_missing(method_name, *args, &block)
-      info.try(:[], Util.format_key(method_name)) ||
+      info.try(:[], method_name.to_s.camelcase) ||
         info.send(method_name) ||
         super
     end
 
     def respond_to_missing?(method_name, *args)
-      info.key?(Util.format_key(method_name)) ||
+      info.key?(method_name.to_s.camelcase) ||
         info.respond_to?(method_name) ||
         super
     end
