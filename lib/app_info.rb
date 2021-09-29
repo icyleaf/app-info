@@ -48,7 +48,7 @@ module AppInfo
     #
     # TODO: This can be better solution, if anyone knows, tell me please.
     def file_type(file)
-      header_hex = IO.read(file, 100)
+      header_hex = File.read(file, 100)
       type = if header_hex =~ /^\x50\x4b\x03\x04/
                detect_zip_file(file)
              else
