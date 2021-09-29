@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.7.0.beta2] (2021-09-29)
+
+### Fixed
+
+- Fix allocator undefined data class [#38](https://github.com/icyleaf/app_info/pull/38)
+
 ## [2.7.0.beta1] (2021-09-27)
 
 ### Added
@@ -191,7 +197,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta1..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta2..HEAD
+[2.7.0.beta2]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta1...v2.7.0.beta2
 [2.7.0.beta1]: https://github.com/icyleaf/app-info/compare/v2.6.5...v2.7.0.beta1
 [2.6.5]: https://github.com/icyleaf/app-info/compare/v2.6.4...v2.6.5
 [2.6.4]: https://github.com/icyleaf/app-info/compare/v2.6.3...v2.6.4
