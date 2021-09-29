@@ -99,7 +99,9 @@ module AppInfo
         end
 
         name = namespace.to_s.empty? ? klass_name : "#{namespace}::#{klass_name}"
-        if Object.const_defined?(name)
+        if Object.const_get(namespace).const_defined?(klass_name)
+          Object.const_get(namespace).const_get(klass_name)
+        elsif Object.const_defined?(name)
           Object.const_get(name)
         else
           Object.const_get(namespace).const_set(klass_name, klass)
