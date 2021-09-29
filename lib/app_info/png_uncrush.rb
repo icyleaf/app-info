@@ -9,6 +9,7 @@ require 'stringio'
 module AppInfo
   class PngUncrush
     class Error < StandardError; end
+
     class FormatError < Error; end
 
     class PngReader # :nodoc:
@@ -19,12 +20,13 @@ module AppInfo
 
       def initialize(raw)
         @io = if raw.is_a?(String)
-          StringIO.new(raw)
-        elsif raw.respond_to?(:read) && raw.respond_to?(:eof?)
-          raw
-        else
-          raise ArgumentError, "expected data as String or an object responding to read, got #{raw.class}"
-        end
+                StringIO.new(raw)
+              elsif raw.respond_to?(:read) && raw.respond_to?(:eof?)
+                raw
+              else
+                raise ArgumentError, "expected data as String or an object
+                                      responding to read, got #{raw.class}"
+              end
 
         @data = String.new
       end
@@ -33,8 +35,8 @@ module AppInfo
         @io.size
       end
 
-      def unpack(a)
-        @io.unpack(a)
+      def unpack(format)
+        @io.unpack(format)
       end
 
       def header
@@ -82,7 +84,7 @@ module AppInfo
       write_file(output, content)
     rescue Zlib::DataError
       # perhops thi is a normal png image file
-      return false
+      false
     end
 
     private
@@ -93,9 +95,9 @@ module AppInfo
       [].tap do |sections|
         while pos < @io.size
           type = @io[pos + 4, 4]
-          length = @io[pos, 4].unpack('N')[0]
+          length = @io[pos, 4].unpack1('N')
           data = @io[pos + 8, length]
-          crc = @io[pos + 8 + length, 4].unpack('N')[0]
+          crc = @io[pos + 8 + length, 4].unpack1('N')
           pos += length + 12
 
           if type == 'CgBI'
@@ -104,14 +106,14 @@ module AppInfo
           end
 
           if type == 'IHDR'
-            width = data[0, 4].unpack("N")[0]
-            height = data[4, 4].unpack("N")[0]
+            width = data[0, 4].unpack1('N')
+            height = data[4, 4].unpack1('N')
             return [width, height] if dimensions
           end
 
           break if type == 'IEND'
 
-          if type == 'IDAT' && sections.size > 0 && sections.last.first == 'IDAT'
+          if type == 'IDAT' && sections&.last&.first == 'IDAT'
             # Append to the previous IDAT
             sections.last[1] += length
             sections.last[2] += data
@@ -123,46 +125,43 @@ module AppInfo
     end
 
     def write_file(path, content)
-      File.open(path, 'wb') do |file|
-        file.puts content
-      end
-
+      File.write(path, content, encoding: Encoding::BINARY)
       true
     end
 
     def _remap(sections)
-      newPNG = String.new(@io.header)
+      new_png = String.new(@io.header)
       sections.map do |(type, length, data, crc, width, height)|
         if type == 'IDAT'
-          bufSize = width * height * 4 + height
-          data = inflate(data[0, bufSize])
+          buff_size = (width * height * 4) + height
+          data = inflate(data[0, buff_size])
           # duplicate the content of old data at first to avoid creating too many string objects
           newdata = String.new(data)
           pos = 0
 
-          (0...height).each do |y|
+          (0...height).each do |_|
             newdata[pos] = data[pos, 1]
             pos += 1
-            (0...width).each do |x|
-              newdata[pos+0] = data[pos+2, 1]
-              newdata[pos+1] = data[pos+1, 1]
-              newdata[pos+2] = data[pos+0, 1]
-              newdata[pos+3] = data[pos+3, 1]
+            (0...width).each do |_|
+              newdata[pos + 0] = data[pos + 2, 1]
+              newdata[pos + 1] = data[pos + 1, 1]
+              newdata[pos + 2] = data[pos + 0, 1]
+              newdata[pos + 3] = data[pos + 3, 1]
               pos += 4
             end
           end
 
           data = deflate(newdata)
           length = data.length
-          crc = Zlib::crc32(type)
-          crc = Zlib::crc32(data, crc)
+          crc = Zlib.crc32(type)
+          crc = Zlib.crc32(data, crc)
           crc = (crc + 0x100000000) % 0x100000000
         end
 
-        newPNG += [length].pack("N") + type + (data if length > 0) + [crc].pack("N")
+        new_png += [length].pack('N') + type + (data if length.positive?) + [crc].pack('N')
       end
 
-      newPNG
+      new_png
     end
 
     def inflate(data)

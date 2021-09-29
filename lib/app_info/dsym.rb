@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 require 'macho'
-require 'app_info/util'
 
 module AppInfo
   # DSYM parser
   class DSYM
+    include Helper::Archive
+
     attr_reader :file
 
     def initialize(file)
@@ -13,7 +14,7 @@ module AppInfo
     end
 
     def file_type
-      AppInfo::Platform::DSYM
+      Platform::DSYM
     end
 
     def object
@@ -92,15 +93,17 @@ module AppInfo
           @contents = @file
         else
           dsym_dir = nil
-          @contents = Util.unarchive(@file, path: 'dsym') do |path, zip_file|
+          @contents = unarchive(@file, path: 'dsym') do |path, zip_file|
             zip_file.each do |f|
               unless dsym_dir
                 dsym_dir = f.name
-                dsym_dir = dsym_dir.split('/')[0] # fix filename is xxx.app.dSYM/Contents
+                # fix filename is xxx.app.dSYM/Contents
+                dsym_dir = dsym_dir.split('/')[0] if dsym_dir.include?('/')
               end
 
               f_path = File.join(path, f.name)
-              zip_file.extract(f, f_path) unless File.exist?(f_path)
+              FileUtils.mkdir_p(File.dirname(f_path))
+              f.extract(f_path) unless File.exist?(f_path)
             end
           end
 
@@ -113,6 +116,8 @@ module AppInfo
 
     # DSYM Mach-O
     class MachO
+      include Helper::HumanFileSize
+
       def initialize(file, size = 0)
         @file = file
         @size = size
@@ -130,8 +135,8 @@ module AppInfo
         @file.filetype
       end
 
-      def size(humanable = false)
-        return Util.size_to_humanable(@size) if humanable
+      def size(human_size: false)
+        return number_to_human_size(@size) if human_size
 
         @size
       end
@@ -152,7 +157,7 @@ module AppInfo
           cpu_name: cpu_name,
           cpu_type: cpu_type,
           size: size,
-          humanable_size: size(true)
+          human_size: size(human_size: true)
         }
       end
     end

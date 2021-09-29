@@ -4,11 +4,12 @@ require 'macho'
 require 'fileutils'
 require 'forwardable'
 require 'cfpropertylist'
-require 'app_info/util'
 
 module AppInfo
   # IPA parser
   class IPA
+    include Helper::HumanFileSize
+    include Helper::Archive
     extend Forwardable
 
     attr_reader :file
@@ -28,18 +29,18 @@ module AppInfo
       @file = file
     end
 
-    def size(humanable = false)
-      AppInfo::Util.file_size(@file, humanable)
+    def size(human_size: false)
+      file_to_human_size(@file, human_size: human_size)
     end
 
     def os
-      AppInfo::Platform::IOS
+      Platform::IOS
     end
     alias file_type os
 
     def_delegators :info, :iphone?, :ipad?, :universal?, :build_version, :name,
                    :release_version, :identifier, :bundle_id, :display_name,
-                   :bundle_name, :icons, :min_sdk_version, :device_type
+                   :bundle_name, :min_sdk_version, :min_os_version, :device_type
 
     def_delegators :mobileprovision, :devices, :team_name, :team_identifier,
                    :profile_name, :expired_date
@@ -83,8 +84,14 @@ module AppInfo
     end
     alias architectures archs
 
+    def icons(uncrush: true)
+      @icons ||= icons_path.each_with_object([]) do |file, obj|
+        obj << build_icon_metadata(file, uncrush: uncrush)
+      end
+    end
+
     def stored?
-      metadata? ? true : false
+      !!metadata?
     end
 
     def plugins
@@ -107,7 +114,7 @@ module AppInfo
     end
 
     def mobileprovision?
-      File.exist?mobileprovision_path
+      File.exist?(mobileprovision_path)
     end
 
     def mobileprovision_path
@@ -139,11 +146,39 @@ module AppInfo
     end
 
     def info
-      @info ||= InfoPlist.new(app_path)
+      @info ||= InfoPlist.new(info_path)
+    end
+
+    def info_path
+      @info_path ||= File.join(app_path, 'Info.plist')
     end
 
     def app_path
       @app_path ||= Dir.glob(File.join(contents, 'Payload', '*.app')).first
+    end
+
+    IPHONE_KEY = 'CFBundleIcons'
+    IPAD_KEY = 'CFBundleIcons~ipad'
+
+    def icons_path
+      return @icons_path if @icons_path
+
+      @icons_path = []
+      icon_keys.each do |name|
+        filenames = info.try(:[], name)
+                        .try(:[], 'CFBundlePrimaryIcon')
+                        .try(:[], 'CFBundleIconFiles')
+
+        next if filenames.nil? || filenames.empty?
+
+        filenames.each do |filename|
+          Dir.glob(File.join(app_path, "#{filename}*")).find_all.each do |file|
+            @icons_path << file
+          end
+        end
+      end
+
+      @icons_path
     end
 
     def clear!
@@ -152,31 +187,48 @@ module AppInfo
       FileUtils.rm_rf(@contents)
 
       @contents = nil
-      @icons = nil
       @app_path = nil
-      @metadata = nil
-      @metadata_path = nil
+      @info_path = nil
       @info = nil
+      @metadata_path = nil
+      @metadata = nil
+      @icons_path = nil
+      @icons = nil
     end
 
     def contents
-      @contents ||= Util.unarchive(@file, path: 'ios')
+      @contents ||= unarchive(@file, path: 'ios')
     end
 
     private
 
-    def icons_root_path
-      iphone = 'CFBundleIcons'
-      ipad = 'CFBundleIcons~ipad'
+    def build_icon_metadata(file, uncrush: true)
+      uncrushed_file = uncrush ? uncrush_png(file) : nil
 
-      case device_type
-      when 'iPhone'
-        [iphone]
-      when 'iPad'
-        [ipad]
-      when 'Universal'
-        [iphone, ipad]
-      end
+      {
+        name: File.basename(file),
+        file: file,
+        uncrushed_file: uncrushed_file,
+        dimensions: PngUncrush.dimensions(file)
+      }
+    end
+
+    # Uncrush png to normal png file (iOS)
+    def uncrush_png(src_file)
+      dest_file = tempdir(src_file, prefix: 'uncrushed')
+      PngUncrush.decompress(src_file, dest_file)
+      File.exist?(dest_file) ? dest_file : nil
+    end
+
+    def icon_keys
+      @icon_keys ||= case device_type
+                     when 'iPhone'
+                       [IPHONE_KEY]
+                     when 'iPad'
+                       [IPAD_KEY]
+                     when 'Universal'
+                       [IPHONE_KEY, IPAD_KEY]
+                     end
     end
   end
 end

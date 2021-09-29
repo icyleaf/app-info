@@ -6,7 +6,7 @@ describe AppInfo::APK do
     after { subject.clear! }
 
     it { expect(subject.size).to eq(3070618) }
-    it { expect(subject.size(humanable: true)).to eq('2.93 MB') }
+    it { expect(subject.size(human_size: true)).to eq('2.93 MB') }
     it { expect(subject.os).to eq 'Android' }
     it { expect(subject.wear?).to be false }
     it { expect(subject.tv?).to be false }

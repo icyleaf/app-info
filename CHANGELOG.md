@@ -9,6 +9,61 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.7.0.beta1] (2021-09-27)
+
+### Added
+
+- Android App Bundle a.k.a `aab` file parts support [#36](https://github.com/icyleaf/app_info/pull/36)
+
+## [2.6.5] (2021-09-17)
+
+### Added
+
+- Add ability to retrieve manifest metadata (depend on playtestcloud/ruby_apk forked one)
+
+## [2.6.4] (2021-09-10)
+
+### Fixed
+
+- Error on extract dSYM zipped file occasionally
+
+## [2.6.3] (2021-08-27)
+
+### Fixed
+
+- Force write all icon data with `ASCII-8BIT`
+- Force convert developer cert name to `UTF-8`
+## [2.6.1] (2021-08-26)
+
+### Fixed
+
+- Force write macOS icon data with `ASCII-8BIT`
+
+## [2.6.0] (2021-08-24)
+
+### Changed
+
+- [breaking changes] Dropped Ruby 2.3, 2.4
+- [breaking changes] get all parser size with human reable changes to keyword arguments
+- Rewrite InfoPlist parser
+- iOS framework and plugin array sortted by ASC
+- Move CI to Github Action
+
+### Added
+
+- macOS App parser support [#34](https://github.com/icyleaf/app_info/pull/34)
+- CLI shell mode support
+
+### Fixed
+
+- Ruby 3.0 support
+
+## [2.5.4] (2021-07-08)
+
+### Fixed
+
+- Make `ruby-macho` version match a range between 1.4 and 3.
+
 ## [2.5.3] (2021-06-16)
 
 ### Fixed
@@ -136,7 +191,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.5.2..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta1..HEAD
+[2.7.0.beta1]: https://github.com/icyleaf/app-info/compare/v2.6.5...v2.7.0.beta1
+[2.6.5]: https://github.com/icyleaf/app-info/compare/v2.6.4...v2.6.5
+[2.6.4]: https://github.com/icyleaf/app-info/compare/v2.6.3...v2.6.4
+[2.6.3]: https://github.com/icyleaf/app-info/compare/v2.6.1...v2.6.3
+[2.6.1]: https://github.com/icyleaf/app-info/compare/v2.6.0...v2.6.1
+[2.6.0]: https://github.com/icyleaf/app-info/compare/v2.5.4...v2.6.0
+[2.5.4]: https://github.com/icyleaf/app-info/compare/v2.5.3...v2.5.4
+[2.5.3]: https://github.com/icyleaf/app-info/compare/v2.5.2...v2.5.3
 [2.5.2]: https://github.com/icyleaf/app-info/compare/v2.5.1...v2.5.2
 [2.5.1]: https://github.com/icyleaf/app-info/compare/v2.4.3...v2.5.1
 [2.4.3]: https://github.com/icyleaf/app-info/compare/v2.4.2...v2.4.3

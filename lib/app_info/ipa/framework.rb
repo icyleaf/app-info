@@ -3,7 +3,7 @@
 require 'forwardable'
 
 module AppInfo
-  # iOS Plugin parser
+  # iOS Framework parser
   class Framework
     extend Forwardable
 
@@ -11,7 +11,7 @@ module AppInfo
       files = Dir.glob(File.join(path, name.to_s, '*'))
       return [] if files.empty?
 
-      files.each_with_object([]) do |file, obj|
+      files.sort.each_with_object([]) do |file, obj|
         obj << new(file)
       end
     end
@@ -41,7 +41,7 @@ module AppInfo
     end
 
     def info
-      @info ||= InfoPlist.new(file)
+      @info ||= InfoPlist.new(File.join(file, 'Info.plist'))
     end
 
     def to_s

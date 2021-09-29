@@ -25,8 +25,7 @@ describe AppInfo::MobileProvision do
     end
 
     context 'Adhoc' do
-      let(:file) { File.dirname(__FILE__) + '/../../fixtures/mobileprovisions/ios_adhoc.mobileprovision' }
-      subject { AppInfo::MobileProvision.new(file) }
+      subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/ios_adhoc.mobileprovision')) }
 
       it { expect(subject.devices).to be_a Array }
       it { expect(subject.platform).to eq :ios }
@@ -50,8 +49,7 @@ describe AppInfo::MobileProvision do
     end
 
     context 'AppStore' do
-      let(:file) { File.dirname(__FILE__) + '/../../fixtures/mobileprovisions/ios_appstore.mobileprovision' }
-      subject { AppInfo::MobileProvision.new(file) }
+      subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/ios_appstore.mobileprovision')) }
 
       it { expect(subject.devices).to be_nil }
       it { expect(subject.platform).to eq :ios }
@@ -77,8 +75,7 @@ describe AppInfo::MobileProvision do
 
   describe 'macOS' do
     context 'Development' do
-      let(:file) { File.dirname(__FILE__) + '/../../fixtures/mobileprovisions/macos_development.provisionprofile' }
-      subject { AppInfo::MobileProvision.new(file) }
+      subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/macos_development.provisionprofile')) }
 
       it { expect(subject.devices).to be_a Array }
       it { expect(subject.platform).to eq :macos }
@@ -102,8 +99,7 @@ describe AppInfo::MobileProvision do
     end
 
     context 'AppStore' do
-      let(:file) { File.dirname(__FILE__) + '/../../fixtures/mobileprovisions/macos_appstore.provisionprofile' }
-      subject { AppInfo::MobileProvision.new(file) }
+      subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/macos_appstore.provisionprofile')) }
 
       it { expect(subject.devices).to be_nil }
       it { expect(subject.platform).to eq :macos }

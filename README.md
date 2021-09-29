@@ -1,19 +1,22 @@
 # app_info
 
-[![Language](https://img.shields.io/badge/ruby-2.3+-701516.svg)](.travis.yml)
-[![Build Status](https://travis-ci.org/icyleaf/app_info.svg?branch=master)](https://travis-ci.org/icyleaf/app_info)
+[![Language](https://img.shields.io/badge/ruby-2.5+-701516.svg)](.github/workflows/ci.yml)
+[![Build Status](https://img.shields.io/github/workflow/status/icyleaf/app_info/CI)](https://github.com/icyleaf/app_info/actions/workflows/ci.yml)
 [![Gem version](https://img.shields.io/gem/v/app-info.svg?style=flat)](https://rubygems.org/gems/app_info)
 [![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](LICENSE)
 
-Teardown tool for mobile app(ipa/apk) and dSYM.zip file, analysis metedata like version, name, icon etc.
+Teardown tool for mobile app (ipa, apk and aab file), macOS app and dSYM.zip file, analysis metedata like version, name, icon etc.
 
 ## Support
 
-- Android apk file
+- Android file
+  - `.apk`
+  - `.aab` (Androld App Bundle)
 - iOS ipa file
-  - Info.plist file
-  - .mobileprovision/.provisionprofile file
-- dSYM(.zip) file
+  - `Info.plist` file
+  - `.mobileprovision`/`.provisionprofile` file
+- Zipped macOS App file
+- Zipped dSYMs file
 
 ## Installation
 
@@ -47,13 +50,16 @@ parser = AppInfo.parse('iphone.ipa')
 parser = AppInfo.parse('ipad.ipa')
 parser = AppInfo.parse('android.apk')
 parser = AppInfo.parse('u-u-i-d.mobileprovision')
+parser = AppInfo.parse('macOS.App.zip')
 parser = AppInfo.parse('App.dSYm.zip')
 
 # If detect file type failed, you can parse in other way
 parser = AppInfo::IPA.new('iphone.ipa')
 parser = AppInfo::APK.new('android.apk')
-parser = AppInfo::InfoPlist.new('App/Info.plist')
-parser = AppInfo::MobileProvision.new('provisioning_profile/uuid.mobileprovision')
+parser = AppInfo::AAB.new('android.aab')
+parser = AppInfo::InfoPlist.new('Info.plist')
+parser = AppInfo::MobileProvision.new('uuid.mobileprovision')
+parser = AppInfo::Macos.new('App.dSYm.zip')
 parser = AppInfo::DSYM.new('App.dSYm.zip')
 ```
 
@@ -69,7 +75,7 @@ ipa.size
 # => 3093823
 
 # get app file size in human reable.
-ipa.size(true)
+ipa.size(human_size: true)
 # => 29 MB
 
 # get app release version
@@ -80,9 +86,9 @@ ipa.release_version
 ipa.bundle_id
 # => com.icyleaf.AppInfoDemo
 
-# get app icons
+# get app icons (uncrushed png by default)
 ipa.icons
-# => [{:name=>"AppIcon29x29@2x~ipad.png", :file=>"/var/folders/mb/8cm0fz4d499968yss9y1j8bc0000gp/T/d20160728-69669-1xnub30/AppInfo-ios-a5369339399e62046d7d59c52254dac6/Payload/bundle.app/AppIcon29x29@2x~ipad.png"}, :dimensions=>[29, 29], :uncrushed_file=>"..." ...]
+# => [{:name=>"AppIcon29x29@2x~ipad.png", :file=>"temp/dir/app/AppIcon29x29@2x~ipad.png"}, :dimensions=>[29, 29], :uncrushed_file=>"..." ...]
 
 # get provisioning profile devices
 ipa.devices
@@ -145,46 +151,6 @@ profile.enabled_capabilities
 # => ['Apple Pay', 'iCloud', 'Sign In with Apple', ...]
 ```
 
-### dSYM
-
-```ruby
-dsym = AppInfo.parse('ios.dSYM.zip')
-
-# get object name
-dsym.object
-# => iOS
-
-# get macho size
-dsym.machos.size
-# => 1 or 2
-
-dsym.machos.each do |macho|
-  # get cpu type
-  macho.cpu_type
-  # => :arm
-
-  # get cpu name
-  macho.cpu_name
-  # => armv7
-
-  # get UUID (debug id)
-  macho.uuid
-  # => 26dfc15d-bdce-351f-b5de-6ee9f5dd6d85
-
-  # get macho size
-  macho.size
-  # => 866526
-
-  # get macho size in human reable.
-  macho.size(true)
-  # => 862 KB
-
-  # dump data to Hash
-  macho.to_h
-  # => {uuid:"26dfc15d-bdce-351f-b5de-6ee9f5dd6d85", cpu_type: :arm, cpu_name: :armv7, ...}
-end
-```
-
 ### Android
 
 ```ruby
@@ -195,7 +161,7 @@ apk.size
 # => 3093823
 
 # get app file size in human reable.
-apk.size(true)
+apk.size(human_size: true)
 # => 29 MB
 
 # get app release version
@@ -208,7 +174,7 @@ apk.bundle_id
 
 # get app icons
 apk.icons
-# => [{:name=>"ic_launcher.png", :file=> "/var/folders/mb/8cm0fz4d499968yss9y1j8bc0000gp/T/d20160728-70163-10d47fl/AppInfo-android-cccbf89a889eb592c5c6f342d56b9a49/res/mipmap-mdpi-v4/ic_launcher.png/ic_launcher.png", :dimensions=>[48, 48]}, ...]
+# => [{:name=>"ic_launcher.png", :file=> "/temp/dir/app/ic_launcher.png", :dimensions=>[48, 48]}, ...]
 
 # get app support min sdk version
 apk.min_sdk_version
@@ -237,6 +203,103 @@ apk.signs
 # detect app type (It's difficult to detect phone or tablet)
 apk.tv?
 apk.wear?
+```
+
+### macOS
+
+Only accept zipped macOS file.
+
+```ruby
+macos = AppInfo.parse('macos_app.zip')
+
+# get app file size
+macos.size
+# => 3093823
+
+# get app file size in human reable.
+macos.size(human_size: true)
+# => 29 MB
+
+# get app release version
+macos.release_version
+# => 1.0
+
+# get app bundle id
+macos.bundle_id
+# => com.icyleaf.AppInfoDemo
+
+# Get minimize os version
+macos.min_os_version
+# => 11.3
+
+# get app icons(convertd icns to png icon sets by default)
+macos.icons
+# => [{:name=>"AppIcon.icns", :file=>"/temp/dir/app/AppIcon.icns"}, :sets=>[{:name=>"64x64_AppIcon.png", :file=>"/temp/dir/app/64x64_AppIcon.png", :dimensions=>[64, 64]}, ...]
+
+# detect publish on mac app store
+macos.stored?
+# => true/false
+
+# detect architecture(s)
+macos.archs
+# => [:x86_64, :arm64]
+
+# get more propety in Info.plist
+macos.info[:CFBundleDisplayName]
+# => 'AppInfoDemo'
+```
+
+### dSYM
+
+```ruby
+dsym = AppInfo.parse('ios.dSYM.zip')
+
+# get object name
+dsym.object
+# => iOS
+
+# get total count of macho
+dsym.machos.count
+# => 1 or 2
+
+dsym.machos.each do |macho|
+  # get cpu type
+  macho.cpu_type
+  # => :arm
+
+  # get cpu name
+  macho.cpu_name
+  # => armv7
+
+  # get UUID (debug id)
+  macho.uuid
+  # => 26dfc15d-bdce-351f-b5de-6ee9f5dd6d85
+
+  # get macho size
+  macho.size
+  # => 866526
+
+  # get macho size in human reable.
+  macho.size(human_size: true)
+  # => 862 KB
+
+  # dump data to Hash
+  macho.to_h
+  # => {uuid:"26dfc15d-bdce-351f-b5de-6ee9f5dd6d85", cpu_type: :arm, cpu_name: :armv7, ...}
+end
+```
+
+## CLI Shell (Interactive console)
+
+It is possible to use this gem as a command line interface to parse mobile app:
+
+```
+> app-info
+
+app-info (0.6.0)> p = AppInfo.parse('/path/to/app')
+=> #<AppInfo::APK::......>
+app-info (0.6.0)> p.name
+=> "AppName"
 ```
 
 ## Best Practice

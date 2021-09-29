@@ -3,11 +3,11 @@
 require 'ruby_apk'
 require 'image_size'
 require 'forwardable'
-require 'app_info/util'
 
 module AppInfo
   # Parse APK file
   class APK
+    include Helper::HumanFileSize
     extend Forwardable
 
     attr_reader :file
@@ -24,12 +24,12 @@ module AppInfo
       @file = file
     end
 
-    def size(humanable = false)
-      AppInfo::Util.file_size(@file, humanable)
+    def size(human_size: false)
+      file_to_human_size(@file, human_size: human_size)
     end
 
     def os
-      AppInfo::Platform::ANDROID
+      Platform::ANDROID
     end
     alias file_type os
 
@@ -77,6 +77,7 @@ module AppInfo
     def min_sdk_version
       manifest.min_sdk_ver
     end
+    alias min_os_version min_sdk_version
 
     def target_sdk_version
       manifest.doc
@@ -110,29 +111,23 @@ module AppInfo
     end
 
     def apk
-      Zip.warn_invalid_date = false # fix invaild date format warnings
-
       @apk ||= ::Android::Apk.new(@file)
     end
 
     def icons
-      unless @icons
-        @icons = apk.icon.each_with_object([]) do |(path, data), obj|
-          icon_name = File.basename(path)
-          icon_path = File.join(contents, File.dirname(path))
-          icon_file = File.join(icon_path, icon_name)
-          FileUtils.mkdir_p icon_path
-          File.open(icon_file, 'wb') { |f| f.write(data) }
+      @icons ||= apk.icon.each_with_object([]) do |(path, data), obj|
+        icon_name = File.basename(path)
+        icon_path = File.join(contents, File.dirname(path))
+        icon_file = File.join(icon_path, icon_name)
+        FileUtils.mkdir_p icon_path
+        File.write(icon_file, data, encoding: Encoding::BINARY)
 
-          obj << {
-            name: icon_name,
-            file: icon_file,
-            dimensions: ImageSize.path(icon_file).size
-          }
-        end
+        obj << {
+          name: icon_name,
+          file: icon_file,
+          dimensions: ImageSize.path(icon_file).size
+        }
       end
-
-      @icons
     end
 
     def clear!
@@ -164,6 +159,7 @@ module AppInfo
     # Android Certificate
     class Certificate
       attr_reader :path, :certificate
+
       def initialize(path, certificate)
         @path = path
         @certificate = certificate
@@ -173,6 +169,7 @@ module AppInfo
     # Android Sign
     class Sign
       attr_reader :path, :sign
+
       def initialize(path, sign)
         @path = path
         @sign = sign

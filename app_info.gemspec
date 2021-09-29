@@ -15,18 +15,22 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'http://github.com/icyleaf/app-info'
   spec.license       = 'MIT'
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+  spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.3'
+  spec.required_ruby_version = '>= 2.5'
 
   spec.add_dependency 'CFPropertyList', '< 3.1.0', '>= 2.3.4'
   spec.add_dependency 'image_size', '>= 1.5', '< 2.2'
   spec.add_dependency 'ruby-macho', '< 3', '>= 1.4'
-  spec.add_dependency 'ruby_android', '~> 0.7.7'
+  spec.add_dependency 'android_parser', '~> 2.4.1'
   spec.add_dependency 'rubyzip', '>= 1.2', '< 3.0'
   spec.add_dependency 'uuidtools', '>= 2.1.5', '< 2.3.0'
+  spec.add_dependency 'icns', '~> 0.2.0'
+  spec.add_dependency 'google-protobuf', '~> 3.18.0'
 
   spec.add_development_dependency 'bundler', '>= 1.12'
   spec.add_development_dependency 'rake', '>= 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rubocop', '~> 1.19'
 end

@@ -2,11 +2,12 @@
 
 require 'uuidtools'
 require 'rexml/document'
-require 'app_info/util'
 
 module AppInfo
   # Proguard parser
   class Proguard
+    include Helper::Archive
+
     NAMESPACE = UUIDTools::UUID.sha1_create(UUIDTools::UUID_DNS_NAMESPACE, 'icyleaf.com')
 
     attr_reader :file
@@ -16,7 +17,7 @@ module AppInfo
     end
 
     def file_type
-      AppInfo::Platform::PROGUARD
+      Platform::PROGUARD
     end
 
     def uuid
@@ -84,7 +85,7 @@ module AppInfo
     alias resource_path symbol_path
 
     def contents
-      @contents ||= Util.unarchive(@file, path: 'proguard')
+      @contents ||= unarchive(@file, path: 'proguard')
     end
 
     def clear!

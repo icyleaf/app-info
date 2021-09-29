@@ -2,7 +2,6 @@
 
 require 'openssl'
 require 'cfpropertylist'
-require 'app_info/util'
 
 module AppInfo
   # .mobileprovision file parser
@@ -29,10 +28,10 @@ module AppInfo
     def platforms
       return unless platforms = mobileprovision.try(:[], 'Platform')
 
-      platforms.map { |v|
+      platforms.map do |v|
         v = 'macOS' if v == 'OSX'
         v.downcase.to_sym
-      }
+      end
     end
 
     def platform
@@ -122,11 +121,9 @@ module AppInfo
     # Related link: https://developer.apple.com/support/app-capabilities/
     def enabled_capabilities
       capabilities = []
-      if adhoc? || appstore?
-        capabilities << 'In-App Purchase' << 'GameKit'
-      end
+      capabilities << 'In-App Purchase' << 'GameKit' if adhoc? || appstore?
 
-      entitlements.each do |key, value|
+      entitlements.each do |key, _|
         case key
         when 'aps-environment'
           capabilities << 'Push Notifications'
@@ -144,9 +141,11 @@ module AppInfo
           capabilities << 'Network Extensions'
         when 'com.apple.developer.networking.vpn.api'
           capabilities << 'Personal VPN'
-        when 'com.apple.developer.healthkit', 'com.apple.developer.healthkit.access'
+        when 'com.apple.developer.healthkit',
+             'com.apple.developer.healthkit.access'
           capabilities << 'HealthKit' unless capabilities.include?('HealthKit')
-        when 'com.apple.developer.icloud-services', 'com.apple.developer.icloud-container-identifiers'
+        when 'com.apple.developer.icloud-services',
+             'com.apple.developer.icloud-container-identifiers'
           capabilities << 'iCloud' unless capabilities.include?('iCloud')
         when 'com.apple.developer.in-app-payments'
           capabilities << 'Apple Pay'
@@ -213,13 +212,13 @@ module AppInfo
     end
 
     def method_missing(method_name, *args, &block)
-      mobileprovision.try(:[], Util.format_key(method_name)) ||
+      mobileprovision.try(:[], method_name.to_s.camelcase) ||
         mobileprovision.send(method_name) ||
         super
     end
 
     def respond_to_missing?(method_name, *args)
-      mobileprovision.key?(Util.format_key(method_name)) ||
+      mobileprovision.key?(method_name.to_s.camelcase) ||
         mobileprovision.respond_to?(method_name) ||
         super
     end
@@ -246,7 +245,7 @@ module AppInfo
       end
 
       def name
-        @raw.subject.to_a.find { |name, _, _| name == 'CN' }[1]
+        @raw.subject.to_a.find { |name, _, _| name == 'CN' }[1].force_encoding('UTF-8')
       end
 
       def created_date
