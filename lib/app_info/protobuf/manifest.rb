@@ -139,6 +139,9 @@ module AppInfo
       def icons
         @resources.find(application.icon)
       end
+
+      # Workaround ruby always return true by called `Object.const_defined?(Data)`
+      class Data < Node; end
     end
   end
 end
