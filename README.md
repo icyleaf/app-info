@@ -5,7 +5,7 @@
 [![Gem version](https://img.shields.io/gem/v/app-info.svg?style=flat)](https://rubygems.org/gems/app_info)
 [![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](LICENSE)
 
-Teardown tool for mobile(ipa/apk) app, macOS app and dSYM.zip file, analysis metedata like version, name, icon etc.
+Teardown tool for mobile app (ipa, apk and aab file), macOS app and dSYM.zip file, analysis metedata like version, name, icon etc.
 
 ## Support
 
