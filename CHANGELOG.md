@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
-## [2.7.0.beta3] (2021-10-14)
+## [2.7.0.beta4] (2021-10-14)
 
 ### Fixed
 
 - Renamed methods of inflector (Conflicts with similar external methods, such like ActiveSupport Core Extensions)
+- Keep same behavior methods between apk and aab
 
 ## [2.7.0.beta2] (2021-09-29)
 
@@ -203,7 +204,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta2..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta4..HEAD
+[2.7.0.beta4]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta2...v2.7.0.beta4
 [2.7.0.beta2]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta1...v2.7.0.beta2
 [2.7.0.beta1]: https://github.com/icyleaf/app-info/compare/v2.6.5...v2.7.0.beta1
 [2.6.5]: https://github.com/icyleaf/app-info/compare/v2.6.4...v2.6.5
