@@ -72,7 +72,7 @@ module AppInfo
         @attributes = element.attribute.each_with_object({}).each do |item, obj|
           node = Attribute.new(item)
 
-          method_name = node.name.snakecase
+          method_name = node.name.ai_snakecase
           obj[method_name] = node
           define_instance_method(method_name, node.value)
         end
@@ -87,11 +87,11 @@ module AppInfo
         @children = element.child.each_with_object({}) do |item, obj|
           next unless item_element = item.element
 
-          class_name = item_element.name.camelcase
+          class_name = item_element.name.ai_camelcase
           klass = create_class(class_name, Protobuf::Node, namespace: 'AppInfo::Protobuf::Manifest')
           node = klass.new(item)
 
-          method_name = item_element.name.snakecase
+          method_name = item_element.name.ai_snakecase
           if UNIQUE_KEY.include?(method_name)
             obj[method_name] = node
           else
