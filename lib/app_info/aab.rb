@@ -93,11 +93,11 @@ module AppInfo
     end
 
     def use_features
-      @use_features ||= manifest&.uses_feature
+      @use_features ||= manifest&.uses_feature&.map(&:name)
     end
 
     def use_permissions
-      @use_permissions ||= manifest&.uses_permission
+      @use_permissions ||= manifest&.uses_permission&.map(&:name)
     end
 
     def activities
