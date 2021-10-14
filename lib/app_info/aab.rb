@@ -93,25 +93,23 @@ module AppInfo
     end
 
     def use_features
-      @use_features ||= manifest&.uses_feature&.map(&:name)
+      @use_features ||= manifest&.uses_feature
     end
 
     def use_permissions
-      @use_permissions ||= manifest&.uses_permission&.map(&:name)
+      @use_permissions ||= manifest&.uses_permission
     end
 
     def activities
-      @activities ||= manifest.activities.map(&:name)
+      @activities ||= manifest.activities
     end
 
     def services
-      @services ||= manifest.services.map(&:name)
+      @services ||= manifest.services
     end
 
     def components
-      @components ||= manifest.components.transform_values do |child|
-        child.map(&:name)
-      end
+      @components ||= manifest.components.transform_values
     end
 
     def signs
