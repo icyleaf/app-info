@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.7.0.beta3] (2021-10-14)
+
+### Fixed
+
+- Renamed methods of inflector (Conflicts with similar external methods, such like ActiveSupport Core Extensions)
+
 ## [2.7.0.beta2] (2021-09-29)
 
 ### Fixed
