@@ -2,7 +2,7 @@
 
 module AppInfo
   module Inflector
-    def snakecase
+    def ai_snakecase
       gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
         .gsub(/([a-z\d])([A-Z])/, '\1_\2')
         .tr('-', '_')
@@ -11,7 +11,7 @@ module AppInfo
         .downcase
     end
 
-    def camelcase(first_letter: :upper, separators: ['-', '_', '\s'])
+    def ai_camelcase(first_letter: :upper, separators: ['-', '_', '\s'])
       str = dup
 
       separators.each do |s|

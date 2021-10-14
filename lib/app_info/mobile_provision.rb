@@ -212,13 +212,13 @@ module AppInfo
     end
 
     def method_missing(method_name, *args, &block)
-      mobileprovision.try(:[], method_name.to_s.camelcase) ||
+      mobileprovision.try(:[], method_name.to_s.ai_camelcase) ||
         mobileprovision.send(method_name) ||
         super
     end
 
     def respond_to_missing?(method_name, *args)
-      mobileprovision.key?(method_name.to_s.camelcase) ||
+      mobileprovision.key?(method_name.to_s.ai_camelcase) ||
         mobileprovision.respond_to?(method_name) ||
         super
     end
