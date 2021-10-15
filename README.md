@@ -49,6 +49,7 @@ require 'app-info'
 parser = AppInfo.parse('iphone.ipa')
 parser = AppInfo.parse('ipad.ipa')
 parser = AppInfo.parse('android.apk')
+parser = AppInfo.parse('android.aab')
 parser = AppInfo.parse('u-u-i-d.mobileprovision')
 parser = AppInfo.parse('macOS.App.zip')
 parser = AppInfo.parse('App.dSYm.zip')
@@ -296,9 +297,9 @@ It is possible to use this gem as a command line interface to parse mobile app:
 ```
 > app-info
 
-app-info (0.6.0)> p = AppInfo.parse('/path/to/app')
+app-info (2.7.0)> p = AppInfo.parse('/path/to/app')
 => #<AppInfo::APK::......>
-app-info (0.6.0)> p.name
+app-info (2.7.0)> p.name
 => "AppName"
 ```
 
