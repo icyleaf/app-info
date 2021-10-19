@@ -29,8 +29,8 @@ describe AppInfo::APK do
     it { expect(subject.activities.size).to eq(1) }
     it { expect(subject.services.size).to eq(1) }
     it { expect(subject.components.size).to eq(3) }
-    it { expect(subject.use_permissions.map(&:name)).to eq(%w[android.permission.ACCESS_FINE_LOCATION android.permission.ACCESS_NETWORK_STATE]) }
-    it { expect(subject.use_features.map(&:name)).to eq(%w[android.hardware.bluetooth android.hardware.camera]) }
+    it { expect(subject.use_permissions).to eq(%w[android.permission.ACCESS_FINE_LOCATION android.permission.ACCESS_NETWORK_STATE]) }
+    it { expect(subject.use_features).to eq(%w[android.hardware.bluetooth android.hardware.camera]) }
     it { expect(subject.manifest).to be_kind_of AppInfo::Protobuf::Manifest }
   end
 end
