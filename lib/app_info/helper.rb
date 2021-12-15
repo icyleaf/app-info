@@ -3,6 +3,7 @@
 module AppInfo
   # App Platform
   module Platform
+    WINDOWS = 'Windows'
     MACOS = 'macOS'
     IOS = 'iOS'
     ANDROID = 'Android'
@@ -10,7 +11,7 @@ module AppInfo
     PROGUARD = 'Proguard'
   end
 
-  # Device Type
+  # Apple Device Type
   module Device
     MACOS = 'macOS'
     IPHONE = 'iPhone'
