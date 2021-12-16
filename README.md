@@ -154,56 +154,67 @@ profile.enabled_capabilities
 
 ### Android
 
+Accept `.aab` and `.apk` Android file.
+
 ```ruby
-apk = AppInfo.parse('android.apk')
+android = AppInfo.parse('android.apk_or_aab')
 
 # get app file size
-apk.size
+android.size
 # => 3093823
 
 # get app file size in human reable.
-apk.size(human_size: true)
+android.size(human_size: true)
 # => 29 MB
 
 # get app release version
-apk.release_version
+android.release_version
 # => 1.0
 
 # get app package name
-apk.bundle_id
+android.bundle_id
 # => com.icyleaf.AppInfoDemo
 
+# detect app type (It's difficult to detect phone or tablet)
+android.tv?
+android.wear?
+android.automotive?
+
 # get app icons
-apk.icons
+android.icons
 # => [{:name=>"ic_launcher.png", :file=> "/temp/dir/app/ic_launcher.png", :dimensions=>[48, 48]}, ...]
 
 # get app support min sdk version
-apk.min_sdk_version
+android.min_sdk_version
 # => 13
 
 # get use_permissions list
-apk.use_permissions
+android.use_permissions
 # => [...]
 
 # get activitiy list
-apk.activities
+android.activities
 # => [...]
 
 # get service list
-apk.services
+android.services
 # => [...]
 
-# get certificate list
-apk.certificates
+# get deep links host
+android.deep_links
+# => ['a.com']
+
+# get schemes without http or https
+android.schemes
+# => ['appinfo']
+
+# get sign list (only v1 sign)
+android.signs
 # => [...]
 
-# get sign list
-apk.signs
+# get certificate list (only v1 sign)
+android.certificates
 # => [...]
-
-# detect app type (It's difficult to detect phone or tablet)
-apk.tv?
-apk.wear?
 ```
 
 ### macOS
