@@ -14,10 +14,11 @@ module AppInfo
 
     # APK Devices
     module Device
-      PHONE   = 'Phone'
-      TABLET  = 'Tablet'
-      WATCH   = 'Watch'
-      TV      = 'Television'
+      PHONE       = 'Phone'
+      TABLET      = 'Tablet'
+      WATCH       = 'Watch'
+      TV          = 'Television'
+      AUTOMOTIVE  = 'Automotive'
     end
 
     def initialize(file)
@@ -35,8 +36,9 @@ module AppInfo
 
     def_delegators :apk, :manifest, :resource, :dex
 
-    def_delegators :manifest, :version_name, :package_name,
-                   :use_permissions, :components
+    def_delegators :manifest, :version_name, :package_name, :target_sdk_version,
+                   :components, :services, :use_permissions, :use_features,
+                   :deep_links, :schemes
 
     alias release_version version_name
     alias identifier package_name
@@ -56,14 +58,15 @@ module AppInfo
         Device::WATCH
       elsif tv?
         Device::TV
+      elsif automotive?
+        Device::AUTOMOTIVE
       else
         Device::PHONE
       end
     end
 
-    # TODO: find a way to detect
+    # TODO: find a way to detect, no way!
     # def tablet?
-    #   resource
     # end
 
     def wear?
@@ -74,20 +77,28 @@ module AppInfo
       use_features.include?('android.software.leanback')
     end
 
+    def automotive?
+      use_features.include?('android.hardware.type.automotive')
+    end
+
     def min_sdk_version
       manifest.min_sdk_ver
     end
     alias min_os_version min_sdk_version
 
-    def target_sdk_version
-      manifest.doc
-              .elements['/manifest/uses-sdk']
-              .attributes['targetSdkVersion']
-              .to_i
-    end
-
-    def use_features
-      manifest_values('/manifest/uses-feature')
+    def sign_version
+      case
+      when !signs.empty?
+        'v1'
+      # when ?
+      # https://source.android.com/security/apksigning/v2?hl=zh-cn
+      #   'v2'
+      # when ?
+      # https://source.android.com/security/apksigning/v3?hl=zh-cn
+      #   'v3'
+      else
+        'unknown'
+      end
     end
 
     def signs
@@ -104,10 +115,6 @@ module AppInfo
 
     def activities
       components.select { |c| c.type == 'activity' }
-    end
-
-    def services
-      components.select { |c| c.type == 'service' }
     end
 
     def apk
@@ -144,16 +151,6 @@ module AppInfo
 
     def contents
       @contents ||= File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
-    end
-
-    private
-
-    def manifest_values(path, key = 'name')
-      values = []
-      manifest.doc.each_element(path) do |elem|
-        values << elem.attributes[key]
-      end
-      values.uniq
     end
 
     # Android Certificate
