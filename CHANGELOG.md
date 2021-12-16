@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
-## [2.8.0] (2021-10-15)
+## [2.8.0] (2021-12-16)
 
 ### Added
 
-- New methods added to `apk`
+- New methods added to `apk` and `aab` [3adfa223](https://github.com/icyleaf/app_info/tree/3adfa223479caa672fce5d3a119b6db098463699) [939a6506](https://github.com/icyleaf/app_info/tree/939a6506f3ac1cb7ad1ed46128df41de6ee3b0d0)
 
 ## [2.7.0] (2021-10-15)
 
