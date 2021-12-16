@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.8.0] (2021-10-15)
+
+### Added
+
+- New methods added to `apk`
+
 ## [2.7.0] (2021-10-15)
 
 ### Added

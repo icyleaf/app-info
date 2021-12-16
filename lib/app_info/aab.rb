@@ -14,10 +14,11 @@ module AppInfo
 
     # APK Devices
     module Device
-      PHONE   = 'Phone'
-      TABLET  = 'Tablet'
-      WATCH   = 'Watch'
-      TV      = 'Television'
+      PHONE       = 'Phone'
+      TABLET      = 'Tablet'
+      WATCH       = 'Watch'
+      TV          = 'Television'
+      AUTOMOTIVE  = 'Automotive'
     end
 
     BASE_PATH = 'base'
@@ -37,7 +38,7 @@ module AppInfo
     end
     alias file_type os
 
-    def_delegators :manifest, :version_name
+    def_delegators :manifest, :version_name, :deep_links, :schemes
 
     alias release_version version_name
 
@@ -61,6 +62,8 @@ module AppInfo
         Device::WATCH
       elsif tv?
         Device::TV
+      elsif automotive?
+        Device::AUTOMOTIVE
       else
         Device::PHONE
       end
@@ -81,6 +84,10 @@ module AppInfo
 
     def tv?
       use_features.include?('android.software.leanback')
+    end
+
+    def automotive?
+      use_features.include?('android.hardware.type.automotive')
     end
 
     def min_sdk_version
@@ -110,6 +117,18 @@ module AppInfo
 
     def components
       @components ||= manifest.components.transform_values
+    end
+
+    def sign_version
+      return 'v1' unless signs.empty?
+
+      # when ?
+      # https://source.android.com/security/apksigning/v2?hl=zh-cn
+      #   'v2'
+      # when ?
+      # https://source.android.com/security/apksigning/v3?hl=zh-cn
+      #   'v3'
+      'unknown'
     end
 
     def signs

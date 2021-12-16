@@ -129,19 +129,96 @@ module AppInfo
       end
 
       def activities
-        application.activity
+        application.respond_to?(:activity) ? application.activity : []
       end
 
       def services
-        application.service
+        application.respond_to?(:service) ? application.service : []
       end
 
       def icons
         @resources.find(application.icon)
       end
 
+      def deep_links
+        activities.each_with_object([]) do |activity, obj|
+          intent_filters = activity.intent_filter
+          next if intent_filters.empty?
+
+          intent_filters.each do |filter|
+            next unless filter.deep_links?
+
+            obj << filter.deep_links
+          end
+        end.flatten.uniq
+      end
+
+      def schemes
+        activities.each_with_object([]) do |activity, obj|
+          intent_filters = activity.intent_filter
+          next if intent_filters.empty?
+
+          intent_filters.each do |filter|
+            next unless filter.schemes?
+
+            obj << filter.schemes
+          end
+        end.flatten.uniq
+      end
+
+      # :nodoc:
       # Workaround ruby always return true by called `Object.const_defined?(Data)`
       class Data < Node; end
+
+      class IntentFilter < Node
+        # filter types (action is required, category and data are optional)
+        TYPES = %w[action category data].freeze
+
+        DEEP_LINK_SCHEMES = %w[http https].freeze
+
+        # browsable of category
+        CATEGORY_BROWSABLE = 'android.intent.category.BROWSABLE'
+
+        def deep_links?
+          browsable? && data.any? { |d| DEEP_LINK_SCHEMES.include?(d.scheme) }
+        end
+
+        def deep_links
+          return unless deep_links?
+
+          data.reject { |d| d.host.nil? }
+              .map(&:host)
+              .uniq
+        end
+
+        def schemes
+          return unless schemes?
+
+          data.select { |d| !d.scheme.nil? && !DEEP_LINK_SCHEMES.include?(d.scheme) }
+              .map(&:scheme)
+              .uniq
+        end
+
+        def schemes?
+          browsable? && data.any? { |d| !DEEP_LINK_SCHEMES.include?(d.scheme) }
+        end
+
+        def browsable?
+          exist?(CATEGORY_BROWSABLE)
+        end
+
+        def exist?(name, type: nil)
+          if type.to_s.empty? && !name.start_with?('android.intent.')
+            raise 'Fill type or use correct name'
+          end
+
+          type ||= name.split('.')[2]
+          raise 'Not found type' unless TYPES.include?(type)
+
+          values = send(type.to_sym).select { |e| e.name == name }
+          values.empty? ? false : values
+        end
+      end
     end
   end
 end
