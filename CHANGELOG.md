@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.8.1] (2021-12-20)
+
+### Fixed
+
+- Fix no found intent filter in manifest error.
+
 ## [2.8.0] (2021-12-16)
 
 ### Added
@@ -216,7 +222,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.6.5..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.8.1..HEAD
+[2.8.1]: https://github.com/icyleaf/app-info/compare/v2.8.0...v2.8.1
+[2.8.0]: https://github.com/icyleaf/app-info/compare/v2.7.0...v2.8.0
 [2.7.0]: https://github.com/icyleaf/app-info/compare/v2.6.5...v2.7.0
 [2.7.0.beta5]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta2...v2.7.0.beta5
 [2.7.0.beta2]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta1...v2.7.0.beta2
