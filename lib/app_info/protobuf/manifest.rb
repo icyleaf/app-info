@@ -141,27 +141,29 @@ module AppInfo
       end
 
       def deep_links
-        activities.each_with_object([]) do |activity, obj|
-          intent_filters = activity.intent_filter
-          next if intent_filters.empty?
-
-          intent_filters.each do |filter|
-            next unless filter.deep_links?
-
-            obj << filter.deep_links
-          end
-        end.flatten.uniq
+        intent_filters(search: :deep_links)
       end
 
       def schemes
+        intent_filters(search: :schemes)
+      end
+
+      private
+
+      def intent_filters(search: nil)
         activities.each_with_object([]) do |activity, obj|
           intent_filters = activity.intent_filter
-          next if intent_filters.empty?
+          next if intent_filters&.empty?
 
-          intent_filters.each do |filter|
-            next unless filter.schemes?
+          if search.nil? || search.empty?
+            obj << intent_filters
+          else
+            intent_filters.each do |filter|
+              exist_method = "#{search}?".to_sym
+              next if filter.respond_to?(exist_method) && !filter.send(exist_method)
 
-            obj << filter.schemes
+              obj << filter.send(search)
+            end
           end
         end.flatten.uniq
       end
