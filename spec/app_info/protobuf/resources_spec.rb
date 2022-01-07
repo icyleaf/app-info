@@ -1,8 +1,8 @@
 describe AppInfo::Protobuf::Resources do
-  PACKAGE_NAME = 'com.icyleaf.appinfo.aabdemo'
+  PACKAGE_NAME = 'com.icyleaf.appinfodemo'
   TYPES = %w[
-    anim animator array attr bool color dimen drawable id integer interpolator
-    layout mipmap plurals string style styleable xml
+    anim animator attr bool color dimen drawable id integer interpolator
+    layout mipmap navigation plurals string style styleable xml
   ].freeze
 
 
@@ -24,8 +24,8 @@ describe AppInfo::Protobuf::Resources do
   end
 
   context '.find' do
-    it { expect(subject.find('string/app_name').value).to eq('AABDemo') }
-    it { expect(subject.find('string/app_name', locale: 'zh-CN').value).to eq('AAB演示') }
+    it { expect(subject.find('string/app_name').value).to eq('AppInfoDemo') }
+    it { expect(subject.find('string/app_name', locale: 'zh-CN').value).to eq('AppInfo演示') }
     it { expect(subject.find('android:color/white').value).to eq('#FFFFFFFF') }
     it { expect(subject.find('android:color/white', locale: 'foobar').value).to eq('#FFFFFFFF') } # default_value
 

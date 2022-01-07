@@ -9,6 +9,31 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.8.1] (2021-12-20)
+
+### Fixed
+
+- Fix no found intent filter in manifest error.
+
+## [2.8.0] (2021-12-16)
+
+### Added
+
+- New methods added to `apk` and `aab` [3adfa223](https://github.com/icyleaf/app_info/tree/3adfa223479caa672fce5d3a119b6db098463699) [939a6506](https://github.com/icyleaf/app_info/tree/939a6506f3ac1cb7ad1ed46128df41de6ee3b0d0)
+
+## [2.7.0] (2021-10-15)
+
+### Added
+
+- Android App Bundle (a.k.a) aab support!!! parts support [#36](https://github.com/icyleaf/app_info/pull/36)
+
+## [2.7.0.beta5] (2021-10-14)
+
+### Fixed
+
+- Renamed methods of inflector (Conflicts with similar external methods, such like ActiveSupport Core Extensions)
+- Keep same behavior methods between apk and aab
+
 ## [2.7.0.beta2] (2021-09-29)
 
 ### Fixed
@@ -197,7 +222,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta2..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.8.1..HEAD
+[2.8.1]: https://github.com/icyleaf/app-info/compare/v2.8.0...v2.8.1
+[2.8.0]: https://github.com/icyleaf/app-info/compare/v2.7.0...v2.8.0
+[2.7.0]: https://github.com/icyleaf/app-info/compare/v2.6.5...v2.7.0
+[2.7.0.beta5]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta2...v2.7.0.beta5
 [2.7.0.beta2]: https://github.com/icyleaf/app-info/compare/v2.7.0.beta1...v2.7.0.beta2
 [2.7.0.beta1]: https://github.com/icyleaf/app-info/compare/v2.6.5...v2.7.0.beta1
 [2.6.5]: https://github.com/icyleaf/app-info/compare/v2.6.4...v2.6.5

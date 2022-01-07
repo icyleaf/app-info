@@ -24,11 +24,11 @@ describe AppInfo::Protobuf::Manifest do
         value = subject.send(attr_name.to_sym)
         case attr_name
         when 'package'
-          expect(value).to eq('com.icyleaf.appinfo.aabdemo')
+          expect(value).to eq('com.icyleaf.appinfodemo')
         when 'version_code'
-          expect(value).to eq(1)
+          expect(value).to eq(10)
         when 'version_name'
-          expect(value).to eq('1.0')
+          expect(value).to eq('2.1.0')
         when 'compile_sdk_version'
           expect(value).to eq(31)
         when 'platform_build_version_code'
@@ -46,6 +46,6 @@ describe AppInfo::Protobuf::Manifest do
     end
   end
 
-  it { expect(subject.label).to eq('AABDemo') }
-  it { expect(subject.label(locale: 'zh-CN')).to eq('AAB演示') }
+  it { expect(subject.label).to eq('AppInfoDemo') }
+  it { expect(subject.label(locale: 'zh-CN')).to eq('AppInfo演示') }
 end
