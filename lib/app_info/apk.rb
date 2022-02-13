@@ -3,40 +3,42 @@
 require 'ruby_apk'
 require 'image_size'
 require 'forwardable'
-require 'app_info/util'
 
 module AppInfo
   # Parse APK file
   class APK
+    include Helper::HumanFileSize
     extend Forwardable
 
     attr_reader :file
 
     # APK Devices
     module Device
-      PHONE   = 'Phone'
-      TABLET  = 'Tablet'
-      WATCH   = 'Watch'
-      TV      = 'Television'
+      PHONE       = 'Phone'
+      TABLET      = 'Tablet'
+      WATCH       = 'Watch'
+      TV          = 'Television'
+      AUTOMOTIVE  = 'Automotive'
     end
 
     def initialize(file)
       @file = file
     end
 
-    def size(humanable = false)
-      AppInfo::Util.file_size(@file, humanable)
+    def size(human_size: false)
+      file_to_human_size(@file, human_size: human_size)
     end
 
     def os
-      AppInfo::Platform::ANDROID
+      Platform::ANDROID
     end
     alias file_type os
 
     def_delegators :apk, :manifest, :resource, :dex
 
-    def_delegators :manifest, :version_name, :package_name,
-                   :use_permissions, :components
+    def_delegators :manifest, :version_name, :package_name, :target_sdk_version,
+                   :components, :services, :use_permissions, :use_features,
+                   :deep_links, :schemes
 
     alias release_version version_name
     alias identifier package_name
@@ -56,14 +58,15 @@ module AppInfo
         Device::WATCH
       elsif tv?
         Device::TV
+      elsif automotive?
+        Device::AUTOMOTIVE
       else
         Device::PHONE
       end
     end
 
-    # TODO: find a way to detect
+    # TODO: find a way to detect, no way!
     # def tablet?
-    #   resource
     # end
 
     def wear?
@@ -74,19 +77,25 @@ module AppInfo
       use_features.include?('android.software.leanback')
     end
 
+    def automotive?
+      use_features.include?('android.hardware.type.automotive')
+    end
+
     def min_sdk_version
       manifest.min_sdk_ver
     end
+    alias min_os_version min_sdk_version
 
-    def target_sdk_version
-      manifest.doc
-              .elements['/manifest/uses-sdk']
-              .attributes['targetSdkVersion']
-              .to_i
-    end
+    def sign_version
+      return 'v1' unless signs.empty?
 
-    def use_features
-      manifest_values('/manifest/uses-feature')
+      # when ?
+      # https://source.android.com/security/apksigning/v2?hl=zh-cn
+      #   'v2'
+      # when ?
+      # https://source.android.com/security/apksigning/v3?hl=zh-cn
+      #   'v3'
+      'unknown'
     end
 
     def signs
@@ -105,34 +114,24 @@ module AppInfo
       components.select { |c| c.type == 'activity' }
     end
 
-    def services
-      components.select { |c| c.type == 'service' }
-    end
-
     def apk
-      Zip.warn_invalid_date = false # fix invaild date format warnings
-
       @apk ||= ::Android::Apk.new(@file)
     end
 
     def icons
-      unless @icons
-        @icons = apk.icon.each_with_object([]) do |(path, data), obj|
-          icon_name = File.basename(path)
-          icon_path = File.join(contents, File.dirname(path))
-          icon_file = File.join(icon_path, icon_name)
-          FileUtils.mkdir_p icon_path
-          File.open(icon_file, 'wb') { |f| f.write(data) }
+      @icons ||= apk.icon.each_with_object([]) do |(path, data), obj|
+        icon_name = File.basename(path)
+        icon_path = File.join(contents, File.dirname(path))
+        icon_file = File.join(icon_path, icon_name)
+        FileUtils.mkdir_p icon_path
+        File.write(icon_file, data, encoding: Encoding::BINARY)
 
-          obj << {
-            name: icon_name,
-            file: icon_file,
-            dimensions: ImageSize.path(icon_file).size
-          }
-        end
+        obj << {
+          name: icon_name,
+          file: icon_file,
+          dimensions: ImageSize.path(icon_file).size
+        }
       end
-
-      @icons
     end
 
     def clear!
@@ -151,19 +150,10 @@ module AppInfo
       @contents ||= File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
     end
 
-    private
-
-    def manifest_values(path, key = 'name')
-      values = []
-      manifest.doc.each_element(path) do |elem|
-        values << elem.attributes[key]
-      end
-      values.uniq
-    end
-
     # Android Certificate
     class Certificate
       attr_reader :path, :certificate
+
       def initialize(path, certificate)
         @path = path
         @certificate = certificate
@@ -173,6 +163,7 @@ module AppInfo
     # Android Sign
     class Sign
       attr_reader :path, :sign
+
       def initialize(path, sign)
         @path = path
         @sign = sign

@@ -23,6 +23,8 @@ describe AppInfo::IPA do
       it { expect(subject.info['CFBundleVersion']).to eq('5') }
       it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.2.3') }
       it { expect(subject.archs).to eq(%i[armv7 arm64]) }
+      it { expect(subject.icons).to be_kind_of Array }
+      it { expect(subject.icons).to be_empty }
 
       it { expect(subject.release_type).to eq('AdHoc') }
       it { expect(subject.build_type).to eq('AdHoc') }
@@ -67,6 +69,8 @@ describe AppInfo::IPA do
     it { expect(subject.bundle_id).to eq('com.icyleaf.bundle') }
     it { expect(subject.device_type).to eq('iPad') }
     it { expect(subject.archs).to eq(%i[armv7 arm64]) }
+    it { expect(subject.icons).to be_kind_of Array }
+    it { expect(subject.icons).not_to be_empty }
 
     it { expect(subject.release_type).to eq('Enterprise') }
     it { expect(subject.build_type).to eq('Enterprise') }
