@@ -79,15 +79,15 @@ module AppInfo
     # end
 
     def wear?
-      use_features.include?('android.hardware.type.watch')
+      use_features&.include?('android.hardware.type.watch')
     end
 
     def tv?
-      use_features.include?('android.software.leanback')
+      use_features&.include?('android.software.leanback')
     end
 
     def automotive?
-      use_features.include?('android.hardware.type.automotive')
+      use_features&.include?('android.hardware.type.automotive')
     end
 
     def min_sdk_version
@@ -100,10 +100,14 @@ module AppInfo
     end
 
     def use_features
+      return [] unless manifest.respond_to?(:uses_feature)
+
       @use_features ||= manifest&.uses_feature&.map(&:name)
     end
 
     def use_permissions
+      return [] unless manifest.respond_to?(:uses_permission)
+
       @use_permissions ||= manifest&.uses_permission&.map(&:name)
     end
 

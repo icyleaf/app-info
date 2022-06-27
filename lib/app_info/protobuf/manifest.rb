@@ -153,7 +153,7 @@ module AppInfo
       def intent_filters(search: nil)
         activities.each_with_object([]) do |activity, obj|
           intent_filters = activity.intent_filter
-          next if intent_filters&.empty?
+          next if intent_filters.nil? || intent_filters&.empty?
 
           if search.nil? || search.empty?
             obj << intent_filters
