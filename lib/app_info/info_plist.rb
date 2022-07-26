@@ -112,13 +112,13 @@ module AppInfo
     def_delegators :info, :to_h
 
     def method_missing(method_name, *args, &block)
-      info.try(:[], method_name.to_s.camelcase) ||
+      info.try(:[], method_name.to_s.ai_camelcase) ||
         info.send(method_name) ||
         super
     end
 
     def respond_to_missing?(method_name, *args)
-      info.key?(method_name.to_s.camelcase) ||
+      info.key?(method_name.to_s.ai_camelcase) ||
         info.respond_to?(method_name) ||
         super
     end

@@ -4,8 +4,10 @@ require 'securerandom'
 
 MATCH_FILE_TYPES = {
   'android.apk' => :apk,
+  'android-24.apk' => :apk,
   'tv.apk' => :apk,
   'wear.apk' => :apk,
+  'automotive.apk' => :apk,
   'android.aab' => :aab,
   'ipad.ipa' => :ipa,
   'iphone.ipa' => :ipa,

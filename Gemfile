@@ -7,6 +7,5 @@ gemspec
 
 group :development do
   gem 'awesome_print'
-  gem 'debase'
-  gem 'ruby-debug-ide'
+  gem 'debug' # For ruby 3.0+
 end
