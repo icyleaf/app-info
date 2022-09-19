@@ -85,9 +85,7 @@ module AppInfo
       def tempdir(file, prefix:)
         dest_path ||= File.join(File.dirname(file), prefix)
         dest_file = File.join(dest_path, File.basename(file))
-
-        Dir.mkdir(dest_path, 0_700) unless Dir.exist?(dest_path)
-
+        Dir.mkdir(dest_path, 0_700)
         dest_file
       end
     end
