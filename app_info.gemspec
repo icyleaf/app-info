@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.5'
 
   spec.add_dependency 'CFPropertyList', '< 3.1.0', '>= 2.3.4'
-  spec.add_dependency 'image_size', '>= 1.5', '< 3.1'
+  spec.add_dependency 'image_size', '>= 1.5', '< 3.2'
   spec.add_dependency 'ruby-macho', '>= 1.4', '< 4'
   spec.add_dependency 'android_parser', '~> 2.5.0'
   spec.add_dependency 'rubyzip', '>= 1.2', '< 3.0'
