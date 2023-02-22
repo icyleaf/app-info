@@ -94,6 +94,19 @@ module AppInfo
       @icons = nil
     end
 
+    def icon_file
+      @icon_file ||= ->() {
+        icon = pe.resources&.find{ |r| r.type == 'ICON' && r.name == '#1' }
+        next unless icon
+
+        puts icon.lang
+        filepath = tempdir("#{icon.type}-#{icon.id}.png", prefix: 'pe')
+        dest_file = File.new(filepath, 'w')
+        IO.copy_stream(pe.io, dest_file, icon.size, icon.file_offset)
+        filepath
+      }.call
+    end
+
     def pe
       @pe ||= PEdump.new(File.open(@file, 'rb'))
     end
@@ -102,21 +115,6 @@ module AppInfo
 
     def file_info
       @file_info ||= FileInfo.new(pe.version_info)
-    end
-
-    def icon_file
-      return @icon_file if @icon_file
-
-      # info.icons.each do |key|
-      #   next unless value = info[key]
-
-      #   file = File.join(app_path, 'Contents', 'Resources', "#{value}.icns")
-      #   next unless File.file?(file)
-
-      #   return @icon_file = file
-      # end
-
-      # @icon_file = nil
     end
 
     class FileInfo
