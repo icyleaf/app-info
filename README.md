@@ -12,12 +12,14 @@ Teardown tool for mobile app (ipa, apk and aab file), macOS app and dSYM.zip fil
 - Android file
   - `.apk`
   - `.aab` (Androld App Bundle)
-- iOS ipa file
+- iOS file
+  - `.ipa`
   - `Info.plist` file
   - `.mobileprovision`/`.provisionprofile` file
 - Zipped macOS App file
+  - `.app.zip`
 - Zipped dSYMs file
-
+  - `.dSYM.zip`
 ## Installation
 
 Add this line to your application's Gemfile:
