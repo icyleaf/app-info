@@ -44,7 +44,7 @@ module AppInfo
       end
 
       def png?
-        PNG_HEADER == header.bytes
+        header.bytes == PNG_HEADER
       end
 
       def [](offset, length)

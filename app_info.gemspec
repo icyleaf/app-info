@@ -21,14 +21,14 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.5'
 
   spec.add_dependency 'CFPropertyList', '< 3.1.0', '>= 2.3.4'
-  spec.add_dependency 'image_size', '>= 1.5', '< 3.1'
+  spec.add_dependency 'image_size', '>= 1.5', '< 3.3'
   spec.add_dependency 'ruby-macho', '>= 1.4', '< 4'
   spec.add_dependency 'android_parser', '~> 2.5.0'
   spec.add_dependency 'rubyzip', '>= 1.2', '< 3.0'
   spec.add_dependency 'uuidtools', '>= 2.1.5', '< 2.3.0'
   spec.add_dependency 'icns', '~> 0.2.0'
-  spec.add_dependency 'google-protobuf', '>= 3.19.4', '< 3.22.0'
   spec.add_dependency 'pedump', '~> 0.6.2'
+  spec.add_dependency 'google-protobuf', '>= 3.19.4', '< 3.23.0'
 
   spec.add_development_dependency 'bundler', '>= 1.12'
   spec.add_development_dependency 'rake', '>= 10.0'
