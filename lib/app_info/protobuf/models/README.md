@@ -3,7 +3,7 @@
 ## Convert to ruby model
 
 ```bash
-cd app_info/lib/app_info/abb/proto
+cd lib/app_info/protobuf/models
 
 protoc --ruby_out=. Resources.proto
 protoc --ruby_out=. Configuration.proto
