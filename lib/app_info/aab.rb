@@ -79,15 +79,15 @@ module AppInfo
     # end
 
     def wear?
-      use_features&.include?('android.hardware.type.watch')
+      !!use_features&.include?('android.hardware.type.watch')
     end
 
     def tv?
-      use_features&.include?('android.software.leanback')
+      !!use_features&.include?('android.software.leanback')
     end
 
     def automotive?
-      use_features&.include?('android.hardware.type.automotive')
+      !!use_features&.include?('android.hardware.type.automotive')
     end
 
     def min_sdk_version
