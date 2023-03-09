@@ -47,6 +47,7 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       optional :level, :enum, 1, "aapt.pb.Visibility.Level"
       optional :source, :message, 2, "aapt.pb.Source"
       optional :comment, :string, 3
+      optional :staged_api, :bool, 4
     end
     add_enum "aapt.pb.Visibility.Level" do
       value :UNKNOWN, 0
@@ -80,6 +81,10 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       value :ACTOR, 8
       value :CONFIG_SIGNATURE, 9
     end
+    add_message "aapt.pb.StagedId" do
+      optional :source, :message, 1, "aapt.pb.Source"
+      optional :staged_id, :uint32, 2
+    end
     add_message "aapt.pb.EntryId" do
       optional :id, :uint32, 1
     end
@@ -90,6 +95,7 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       optional :allow_new, :message, 4, "aapt.pb.AllowNew"
       optional :overlayable_item, :message, 5, "aapt.pb.OverlayableItem"
       repeated :config_value, :message, 6, "aapt.pb.ConfigValue"
+      optional :staged_id, :message, 7, "aapt.pb.StagedId"
     end
     add_message "aapt.pb.ConfigValue" do
       optional :config, :message, 1, "aapt.pb.Configuration"
@@ -122,6 +128,7 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
         optional :styleable, :message, 3, "aapt.pb.Styleable"
         optional :array, :message, 4, "aapt.pb.Array"
         optional :plural, :message, 5, "aapt.pb.Plural"
+        optional :macro, :message, 6, "aapt.pb.MacroBody"
       end
     end
     add_message "aapt.pb.Boolean" do
@@ -133,6 +140,8 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       optional :name, :string, 3
       optional :private, :bool, 4
       optional :is_dynamic, :message, 5, "aapt.pb.Boolean"
+      optional :type_flags, :uint32, 6
+      optional :allow_raw, :bool, 7
     end
     add_enum "aapt.pb.Reference.Type" do
       value :REFERENCE, 0
@@ -285,6 +294,31 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       optional :resource_id, :uint32, 5
       optional :compiled_item, :message, 6, "aapt.pb.Item"
     end
+    add_message "aapt.pb.MacroBody" do
+      optional :raw_string, :string, 1
+      optional :style_string, :message, 2, "aapt.pb.StyleString"
+      repeated :untranslatable_sections, :message, 3, "aapt.pb.UntranslatableSection"
+      repeated :namespace_stack, :message, 4, "aapt.pb.NamespaceAlias"
+      optional :source, :message, 5, "aapt.pb.SourcePosition"
+    end
+    add_message "aapt.pb.NamespaceAlias" do
+      optional :prefix, :string, 1
+      optional :package_name, :string, 2
+      optional :is_private, :bool, 3
+    end
+    add_message "aapt.pb.StyleString" do
+      optional :str, :string, 1
+      repeated :spans, :message, 2, "aapt.pb.StyleString.Span"
+    end
+    add_message "aapt.pb.StyleString.Span" do
+      optional :name, :string, 1
+      optional :start_index, :uint32, 2
+      optional :end_index, :uint32, 3
+    end
+    add_message "aapt.pb.UntranslatableSection" do
+      optional :start_index, :uint64, 1
+      optional :end_index, :uint64, 2
+    end
   end
 end
 
@@ -305,6 +339,7 @@ module Aapt
     Overlayable = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.Overlayable").msgclass
     OverlayableItem = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.OverlayableItem").msgclass
     OverlayableItem::Policy = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.OverlayableItem.Policy").enummodule
+    StagedId = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.StagedId").msgclass
     EntryId = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.EntryId").msgclass
     Entry = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.Entry").msgclass
     ConfigValue = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.ConfigValue").msgclass
@@ -340,5 +375,10 @@ module Aapt
     XmlElement = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.XmlElement").msgclass
     XmlNamespace = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.XmlNamespace").msgclass
     XmlAttribute = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.XmlAttribute").msgclass
+    MacroBody = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.MacroBody").msgclass
+    NamespaceAlias = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.NamespaceAlias").msgclass
+    StyleString = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.StyleString").msgclass
+    StyleString::Span = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.StyleString.Span").msgclass
+    UntranslatableSection = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.UntranslatableSection").msgclass
   end
 end

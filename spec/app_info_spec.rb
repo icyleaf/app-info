@@ -9,6 +9,7 @@ MATCH_FILE_TYPES = {
   'wear.apk' => :apk,
   'automotive.apk' => :apk,
   'android.aab' => :aab,
+  'android-31.aab' => :aab,
   'ipad.ipa' => :ipa,
   'iphone.ipa' => :ipa,
   'embedded.ipa' => :ipa,
