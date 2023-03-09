@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [2.8.4] (2023-03-09)
+
+### Fixed
+
+- Sync the latest appt2 proto files to parse Android SDK 31+ for aab parser. [#51](https://github.com/icyleaf/app_info/issues/51) (thanks @[UpBra](https://github.com/UpBra))
+- Force android device return as boolean for aab parser.
+- Handle string resources referencing other resources for apk parser.
+
 ## [2.8.3] (2022-06-27)
 
 ### Fixed
@@ -234,7 +242,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.8.3..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.8.4..HEAD
+[2.8.4]: https://github.com/icyleaf/app-info/compare/v2.8.3...v2.8.4
 [2.8.3]: https://github.com/icyleaf/app-info/compare/v2.8.2...v2.8.3
 [2.8.2]: https://github.com/icyleaf/app-info/compare/v2.8.1...v2.8.2
 [2.8.1]: https://github.com/icyleaf/app-info/compare/v2.8.0...v2.8.1
