@@ -20,6 +20,16 @@ Teardown tool for mobile app (ipa, apk and aab file), macOS app and dSYM.zip fil
   - `.app.zip`
 - Zipped dSYMs file
   - `.dSYM.zip`
+
+<hr />
+
+![Zealot Showcase](https://github.com/tryzealot/docs/blob/main/static/img/showcase-light.png#gh-light-mode-only)
+![Zealot Showcase](https://github.com/tryzealot/docs/blob/main/static/img/showcase-dark.png#gh-dark-mode-only)
+
+[Zealot](https://zealot.ews.im/docs/user-guide/) is a self-hosted Beta App Distribution for Android, iOS and macOS apps. app_info it the core inside.
+
+<hr />
+
 ## Installation
 
 Add this line to your application's Gemfile:
