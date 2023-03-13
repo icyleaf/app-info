@@ -3,6 +3,7 @@
 require 'pedump'
 require 'fileutils'
 require 'forwardable'
+require 'imageruby'
 
 module AppInfo
   # Windows PE parser
@@ -48,70 +49,92 @@ module AppInfo
     #                :release_version, :identifier, :bundle_id, :display_name,
     #                :bundle_name, :min_system_version, :min_os_version, :device_type
 
-    def release_type
-      # if stored?
-      #   ExportType::APPSTORE
-      # elsif mobileprovision?
-      #   ExportType::RELEASE
-      # else
-      #   ExportType::DEBUG
-      # end
-    end
+    # def archs
+    #   # return unless File.exist?(binary_path)
 
-    def icons(convert: true)
-      # return unless icon_file
-
-      # data = {
-      #   name: File.basename(icon_file),
-      #   file: icon_file
-      # }
-
-      # convert_icns_to_png(data) if convert
-      # data
-    end
-
-    def archs
-      # return unless File.exist?(binary_path)
-
-      # file = MachO.open(binary_path)
-      # case file
-      # when MachO::MachOFile
-      #   [file.cpusubtype]
-      # else
-      #   file.machos.each_with_object([]) do |arch, obj|
-      #     obj << arch.cpusubtype
-      #   end
-      # end
-    end
-    alias architectures archs
+    #   # file = MachO.open(binary_path)
+    #   # case file
+    #   # when MachO::MachOFile
+    #   #   [file.cpusubtype]
+    #   # else
+    #   #   file.machos.each_with_object([]) do |arch, obj|
+    #   #     obj << arch.cpusubtype
+    #   #   end
+    #   # end
+    # end
+    # alias architectures archs
 
     def clear!
       return unless @contents
 
       FileUtils.rm_rf(@contents)
 
+      @io = nil
       @pe = nil
       @icons = nil
     end
 
-    def icon_file
-      @icon_file ||= ->() {
-        icon = pe.resources&.find{ |r| r.type == 'ICON' && r.name == '#1' }
-        next unless icon
+    def icons
+      @icon_file ||= -> {
+        # Fetch the largest size icon
+        files = []
+        pe.resources&.find_all do |res|
+          next unless res.type == 'ICON'
+          icon_file = tempdir("#{File.basename(file, '.*')}-#{res.type}-#{res.id}.bmp", prefix: 'pe')
+          mask_icon_file = icon_file.sub('.bmp', '.mask.bmp')
 
-        puts icon.lang
-        filepath = tempdir("#{icon.type}-#{icon.id}.png", prefix: 'pe')
-        dest_file = File.new(filepath, 'w')
-        IO.copy_stream(pe.io, dest_file, icon.size, icon.file_offset)
-        filepath
+          begin
+            File.open(icon_file, 'wb') do |f|
+              f << res.restore_bitmap(io)
+            end
+
+            if mask = res.bitmap_mask(io)
+              mask_icon_file = icon_file.sub('.bmp', '.mask.bmp')
+              File.open(mask_icon_file, "wb") do |f|
+                f << res.bitmap_mask(io)
+              end
+            end
+          rescue => e
+            # ignore pedump throws any exception.
+            if e.backtrace.first.include?('pedump')
+              FileUtils.rm_f(icon_file)
+            else
+              raise e
+            end
+
+          ensure
+            next unless File.exist?(icon_file)
+
+            files << icon_metadata(icon_file, mask_file: File.exist?(mask_icon_file) ? mask_icon_file : nil)
+          end
+        end
+
+        files
       }.call
     end
 
     def pe
-      @pe ||= PEdump.new(File.open(@file, 'rb'))
+      @pe ||= -> {
+        pe = PEdump.new(io)
+        pe.logger.level = :error # ignore :warn logger output
+        pe
+      }.call
     end
 
     private
+
+    def icon_metadata(file, mask_file: nil)
+      {
+        name: File.basename(file),
+        file: file,
+        mask: mask_file,
+        dimensions: ImageSize.path(file).size
+      }
+    end
+
+    def io
+      @io ||= File.open(@file, 'rb')
+    end
 
     def file_info
       @file_info ||= FileInfo.new(pe.version_info)
