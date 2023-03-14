@@ -182,6 +182,8 @@ module AppInfo
         CATEGORY_BROWSABLE = 'android.intent.category.BROWSABLE'
 
         def deep_links?
+          return unless respond_to?(:data)
+
           browsable? && data.any? { |d| DEEP_LINK_SCHEMES.include?(d.scheme) }
         end
 
@@ -193,16 +195,18 @@ module AppInfo
               .uniq
         end
 
+        def schemes?
+          return unless respond_to?(:data)
+
+          browsable? && data.any? { |d| !DEEP_LINK_SCHEMES.include?(d.scheme) }
+        end
+
         def schemes
           return unless schemes?
 
           data.select { |d| !d.scheme.nil? && !DEEP_LINK_SCHEMES.include?(d.scheme) }
               .map(&:scheme)
               .uniq
-        end
-
-        def schemes?
-          browsable? && data.any? { |d| !DEEP_LINK_SCHEMES.include?(d.scheme) }
         end
 
         def browsable?
