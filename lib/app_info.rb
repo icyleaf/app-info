@@ -32,6 +32,8 @@ module AppInfo
   BPLIST_REGEX = /^\x62\x70\x6C\x69\x73\x74/.freeze
 
   class << self
+    UNKNOWN_FORMAT = :unkown
+
     # Get a new parser for automatic
     def parse(file)
       raise NotFoundError, file unless File.exist?(file)
@@ -50,6 +52,10 @@ module AppInfo
       end
     end
     alias dump parse
+
+    def parse?(file)
+      file_type(file) != UNKNOWN_FORMAT
+    end
 
     # Detect file type by read file header
     #
