@@ -87,7 +87,8 @@ module AppInfo
       return Format::MACOS if macos_clues?(zip_file)
       return Format::PE if pe_clues?(zip_file)
       return Format::UNKNOWN unless clue = other_clues?(zip_file)
-      return clue
+
+      clue
     ensure
       zip_file.close
     end
@@ -100,19 +101,19 @@ module AppInfo
     # :nodoc:
     def apk_clues?(zip_file)
       !zip_file.find_entry('AndroidManifest.xml').nil? &&
-      !zip_file.find_entry('classes.dex').nil?
+        !zip_file.find_entry('classes.dex').nil?
     end
 
     # :nodoc:
     def aab_clues?(zip_file)
       !zip_file.find_entry('base/manifest/AndroidManifest.xml').nil? &&
-      !zip_file.find_entry('BundleConfig.pb').nil?
+        !zip_file.find_entry('BundleConfig.pb').nil?
     end
 
     # :nodoc:
     def macos_clues?(zip_file)
       !zip_file.glob('*/Contents/MacOS/*').empty? &&
-      !zip_file.glob('*/Contents/Info.plist').empty?
+        !zip_file.glob('*/Contents/Info.plist').empty?
     end
 
     # :nodoc:

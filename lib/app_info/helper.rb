@@ -106,8 +106,13 @@ module AppInfo
         root_path
       end
 
-      def tempdir(file, system: false, prefix:)
-        dest_path = system ? Dir.mktmpdir("appinfo-#{prefix}-#{File.basename(file, '.*')}-", '/tmp') : File.join(File.dirname(file), prefix)
+      def tempdir(file, prefix:, system: false)
+        dest_path = if system
+                      Dir.mktmpdir("appinfo-#{prefix}-#{File.basename(file, '.*')}-", '/tmp')
+                    else
+                      File.join(File.dirname(file), prefix)
+                    end
+
         dest_file = File.join(dest_path, File.basename(file))
         FileUtils.mkdir_p(dest_path, mode: 0_700) unless system
         dest_file

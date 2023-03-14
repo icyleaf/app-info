@@ -19,13 +19,12 @@ module AppInfo
       0x014c => 'x86',
       0x0200 => 'Intel Itanium',
       0x8664 => 'x64',
-      0x1c0  => 'arm',
+      0x1c0 => 'arm',
       0xaa64 => 'arm64',
-      0x14c  => 'i386',
       0x5032 => 'RISC-v 32',
       0x5064 => 'RISC-v 64',
       0x5128 => 'RISC-v 128'
-    }
+    }.freeze
 
     def initialize(file)
       @file = file
@@ -44,8 +43,7 @@ module AppInfo
     end
     alias file_type os
 
-    def_delegators :version_info, :product_name, :product_version, :company_name,
-      :assembly_version
+    def_delegators :version_info, :product_name, :product_version, :company_name, :assembly_version
 
     alias name product_name
     alias release_version product_version
@@ -63,12 +61,14 @@ module AppInfo
     end
 
     def icons
-      @icons ||= -> {
+      @icons ||= lambda {
         # Fetch the largest size icon
         files = []
         pe.resources&.find_all do |res|
           next unless res.type == 'ICON'
-          icon_file = tempdir("#{File.basename(file, '.*')}-#{res.type}-#{res.id}.bmp", system: true, prefix: 'pe')
+
+          filename = "#{File.basename(file, '.*')}-#{res.type}-#{res.id}.bmp"
+          icon_file = tempdir(filename, system: true, prefix: 'pe')
           mask_icon_file = icon_file.sub('.bmp', '.mask.bmp')
 
           begin
@@ -76,24 +76,22 @@ module AppInfo
               f << res.restore_bitmap(io)
             end
 
-            if mask = res.bitmap_mask(io)
+            if res.bitmap_mask(io)
               mask_icon_file = icon_file.sub('.bmp', '.mask.bmp')
-              File.open(mask_icon_file, "wb") do |f|
+              File.open(mask_icon_file, 'wb') do |f|
                 f << res.bitmap_mask(io)
               end
             end
-          rescue => e
+          rescue StandardError => e
             # ignore pedump throws any exception.
-            if e.backtrace.first.include?('pedump')
-              FileUtils.rm_f(icon_file)
-            else
-              raise e
-            end
+            raise e unless e.backtrace.first.include?('pedump')
 
+            FileUtils.rm_f(icon_file)
           ensure
             next unless File.exist?(icon_file)
 
-            files << icon_metadata(icon_file, mask_file: File.exist?(mask_icon_file) ? mask_icon_file : nil)
+            mask_file = File.exist?(mask_icon_file) ? mask_icon_file : nil
+            files << icon_metadata(icon_file, mask_file: mask_file)
           end
         end
 
@@ -102,7 +100,7 @@ module AppInfo
     end
 
     def pe
-      @pe ||= -> {
+      @pe ||= lambda {
         pe = PEdump.new(io)
         pe.logger.level = Logger::FATAL # ignore :warn logger output
         pe
@@ -121,9 +119,9 @@ module AppInfo
     end
 
     def binrary_file
-      @binrary_file ||= -> {
-        _io = File.open(@file, 'rb')
-        return @file unless _io.read(100) =~ AppInfo::ZIP_RETGEX
+      @binrary_file ||= lambda {
+        file_io = File.open(@file, 'rb')
+        return @file unless file_io.read(100) =~ AppInfo::ZIP_RETGEX
 
         zip_file = Zip::File.open(@file)
         zip_entry = zip_file.glob('*.exe').first
@@ -132,7 +130,6 @@ module AppInfo
         exe_file = tempdir(zip_entry.name, system: true, prefix: 'pe-exe')
         zip_entry.extract(exe_file)
         zip_file.close
-        _io = nil
 
         return exe_file
       }.call
@@ -166,7 +163,7 @@ module AppInfo
       end
 
       def company_name
-        @publisher ||= value_of('CompanyName')
+        @company_name ||= value_of('CompanyName')
       end
 
       def product_name
@@ -209,7 +206,7 @@ module AppInfo
         @raw.each do |item|
           next unless item.is_a?(PEdump::VS_VERSIONINFO)
 
-          versions = item[:Children].select {|v| v.is_a?(PEdump::StringFileInfo) }
+          versions = item[:Children].select { |v| v.is_a?(PEdump::StringFileInfo) }
           next if versions.empty?
 
           @info = versions[0][:Children][0][:Children]

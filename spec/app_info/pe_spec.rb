@@ -63,7 +63,7 @@ describe AppInfo::PE do
       it { expect(subject.build_version).to be_nil }
       it { expect(subject.name).to eq('UPX') }
       it { expect(subject.company_name).to eq('The UPX Team http://upx.sf.net') }
-      it { expect(subject.archs).to eq('i386') }
+      it { expect(subject.archs).to eq('x86') }
       it { expect(subject.version_info).to be_kind_of(AppInfo::PE::VersionInfo) }
       it { expect(subject.pe).to be_kind_of(PEdump) }
 
