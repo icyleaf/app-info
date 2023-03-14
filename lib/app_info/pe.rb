@@ -57,7 +57,7 @@ module AppInfo
         files = []
         pe.resources&.find_all do |res|
           next unless res.type == 'ICON'
-          icon_file = tempdir("#{File.basename(file, '.*')}-#{res.type}-#{res.id}.bmp", prefix: 'pe')
+          icon_file = tempdir("#{File.basename(file, '.*')}-#{res.type}-#{res.id}.bmp", system: true, prefix: 'pe')
           mask_icon_file = icon_file.sub('.bmp', '.mask.bmp')
 
           begin
@@ -93,7 +93,7 @@ module AppInfo
     def pe
       @pe ||= -> {
         pe = PEdump.new(io)
-        pe.logger.level = :error # ignore :warn logger output
+        pe.logger.level = Logger::FATAL # ignore :warn logger output
         pe
       }.call
     end
@@ -107,6 +107,24 @@ module AppInfo
       @pe = nil
       @icons = nil
       @imports = nil
+    end
+
+    def binrary_file
+      @binrary ||= -> {
+        _io = File.open(@file)
+        return @file unless _io.read(100) =~ AppInfo::ZIP_RETGEX
+
+        zip_file = Zip::File.open(@file)
+        zip_entry = zip_file.glob('*.exe').first
+        raise NotFoundWinBinraryError, 'Not found .exe file in archive file' if zip_entry.nil?
+
+        exe_file = tempdir(zip_entry.name, system: true, prefix: 'pe-exe')
+        zip_entry.extract(exe_file)
+        zip_file.close
+        _io = nil
+
+        return exe_file
+      }.call
     end
 
     private
@@ -125,9 +143,8 @@ module AppInfo
     end
 
     def io
-      @io ||= File.open(@file, 'rb')
+      @io ||= File.open(binrary_file, 'rb')
     end
-
 
     # VersionInfo class
     #

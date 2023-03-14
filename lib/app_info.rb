@@ -26,25 +26,10 @@ Zip.warn_invalid_date = false
 
 # AppInfo Module
 module AppInfo
-  module Format
-    # iOS
-    IPA = :ipa
-    MOBILEPROVISION = :mobileprovision
-    DSYM = :dsym
-
-    # Android
-    APK = :apk
-    AAB = :aab
-    PROGUARD = :proguard
-
-    # macOS
-    MACOS = :macos
-
-    # Windows
-    PE = :pe
-
-    UNKNOWN = :unknown
-  end
+  ZIP_RETGEX = /^\x50\x4b\x03\x04/.freeze
+  PE_REGEX = /^MZ/.freeze
+  PLIST_REGEX = /\x3C\x3F\x78\x6D\x6C/.freeze
+  BPLIST_REGEX = /^\x62\x70\x6C\x69\x73\x74/.freeze
 
   class << self
     # Get a new parser for automatic
@@ -90,29 +75,53 @@ module AppInfo
       Zip.warn_invalid_date = false
       zip_file = Zip::File.open(file)
 
-      return :proguard unless zip_file.glob('*mapping*.txt').empty?
-      return :apk if !zip_file.find_entry('AndroidManifest.xml').nil? &&
-                     !zip_file.find_entry('classes.dex').nil?
-
-      return :aab if !zip_file.find_entry('base/manifest/AndroidManifest.xml').nil? &&
-                     !zip_file.find_entry('BundleConfig.pb').nil?
-
-      return :macos if !zip_file.glob('*/Contents/MacOS/*').empty? &&
-                       !zip_file.glob('*/Contents/Info.plist').empty?
-
-      zip_file.each do |f|
-        path = f.name
-
-        return :ipa if path.include?('Payload/') && path.end_with?('Info.plist')
-        return :dsym if path.include?('Contents/Resources/DWARF/')
-      end
+      return Format::PROGUARD if proguard_clues?(zip_file)
+      return Format::APK if apk_clues?(zip_file)
+      return Format::AAB if aab_clues?(zip_file)
+      return Format::MACOS if macos_clues?(zip_file)
+      return Format::PE if pe_clues?(zip_file)
+      return Format::UNKNOWN unless clue = other_clues?
+      return clue
     ensure
       zip_file.close
     end
 
-    ZIP_RETGEX = /^\x50\x4b\x03\x04/.freeze
-    PE_REGEX = /^MZ/.freeze
-    PLIST_REGEX = /\x3C\x3F\x78\x6D\x6C/.freeze
-    BPLIST_REGEX = /^\x62\x70\x6C\x69\x73\x74/.freeze
+    # :nodoc:
+    def proguard_clues?(zip_file)
+      !zip_file.glob('*mapping*.txt').empty?
+    end
+
+    # :nodoc:
+    def apk_clues?(zip_file)
+      !zip_file.find_entry('AndroidManifest.xml').nil? &&
+      !zip_file.find_entry('classes.dex').nil?
+    end
+
+    # :nodoc:
+    def aab_clues?(zip_file)
+      !zip_file.find_entry('base/manifest/AndroidManifest.xml').nil? &&
+      !zip_file.find_entry('BundleConfig.pb').nil?
+    end
+
+    # :nodoc:
+    def macos_clues?(zip_file)
+      !zip_file.glob('*/Contents/MacOS/*').empty? &&
+      !zip_file.glob('*/Contents/Info.plist').empty?
+    end
+
+    # :nodoc:
+    def pe_clues?(zip_file)
+      !zip_file.glob('*.exe').empty?
+    end
+
+    # :nodoc:
+    def other_clues?(zip_file)
+      zip_file.each do |f|
+        path = f.name
+
+        return Format::IPA if path.include?('Payload/') && path.end_with?('Info.plist')
+        return Format::DSYM if path.include?('Contents/Resources/DWARF/')
+      end
+    end
   end
 end
