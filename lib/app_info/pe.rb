@@ -7,6 +7,8 @@ require 'imageruby'
 
 module AppInfo
   # Windows PE parser
+  #
+  # Ref: https://learn.microsoft.com/zh-cn/windows/win32/debug/pe-format
   class PE
     include Helper::HumanFileSize
     include Helper::Archive
@@ -18,6 +20,12 @@ module AppInfo
       0x014c => 'x86',
       0x0200 => 'Intel Itanium',
       0x8664 => 'x64'
+      0x1c0  => 'arm',
+      0xaa64 => 'arm64',
+      0x14c  => 'i386',
+      0x5032 => 'RISC-v 32',
+      0x5064 => 'RISC-v 64',
+      0x5128 => 'RISC-v 128',
     }
 
     def initialize(file)
