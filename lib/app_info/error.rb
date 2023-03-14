@@ -10,4 +10,6 @@ module AppInfo
   class NotFoundError < Error; end
 
   class UnkownFileTypeError < Error; end
+
+  class ProtobufParseError < Error; end
 end

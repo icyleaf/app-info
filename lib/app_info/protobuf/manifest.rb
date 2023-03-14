@@ -17,7 +17,7 @@ module AppInfo
       private
 
       def parse(_)
-        raise 'not implemented'
+        raise ProtobufParseError, 'not implemented'
       end
     end
 
@@ -211,13 +211,15 @@ module AppInfo
 
         def exist?(name, type: nil)
           if type.to_s.empty? && !name.start_with?('android.intent.')
-            raise 'Fill type or use correct name'
+            raise ProtobufParseError, 'Not found intent type'
           end
 
           type ||= name.split('.')[2]
-          raise 'Not found type' unless TYPES.include?(type)
+          raise ProtobufParseError, 'Not found intent type' unless TYPES.include?(type)
 
-          values = send(type.to_sym).select { |e| e.name == name }
+          return false unless intent = send(type.to_sym)
+
+          values = intent.select { |e| e.name == name }
           values.empty? ? false : values
         end
       end
