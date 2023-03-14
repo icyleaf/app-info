@@ -3,7 +3,6 @@
 require 'pedump'
 require 'fileutils'
 require 'forwardable'
-require 'imageruby'
 
 module AppInfo
   # Windows PE parser
@@ -19,13 +18,13 @@ module AppInfo
     ARCH = {
       0x014c => 'x86',
       0x0200 => 'Intel Itanium',
-      0x8664 => 'x64'
+      0x8664 => 'x64',
       0x1c0  => 'arm',
       0xaa64 => 'arm64',
       0x14c  => 'i386',
       0x5032 => 'RISC-v 32',
       0x5064 => 'RISC-v 64',
-      0x5128 => 'RISC-v 128',
+      0x5128 => 'RISC-v 128'
     }
 
     def initialize(file)

@@ -86,7 +86,7 @@ module AppInfo
       return Format::AAB if aab_clues?(zip_file)
       return Format::MACOS if macos_clues?(zip_file)
       return Format::PE if pe_clues?(zip_file)
-      return Format::UNKNOWN unless clue = other_clues?
+      return Format::UNKNOWN unless clue = other_clues?(zip_file)
       return clue
     ensure
       zip_file.close
