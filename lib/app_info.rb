@@ -26,6 +26,8 @@ Zip.warn_invalid_date = false
 # AppInfo Module
 module AppInfo
   class << self
+    UNKNOWN_FORMAT = :unkown
+
     # Get a new parser for automatic
     def parse(file)
       raise NotFoundError, file unless File.exist?(file)
@@ -44,6 +46,10 @@ module AppInfo
     end
     alias dump parse
 
+    def parse?(file)
+      file_type(file) != UNKNOWN_FORMAT
+    end
+
     # Detect file type by read file header
     #
     # TODO: This can be better solution, if anyone knows, tell me please.
@@ -55,7 +61,7 @@ module AppInfo
                detect_mobileprovision(header_hex)
              end
 
-      type || :unkown
+      type || UNKNOWN_FORMAT
     end
 
     private
