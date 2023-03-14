@@ -9,5 +9,8 @@ module AppInfo
 
   class NotFoundError < Error; end
 
+  class UnknownFileTypeError < Error; end
+
+  # legacy
   class UnkownFileTypeError < Error; end
 end

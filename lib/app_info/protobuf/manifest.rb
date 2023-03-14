@@ -217,8 +217,11 @@ module AppInfo
           type ||= name.split('.')[2]
           raise 'Not found type' unless TYPES.include?(type)
 
-          values = send(type.to_sym).select { |e| e.name == name }
-          values.empty? ? false : values
+          # May be type not exists, but why?
+          return false unless type_values = send(type.to_sym)
+
+          values = type_values.select { |e| e.name == name }
+          values&.empty? ? false : values
         end
       end
     end

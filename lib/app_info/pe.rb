@@ -14,6 +14,12 @@ module AppInfo
 
     attr_reader :file
 
+    ARCH = {
+      0x014c => 'x86',
+      0x0200 => 'Intel Itanium',
+      0x8664 => 'x64'
+    }
+
     def initialize(file)
       @file = file
     end
@@ -27,55 +33,26 @@ module AppInfo
     end
     alias file_type os
 
-    def name
-      file_info.product_name
+    def_delegators :version_info, :product_name, :product_version, :company_name,
+      :assembly_version
+
+    alias name product_name
+    alias release_version product_version
+    alias build_version assembly_version
+
+    def archs
+      ARCH[image_file_header.Machine] || 'unknown'
     end
+    alias architectures archs
 
-    def release_version
-
-    end
-
-    def build_version
-    end
-
-    def publisher
-      file_info.company_name
-    end
-
-    def bundle_id
-    end
-
-    # def_delegators :info, :macos?, :iphone?, :ipad?, :universal?, :build_version, :name,
-    #                :release_version, :identifier, :bundle_id, :display_name,
-    #                :bundle_name, :min_system_version, :min_os_version, :device_type
-
-    # def archs
-    #   # return unless File.exist?(binary_path)
-
-    #   # file = MachO.open(binary_path)
-    #   # case file
-    #   # when MachO::MachOFile
-    #   #   [file.cpusubtype]
-    #   # else
-    #   #   file.machos.each_with_object([]) do |arch, obj|
-    #   #     obj << arch.cpusubtype
-    #   #   end
-    #   # end
-    # end
-    # alias architectures archs
-
-    def clear!
-      return unless @contents
-
-      FileUtils.rm_rf(@contents)
-
-      @io = nil
-      @pe = nil
-      @icons = nil
+    def imports
+      @imports ||= pe.imports.each_with_object({}) do |import, obj|
+        obj[import.module_name] = import.first_thunk.map(&:name).compact
+      end
     end
 
     def icons
-      @icon_file ||= -> {
+      @icons ||= -> {
         # Fetch the largest size icon
         files = []
         pe.resources&.find_all do |res|
@@ -121,7 +98,22 @@ module AppInfo
       }.call
     end
 
+    def version_info
+      @version_info ||= VersionInfo.new(pe.version_info)
+    end
+
+    def clear!
+      @io = nil
+      @pe = nil
+      @icons = nil
+      @imports = nil
+    end
+
     private
+
+    def image_file_header
+      @image_file_header ||= pe.pe.image_file_header
+    end
 
     def icon_metadata(file, mask_file: nil)
       {
@@ -136,11 +128,11 @@ module AppInfo
       @io ||= File.open(@file, 'rb')
     end
 
-    def file_info
-      @file_info ||= FileInfo.new(pe.version_info)
-    end
 
-    class FileInfo
+    # VersionInfo class
+    #
+    # Ref: https://learn.microsoft.com/zh-cn/windows/win32/menurc/versioninfo-resource
+    class VersionInfo
       def initialize(raw)
         @raw = raw
       end
@@ -154,15 +146,19 @@ module AppInfo
       end
 
       def product_version
-        @product_version ||= value_of('ProductName')
+        @product_version ||= value_of('ProductVersion')
       end
 
-      def file_description
-        @file_description ||= value_of('FileDescription')
+      def assembly_version
+        @assembly_version ||= value_of('Assembly Version')
       end
 
       def file_version
         @file_version ||= value_of('FileVersion')
+      end
+
+      def file_description
+        @file_description ||= value_of('FileDescription')
       end
 
       def copyright
