@@ -121,8 +121,8 @@ module AppInfo
     end
 
     def binrary_file
-      @binrary ||= -> {
-        _io = File.open(@file)
+      @binrary_file ||= -> {
+        _io = File.open(@file, 'rb')
         return @file unless _io.read(100) =~ AppInfo::ZIP_RETGEX
 
         zip_file = Zip::File.open(@file)

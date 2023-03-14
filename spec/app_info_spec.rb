@@ -64,6 +64,8 @@ describe AppInfo do
             expect(parse).to be_a(AppInfo::MobileProvision)
           when :macos
             expect(parse).to be_a(AppInfo::Macos)
+          when :pe
+            expect(parse).to be_a(AppInfo::PE)
           end
         end
       end
