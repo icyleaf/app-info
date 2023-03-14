@@ -36,6 +36,10 @@ module AppInfo
       file_to_human_size(@file, human_size: human_size)
     end
 
+    def binrary_size(human_size: false)
+      file_to_human_size(binrary_file, human_size: human_size)
+    end
+
     def os
       Platform::WINDOWS
     end
