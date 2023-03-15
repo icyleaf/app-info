@@ -152,6 +152,8 @@ module AppInfo
 
       def intent_filters(search: nil)
         activities.each_with_object([]) do |activity, obj|
+          next unless activity.respond_to?(:intent_filter)
+
           intent_filters = activity.intent_filter
           next if intent_filters.nil? || intent_filters&.empty?
 
