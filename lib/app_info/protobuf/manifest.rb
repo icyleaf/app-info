@@ -17,7 +17,7 @@ module AppInfo
       private
 
       def parse(_)
-        raise 'not implemented'
+        raise ProtobufParseError, 'not implemented'
       end
     end
 
@@ -152,6 +152,8 @@ module AppInfo
 
       def intent_filters(search: nil)
         activities.each_with_object([]) do |activity, obj|
+          next unless activity.respond_to?(:intent_filter)
+
           intent_filters = activity.intent_filter
           next if intent_filters.nil? || intent_filters&.empty?
 
@@ -182,6 +184,8 @@ module AppInfo
         CATEGORY_BROWSABLE = 'android.intent.category.BROWSABLE'
 
         def deep_links?
+          return unless respond_to?(:data)
+
           browsable? && data.any? { |d| DEEP_LINK_SCHEMES.include?(d.scheme) }
         end
 
@@ -193,6 +197,12 @@ module AppInfo
               .uniq
         end
 
+        def schemes?
+          return unless respond_to?(:data)
+
+          browsable? && data.any? { |d| !DEEP_LINK_SCHEMES.include?(d.scheme) }
+        end
+
         def schemes
           return unless schemes?
 
@@ -201,27 +211,21 @@ module AppInfo
               .uniq
         end
 
-        def schemes?
-          browsable? && data.any? { |d| !DEEP_LINK_SCHEMES.include?(d.scheme) }
-        end
-
         def browsable?
           exist?(CATEGORY_BROWSABLE)
         end
 
         def exist?(name, type: nil)
           if type.to_s.empty? && !name.start_with?('android.intent.')
-            raise 'Fill type or use correct name'
+            raise ProtobufParseError, 'Not found intent type'
           end
 
           type ||= name.split('.')[2]
-          raise 'Not found type' unless TYPES.include?(type)
+          raise ProtobufParseError, 'Not found intent type' unless TYPES.include?(type)
+          return false unless intent = send(type.to_sym)
 
-          # May be type not exists, but why?
-          return false unless type_values = send(type.to_sym)
-
-          values = type_values.select { |e| e.name == name }
-          values&.empty? ? false : values
+          values = intent.select { |e| e.name == name }
+          values.empty? ? false : values
         end
       end
     end

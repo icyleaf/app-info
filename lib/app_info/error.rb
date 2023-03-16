@@ -15,4 +15,6 @@ module AppInfo
 
   # legacy
   class UnkownFileTypeError < Error; end
+
+  class ProtobufParseError < Error; end
 end
