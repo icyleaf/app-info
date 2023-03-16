@@ -27,7 +27,9 @@ MATCH_FILE_TYPES = {
   'single_mapping.zip' => :proguard,
   'full_mapping.zip' => :proguard,
   'macos.zip' => :macos,
-  'macos-signed.zip' => :macos
+  'macos-signed.zip' => :macos,
+  'win-TopBar-v0.1.1.zip' => :pe,
+  'win-upx.exe' => :pe
 }
 
 describe AppInfo do
@@ -36,17 +38,17 @@ describe AppInfo do
     next if path.include?('payload')
 
     filename = File.basename(path)
-    file_type = MATCH_FILE_TYPES[filename] || :unkown
+    file_type = MATCH_FILE_TYPES[filename] || AppInfo::Format::UNKNOWN
     context "file #{filename}" do
       it "should detect file type is #{file_type}" do
         expect(AppInfo.file_type(path)).to eq file_type
       end
 
-      if file_type == :unkown
+      if file_type == AppInfo::Format::UNKNOWN
         it 'should throwa an exception when not matched' do
           expect do
             AppInfo.parse(path)
-          end.to raise_error(AppInfo::UnkownFileTypeError)
+          end.to raise_error(AppInfo::UnknownFileTypeError)
         end
       else
         it 'should parse' do
@@ -62,6 +64,8 @@ describe AppInfo do
             expect(parse).to be_a(AppInfo::MobileProvision)
           when :macos
             expect(parse).to be_a(AppInfo::Macos)
+          when :pe
+            expect(parse).to be_a(AppInfo::PE)
           end
         end
       end
@@ -82,7 +86,7 @@ describe AppInfo do
 
       expect do
         AppInfo.parse(file.path)
-      end.to raise_error(AppInfo::UnkownFileTypeError)
+      end.to raise_error(AppInfo::UnknownFileTypeError)
     end
   end
 end

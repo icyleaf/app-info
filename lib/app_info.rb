@@ -19,12 +19,18 @@ require 'app_info/proguard'
 require 'app_info/dsym'
 
 require 'app_info/macos'
+require 'app_info/pe'
 
 # fix invaild date format warnings
 Zip.warn_invalid_date = false
 
 # AppInfo Module
 module AppInfo
+  ZIP_RETGEX = /^\x50\x4b\x03\x04/.freeze
+  PE_REGEX = /^MZ/.freeze
+  PLIST_REGEX = /\x3C\x3F\x78\x6D\x6C/.freeze
+  BPLIST_REGEX = /^\x62\x70\x6C\x69\x73\x74/.freeze
+
   class << self
     UNKNOWN_FORMAT = :unkown
 
@@ -33,15 +39,16 @@ module AppInfo
       raise NotFoundError, file unless File.exist?(file)
 
       case file_type(file)
-      when :ipa then IPA.new(file)
-      when :apk then APK.new(file)
-      when :aab then AAB.new(file)
-      when :mobileprovision then MobileProvision.new(file)
-      when :dsym then DSYM.new(file)
-      when :proguard then Proguard.new(file)
-      when :macos then Macos.new(file)
+      when Format::IPA then IPA.new(file)
+      when Format::APK then APK.new(file)
+      when Format::AAB then AAB.new(file)
+      when Format::MOBILEPROVISION then MobileProvision.new(file)
+      when Format::DSYM then DSYM.new(file)
+      when Format::PROGUARD then Proguard.new(file)
+      when Format::MACOS then Macos.new(file)
+      when Format::PE then PE.new(file)
       else
-        raise UnkownFileTypeError, "Do not detect file type: #{file}"
+        raise UnknownFileTypeError, "Do not detect file type: #{file}"
       end
     end
     alias dump parse
@@ -55,13 +62,16 @@ module AppInfo
     # TODO: This can be better solution, if anyone knows, tell me please.
     def file_type(file)
       header_hex = File.read(file, 100)
-      type = if header_hex =~ /^\x50\x4b\x03\x04/
-               detect_zip_file(file)
-             else
-               detect_mobileprovision(header_hex)
-             end
-
-      type || UNKNOWN_FORMAT
+      case header_hex
+      when ZIP_RETGEX
+        detect_zip_file(file)
+      when PE_REGEX
+        Format::PE
+      when PLIST_REGEX, BPLIST_REGEX
+        Format::MOBILEPROVISION
+      else
+        Format::UNKNOWN
+      end
     end
 
     private
@@ -71,34 +81,53 @@ module AppInfo
       Zip.warn_invalid_date = false
       zip_file = Zip::File.open(file)
 
-      return :proguard unless zip_file.glob('*mapping*.txt').empty?
-      return :apk if !zip_file.find_entry('AndroidManifest.xml').nil? &&
-                     !zip_file.find_entry('classes.dex').nil?
+      return Format::PROGUARD if proguard_clues?(zip_file)
+      return Format::APK if apk_clues?(zip_file)
+      return Format::AAB if aab_clues?(zip_file)
+      return Format::MACOS if macos_clues?(zip_file)
+      return Format::PE if pe_clues?(zip_file)
+      return Format::UNKNOWN unless clue = other_clues?(zip_file)
 
-      return :aab if !zip_file.find_entry('base/manifest/AndroidManifest.xml').nil? &&
-                     !zip_file.find_entry('BundleConfig.pb').nil?
-
-      return :macos if !zip_file.glob('*/Contents/MacOS/*').empty? &&
-                       !zip_file.glob('*/Contents/Info.plist').empty?
-
-      zip_file.each do |f|
-        path = f.name
-
-        return :ipa if path.include?('Payload/') && path.end_with?('Info.plist')
-        return :dsym if path.include?('Contents/Resources/DWARF/')
-      end
+      clue
     ensure
       zip_file.close
     end
 
-    PLIST_REGEX = /\x3C\x3F\x78\x6D\x6C/.freeze
-    BPLIST_REGEX = /^\x62\x70\x6C\x69\x73\x74/.freeze
+    # :nodoc:
+    def proguard_clues?(zip_file)
+      !zip_file.glob('*mapping*.txt').empty?
+    end
 
     # :nodoc:
-    def detect_mobileprovision(hex)
-      case hex
-      when PLIST_REGEX, BPLIST_REGEX
-        :mobileprovision
+    def apk_clues?(zip_file)
+      !zip_file.find_entry('AndroidManifest.xml').nil? &&
+        !zip_file.find_entry('classes.dex').nil?
+    end
+
+    # :nodoc:
+    def aab_clues?(zip_file)
+      !zip_file.find_entry('base/manifest/AndroidManifest.xml').nil? &&
+        !zip_file.find_entry('BundleConfig.pb').nil?
+    end
+
+    # :nodoc:
+    def macos_clues?(zip_file)
+      !zip_file.glob('*/Contents/MacOS/*').empty? &&
+        !zip_file.glob('*/Contents/Info.plist').empty?
+    end
+
+    # :nodoc:
+    def pe_clues?(zip_file)
+      !zip_file.glob('*.exe').empty?
+    end
+
+    # :nodoc:
+    def other_clues?(zip_file)
+      zip_file.each do |f|
+        path = f.name
+
+        return Format::IPA if path.include?('Payload/') && path.end_with?('Info.plist')
+        return Format::DSYM if path.include?('Contents/Resources/DWARF/')
       end
     end
   end

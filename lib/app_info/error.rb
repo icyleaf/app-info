@@ -9,6 +9,11 @@ module AppInfo
 
   class NotFoundError < Error; end
 
+  class NotFoundWinBinraryError < NotFoundError; end
+
+  class UnknownFileTypeError < Error; end
+
+  # legacy
   class UnkownFileTypeError < Error; end
 
   class ProtobufParseError < Error; end

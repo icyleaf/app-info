@@ -1,8 +1,32 @@
 # frozen_string_literal: true
 
+require 'tmpdir'
+
 module AppInfo
+  # App format
+  module Format
+    # iOS
+    IPA = :ipa
+    MOBILEPROVISION = :mobileprovision
+    DSYM = :dsym
+
+    # Android
+    APK = :apk
+    AAB = :aab
+    PROGUARD = :proguard
+
+    # macOS
+    MACOS = :macos
+
+    # Windows
+    PE = :pe
+
+    UNKNOWN = :unknown
+  end
+
   # App Platform
   module Platform
+    WINDOWS = 'Windows'
     MACOS = 'macOS'
     IOS = 'iOS'
     ANDROID = 'Android'
@@ -10,7 +34,7 @@ module AppInfo
     PROGUARD = 'Proguard'
   end
 
-  # Device Type
+  # Apple Device Type
   module Device
     MACOS = 'macOS'
     IPHONE = 'iPhone'
@@ -82,10 +106,15 @@ module AppInfo
         root_path
       end
 
-      def tempdir(file, prefix:)
-        dest_path ||= File.join(File.dirname(file), prefix)
+      def tempdir(file, prefix:, system: false)
+        dest_path = if system
+                      Dir.mktmpdir("appinfo-#{prefix}-#{File.basename(file, '.*')}-", '/tmp')
+                    else
+                      File.join(File.dirname(file), prefix)
+                    end
+
         dest_file = File.join(dest_path, File.basename(file))
-        FileUtils.mkdir_p(dest_path, mode: 0_700)
+        FileUtils.mkdir_p(dest_path, mode: 0_700) unless system
         dest_file
       end
     end

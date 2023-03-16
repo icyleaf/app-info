@@ -222,7 +222,6 @@ module AppInfo
 
           type ||= name.split('.')[2]
           raise ProtobufParseError, 'Not found intent type' unless TYPES.include?(type)
-
           return false unless intent = send(type.to_sym)
 
           values = intent.select { |e| e.name == name }
