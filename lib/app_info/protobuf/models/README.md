@@ -9,6 +9,13 @@ protoc --ruby_out=. Resources.proto
 protoc --ruby_out=. Configuration.proto
 ```
 
+## Decode
+
+```bash
+protoc --decode=aapt.pb.ResourceTable Resources.proto < aab/base/BundleConfig.pb > BundleConfig.txt
+protoc --decode=aapt.pb.ResourceTable Resources.proto < aab/base/native.pb > native.txt
+```
+
 ## Resouces
 
 `Configuration.proto` and `Resources.proto` can be found in aapt2's github:
