@@ -7,7 +7,10 @@ describe AppInfo::Macos do
       after { subject.clear! }
 
       context 'parse' do
-        it { expect(subject.os).to eq AppInfo::Platform::MACOS }
+        it { expect(subject.file_type).to eq AppInfo::Format::MACOS }
+        it { expect(subject.file_type).to eq :macos }
+        it { expect(subject.platform).to eq AppInfo::Platform::MACOS }
+        it { expect(subject.platform).to eq 'macOS' }
         it { expect(subject).to be_macos }
         it { expect(subject).not_to be_iphone }
         it { expect(subject).not_to be_ipad }
@@ -49,7 +52,10 @@ describe AppInfo::Macos do
       after { subject.clear! }
 
       context 'parse' do
-        it { expect(subject.os).to eq AppInfo::Platform::MACOS }
+        it { expect(subject.file_type).to eq AppInfo::Format::MACOS }
+        it { expect(subject.file_type).to eq :macos }
+        it { expect(subject.platform).to eq AppInfo::Platform::MACOS }
+        it { expect(subject.platform).to eq 'macOS' }
         it { expect(subject).to be_macos }
         it { expect(subject).not_to be_iphone }
         it { expect(subject).not_to be_ipad }

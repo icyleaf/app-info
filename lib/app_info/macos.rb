@@ -7,7 +7,7 @@ require 'cfpropertylist'
 
 module AppInfo
   # MacOS App parser
-  class Macos
+  class Macos < File
     include Helper::HumanFileSize
     include Helper::Archive
     extend Forwardable
@@ -21,18 +21,17 @@ module AppInfo
       APPSTORE = 'AppStore'
     end
 
-    def initialize(file)
-      @file = file
-    end
-
     def size(human_size: false)
       file_to_human_size(@file, human_size: human_size)
     end
 
-    def os
+    def file_type
+      Format::MACOS
+    end
+
+    def platform
       Platform::MACOS
     end
-    alias file_type os
 
     def_delegators :info, :macos?, :iphone?, :ipad?, :universal?, :build_version, :name,
                    :release_version, :identifier, :bundle_id, :display_name,
@@ -56,14 +55,14 @@ module AppInfo
     end
 
     def stored?
-      File.exist?(store_path)
+      ::File.exist?(store_path)
     end
 
     def icons(convert: true)
       return unless icon_file
 
       data = {
-        name: File.basename(icon_file),
+        name: ::File.basename(icon_file),
         file: icon_file
       }
 
@@ -72,7 +71,7 @@ module AppInfo
     end
 
     def archs
-      return unless File.exist?(binary_path)
+      return unless ::File.exist?(binary_path)
 
       file = MachO.open(binary_path)
       case file
@@ -97,25 +96,25 @@ module AppInfo
     end
 
     def mobileprovision?
-      File.exist?(mobileprovision_path)
+      ::File.exist?(mobileprovision_path)
     end
 
     def mobileprovision_path
-      @mobileprovision_path ||= File.join(app_path, 'Contents', 'embedded.provisionprofile')
+      @mobileprovision_path ||= ::File.join(app_path, 'Contents', 'embedded.provisionprofile')
     end
 
     def store_path
-      @store_path ||= File.join(app_path, 'Contents', '_MASReceipt', 'receipt')
+      @store_path ||= ::File.join(app_path, 'Contents', '_MASReceipt', 'receipt')
     end
 
     def binary_path
       return @binary_path if @binary_path
 
-      base_path = File.join(app_path, 'Contents', 'MacOS')
+      base_path = ::File.join(app_path, 'Contents', 'MacOS')
       binary = info['CFBundleExecutable']
-      return File.join(base_path, binary) if binary
+      return ::File.join(base_path, binary) if binary
 
-      @binary_path ||= Dir.glob(File.join(base_path, '*')).first
+      @binary_path ||= Dir.glob(::File.join(base_path, '*')).first
     end
 
     def info
@@ -123,11 +122,11 @@ module AppInfo
     end
 
     def info_path
-      @info_path ||= File.join(app_path, 'Contents', 'Info.plist')
+      @info_path ||= ::File.join(app_path, 'Contents', 'Info.plist')
     end
 
     def app_path
-      @app_path ||= Dir.glob(File.join(contents, '*.app')).first
+      @app_path ||= Dir.glob(::File.join(contents, '*.app')).first
     end
 
     def clear!
@@ -155,8 +154,8 @@ module AppInfo
       info.icons.each do |key|
         next unless value = info[key]
 
-        file = File.join(app_path, 'Contents', 'Resources', "#{value}.icns")
-        next unless File.file?(file)
+        file = ::File.join(app_path, 'Contents', 'Resources', "#{value}.icns")
+        next unless ::File.file?(file)
 
         return @icon_file = file
       end
@@ -173,14 +172,14 @@ module AppInfo
       file = data[:file]
       reader = Icns::Reader.new(file)
       Icns::SIZE_TO_TYPE.each do |size, _|
-        dest_filename = "#{File.basename(file, '.icns')}_#{size}x#{size}.png"
-        dest_file = tempdir(File.join(File.dirname(file), dest_filename), prefix: 'converted')
+        dest_filename = "#{::File.basename(file, '.icns')}_#{size}x#{size}.png"
+        dest_file = tempdir(::File.join(::File.dirname(file), dest_filename), prefix: 'converted')
         next unless icon_data = reader.image(size: size)
 
-        File.write(dest_file, icon_data, encoding: Encoding::BINARY)
+        ::File.write(dest_file, icon_data, encoding: Encoding::BINARY)
 
         data[:sets] << {
-          name: File.basename(dest_filename),
+          name: ::File.basename(dest_filename),
           file: dest_file,
           dimensions: ImageSize.path(dest_file).size
         }
