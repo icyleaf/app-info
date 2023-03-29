@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
+require 'app_info/android/signature_verify'
 require 'ruby_apk'
 require 'image_size'
 require 'forwardable'
 
 module AppInfo
   # Parse APK file
-  class APK
+  class APK < File
     include Helper::HumanFileSize
     extend Forwardable
 
@@ -21,18 +22,17 @@ module AppInfo
       AUTOMOTIVE  = 'Automotive'
     end
 
-    def initialize(file)
-      @file = file
-    end
-
     def size(human_size: false)
       file_to_human_size(@file, human_size: human_size)
     end
 
-    def os
+    def file_type
+      Format::APK
+    end
+
+    def platform
       Platform::ANDROID
     end
-    alias file_type os
 
     def_delegators :apk, :manifest, :resource, :dex
 
@@ -120,11 +120,11 @@ module AppInfo
 
     def icons
       @icons ||= apk.icon.each_with_object([]) do |(path, data), obj|
-        icon_name = File.basename(path)
-        icon_path = File.join(contents, File.dirname(path))
-        icon_file = File.join(icon_path, icon_name)
+        icon_name = ::File.basename(path)
+        icon_path = ::File.join(contents, ::File.dirname(path))
+        icon_file = ::File.join(icon_path, icon_name)
         FileUtils.mkdir_p icon_path
-        File.write(icon_file, data, encoding: Encoding::BINARY)
+        ::File.write(icon_file, data, encoding: Encoding::BINARY)
 
         obj << {
           name: icon_name,
@@ -147,7 +147,7 @@ module AppInfo
     end
 
     def contents
-      @contents ||= File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
+      @contents ||= ::File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
     end
 
     # Android Certificate
