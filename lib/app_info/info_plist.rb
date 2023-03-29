@@ -6,11 +6,11 @@ require 'app_info/png_uncrush'
 
 module AppInfo
   # iOS Info.plist parser
-  class InfoPlist
+  class InfoPlist < File
     extend Forwardable
 
-    def initialize(file)
-      @file = file
+    def file_type
+      Format::INFOPLIST
     end
 
     def version
@@ -126,7 +126,7 @@ module AppInfo
     private
 
     def info
-      return unless File.file?(@file)
+      return unless ::File.file?(@file)
 
       @info ||= CFPropertyList.native_types(CFPropertyList::List.new(file: @file).value)
     end
@@ -134,9 +134,9 @@ module AppInfo
     def app_path
       @app_path ||= case device_type
                     when Device::MACOS
-                      File.dirname(@file)
+                      ::File.dirname(@file)
                     else
-                      File.expand_path('../', @file)
+                      ::File.expand_path('../', @file)
                     end
     end
   end
