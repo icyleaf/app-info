@@ -30,8 +30,6 @@ module AppInfo
     MACOS = 'macOS'
     IOS = 'iOS'
     ANDROID = 'Android'
-    DSYM = 'dSYM'
-    PROGUARD = 'Proguard'
   end
 
   # Apple Device Type
@@ -60,7 +58,7 @@ module AppInfo
   module Helper
     module HumanFileSize
       def file_to_human_size(file, human_size:)
-        number = File.size(file)
+        number = ::File.size(file)
         human_size ? number_to_human_size(number) : number
       end
 
@@ -96,9 +94,9 @@ module AppInfo
             yield root_path, zip_file
           else
             zip_file.each do |f|
-              f_path = File.join(root_path, f.name)
-              FileUtils.mkdir_p(File.dirname(f_path))
-              zip_file.extract(f, f_path) unless File.exist?(f_path)
+              f_path = ::File.join(root_path, f.name)
+              FileUtils.mkdir_p(::File.dirname(f_path))
+              zip_file.extract(f, f_path) unless ::File.exist?(f_path)
             end
           end
         end
@@ -108,12 +106,12 @@ module AppInfo
 
       def tempdir(file, prefix:, system: false)
         dest_path = if system
-                      Dir.mktmpdir("appinfo-#{prefix}-#{File.basename(file, '.*')}-", '/tmp')
+                      Dir.mktmpdir("appinfo-#{prefix}-#{::File.basename(file, '.*')}-", '/tmp')
                     else
-                      File.join(File.dirname(file), prefix)
+                      ::File.join(::File.dirname(file), prefix)
                     end
 
-        dest_file = File.join(dest_path, File.basename(file))
+        dest_file = ::File.join(dest_path, ::File.basename(file))
         FileUtils.mkdir_p(dest_path, mode: 0_700) unless system
         dest_file
       end

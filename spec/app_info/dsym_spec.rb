@@ -14,7 +14,8 @@ describe AppInfo::DSYM do
         human_size: '846.59 KB'
       }
 
-      it { expect(subject.file_type).to eq AppInfo::Platform::DSYM }
+      it { expect(subject.file_type).to eq AppInfo::Format::DSYM }
+      it { expect(subject.file_type).to eq :dsym }
       it { expect(subject.object).to eq 'iOS' }
       it { expect(subject.macho_type).to be_a ::MachO::MachOFile }
       it { expect(subject.release_version).to eq '1.0' }
@@ -57,7 +58,8 @@ describe AppInfo::DSYM do
         }
       ]
 
-      it { expect(subject.file_type).to eq AppInfo::Platform::DSYM }
+      it { expect(subject.file_type).to eq AppInfo::Format::DSYM }
+      it { expect(subject.file_type).to eq :dsym }
       it { expect(subject.object).to eq 'iOS' }
       it { expect(subject.macho_type).to be_a ::MachO::FatFile }
       it { expect(subject.release_version).to eq '1.0' }
