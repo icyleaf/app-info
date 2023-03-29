@@ -8,12 +8,10 @@ module AppInfo
   # Windows PE parser
   #
   # Ref: https://learn.microsoft.com/zh-cn/windows/win32/debug/pe-format
-  class PE
+  class PE < File
     include Helper::HumanFileSize
     include Helper::Archive
     extend Forwardable
-
-    attr_reader :file
 
     ARCH = {
       0x014c => 'x86',
@@ -26,8 +24,12 @@ module AppInfo
       0x5128 => 'RISC-v 128'
     }.freeze
 
-    def initialize(file)
-      @file = file
+    def file_type
+      Format::PE
+    end
+
+    def platform
+      Platform::WINDOWS
     end
 
     def size(human_size: false)
@@ -37,11 +39,6 @@ module AppInfo
     def binrary_size(human_size: false)
       file_to_human_size(binrary_file, human_size: human_size)
     end
-
-    def os
-      Platform::WINDOWS
-    end
-    alias file_type os
 
     def_delegators :version_info, :product_name, :product_version, :company_name, :assembly_version
 
@@ -67,18 +64,18 @@ module AppInfo
         pe.resources&.find_all do |res|
           next unless res.type == 'ICON'
 
-          filename = "#{File.basename(file, '.*')}-#{res.type}-#{res.id}.bmp"
+          filename = "#{::File.basename(file, '.*')}-#{res.type}-#{res.id}.bmp"
           icon_file = tempdir(filename, system: true, prefix: 'pe')
           mask_icon_file = icon_file.sub('.bmp', '.mask.bmp')
 
           begin
-            File.open(icon_file, 'wb') do |f|
+            ::File.open(icon_file, 'wb') do |f|
               f << res.restore_bitmap(io)
             end
 
             if res.bitmap_mask(io)
               mask_icon_file = icon_file.sub('.bmp', '.mask.bmp')
-              File.open(mask_icon_file, 'wb') do |f|
+              ::File.open(mask_icon_file, 'wb') do |f|
                 f << res.bitmap_mask(io)
               end
             end
@@ -88,9 +85,9 @@ module AppInfo
 
             FileUtils.rm_f(icon_file)
           ensure
-            next unless File.exist?(icon_file)
+            next unless ::File.exist?(icon_file)
 
-            mask_file = File.exist?(mask_icon_file) ? mask_icon_file : nil
+            mask_file = ::File.exist?(mask_icon_file) ? mask_icon_file : nil
             files << icon_metadata(icon_file, mask_file: mask_file)
           end
         end
@@ -120,7 +117,7 @@ module AppInfo
 
     def binrary_file
       @binrary_file ||= lambda {
-        file_io = File.open(@file, 'rb')
+        file_io = ::File.open(@file, 'rb')
         return @file unless file_io.read(100) =~ AppInfo::ZIP_RETGEX
 
         zip_file = Zip::File.open(@file)
@@ -143,7 +140,7 @@ module AppInfo
 
     def icon_metadata(file, mask_file: nil)
       {
-        name: File.basename(file),
+        name: ::File.basename(file),
         file: file,
         mask: mask_file,
         dimensions: ImageSize.path(file).size
@@ -151,7 +148,7 @@ module AppInfo
     end
 
     def io
-      @io ||= File.open(binrary_file, 'rb')
+      @io ||= ::File.open(binrary_file, 'rb')
     end
 
     # VersionInfo class
