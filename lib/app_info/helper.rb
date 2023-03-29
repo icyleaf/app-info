@@ -7,6 +7,7 @@ module AppInfo
   module Format
     # iOS
     IPA = :ipa
+    INFOPLIST = :infoplist
     MOBILEPROVISION = :mobileprovision
     DSYM = :dsym
 

@@ -3,6 +3,9 @@ describe AppInfo::InfoPlist do
     let(:app) { AppInfo::IPA.new(fixture_path('apps/ipad.ipa')) }
     subject { AppInfo::InfoPlist.new(app.info_path) }
 
+    it { expect(subject.file_type).to eq(AppInfo::Format::INFOPLIST) }
+    it { expect(subject.file_type).to eq(:infoplist) }
+    it { expect(subject.build_version).to eq('1') }
     it { expect(subject.build_version).to eq('1') }
     it { expect(subject.release_version).to eq('1.0') }
     it { expect(subject.name).to eq('bundle') }
@@ -26,6 +29,8 @@ describe AppInfo::InfoPlist do
     let(:app) { AppInfo::Macos.new(fixture_path('apps/macos.zip')) }
     subject { AppInfo::InfoPlist.new(app.info_path) }
 
+    it { expect(subject.file_type).to eq(AppInfo::Format::INFOPLIST) }
+    it { expect(subject.file_type).to eq(:infoplist) }
     it { expect(subject.build_version).to eq('1') }
     it { expect(subject.release_version).to eq('1.0') }
     it { expect(subject.name).to eq('GuiApp') }
