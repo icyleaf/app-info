@@ -8,11 +8,13 @@ describe AppInfo::APK do
 
       it { expect(subject.size).to eq(3618865) }
       it { expect(subject.size(human_size: true)).to eq('3.45 MB') }
-      it { expect(subject.os).to eq 'Android' }
+      it { expect(subject.file_type).to eq :aab }
+      it { expect(subject.file_type).to eq AppInfo::Format::AAB }
+      it { expect(subject.platform).to eq 'Android' }
+      it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
       it { expect(subject.wear?).to be false }
       it { expect(subject.tv?).to be false }
       it { expect(subject.automotive?).to be false }
-      it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
       it { expect(subject.file).to eq file }
       it { expect(subject.release_version).to eq('2.1.0') }
       it { expect(subject.build_version).to eq('10') }
@@ -45,11 +47,13 @@ describe AppInfo::APK do
 
       it { expect(subject.size).to eq(7448532) }
       it { expect(subject.size(human_size: true)).to eq('7.10 MB') }
-      it { expect(subject.os).to eq 'Android' }
+      it { expect(subject.file_type).to eq :aab }
+      it { expect(subject.file_type).to eq AppInfo::Format::AAB }
+      it { expect(subject.platform).to eq 'Android' }
+      it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
       it { expect(subject.wear?).to be false }
       it { expect(subject.tv?).to be false }
       it { expect(subject.automotive?).to be false }
-      it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
       it { expect(subject.file).to eq file }
       it { expect(subject.release_version).to eq('1.0') }
       it { expect(subject.build_version).to eq('1') }
