@@ -5,37 +5,31 @@ require 'rexml/document'
 
 module AppInfo
   # Proguard parser
-  class Proguard
+  class Proguard < File
     include Helper::Archive
 
     NAMESPACE = UUIDTools::UUID.sha1_create(UUIDTools::UUID_DNS_NAMESPACE, 'icyleaf.com')
 
-    attr_reader :file
-
-    def initialize(file)
-      @file = file
-    end
-
     def file_type
-      Platform::PROGUARD
+      Format::PROGUARD
     end
 
     def uuid
       # Similar to https://docs.sentry.io/workflow/debug-files/#proguard-uuids
-      UUIDTools::UUID.sha1_create(NAMESPACE, File.read(mapping_path)).to_s
+      UUIDTools::UUID.sha1_create(NAMESPACE, ::File.read(mapping_path)).to_s
     end
     alias debug_id uuid
 
     def mapping?
-      File.exist?(mapping_path)
+      ::File.exist?(mapping_path)
     end
 
     def manifest?
-      File.exist?(manifest_path)
+      ::File.exist?(manifest_path)
     end
 
     def symbol?
-      File.exist?(symbol_path)
+      ::File.exist?(symbol_path)
     end
     alias resource? symbol?
 
@@ -68,19 +62,19 @@ module AppInfo
     def manifest
       return unless manifest?
 
-      @manifest ||= REXML::Document.new(File.new(manifest_path))
+      @manifest ||= REXML::Document.new(::File.new(manifest_path))
     end
 
     def mapping_path
-      @mapping_path ||= Dir.glob(File.join(contents, '*mapping*.txt')).first
+      @mapping_path ||= Dir.glob(::File.join(contents, '*mapping*.txt')).first
     end
 
     def manifest_path
-      @manifest_path ||= File.join(contents, 'AndroidManifest.xml')
+      @manifest_path ||= ::File.join(contents, 'AndroidManifest.xml')
     end
 
     def symbol_path
-      @symbol_path ||= File.join(contents, 'R.txt')
+      @symbol_path ||= ::File.join(contents, 'R.txt')
     end
     alias resource_path symbol_path
 
