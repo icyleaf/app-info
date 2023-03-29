@@ -8,11 +8,13 @@ describe AppInfo::APK do
       let(:file) { fixture_path('apps/android.apk') }
       it { expect(subject.size).to eq(4000563) }
       it { expect(subject.size(human_size: true)).to eq('3.82 MB') }
-      it { expect(subject.os).to eq 'Android' }
+      it { expect(subject.file_type).to eq :apk }
+      it { expect(subject.file_type).to eq AppInfo::Format::APK }
+      it { expect(subject.platform).to eq 'Android' }
+      it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
       it { expect(subject.wear?).to be false }
       it { expect(subject.tv?).to be false }
       it { expect(subject.automotive?).to be false }
-      it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
       it { expect(subject.device_type).to eq AppInfo::APK::Device::PHONE }
       it { expect(subject.file).to eq file }
       it { expect(subject.apk).to be_a Android::Apk }
@@ -54,11 +56,13 @@ describe AppInfo::APK do
 
     after { subject.clear! }
 
-    it { expect(subject.os).to eq 'Android' }
+    it { expect(subject.file_type).to eq :apk }
+    it { expect(subject.file_type).to eq AppInfo::Format::APK }
+    it { expect(subject.platform).to eq 'Android' }
+    it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.wear?).to be true }
     it { expect(subject.tv?).to be false }
     it { expect(subject.automotive?).to be false }
-    it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.device_type).to eq AppInfo::APK::Device::WATCH }
     it { expect(subject.file).to eq file }
     it { expect(subject.apk).to be_a Android::Apk }
@@ -78,11 +82,13 @@ describe AppInfo::APK do
 
     after { subject.clear! }
 
-    it { expect(subject.os).to eq 'Android' }
+    it { expect(subject.file_type).to eq :apk }
+    it { expect(subject.file_type).to eq AppInfo::Format::APK }
+    it { expect(subject.platform).to eq 'Android' }
+    it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.wear?).to be false }
     it { expect(subject.tv?).to be true }
     it { expect(subject.automotive?).to be false }
-    it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.device_type).to eq AppInfo::APK::Device::TV }
     it { expect(subject.file).to eq file }
     it { expect(subject.apk).to be_a Android::Apk }
@@ -102,11 +108,13 @@ describe AppInfo::APK do
 
     after { subject.clear! }
 
-    it { expect(subject.os).to eq 'Android' }
+    it { expect(subject.file_type).to eq :apk }
+    it { expect(subject.file_type).to eq AppInfo::Format::APK }
+    it { expect(subject.platform).to eq 'Android' }
+    it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.wear?).to be false }
     it { expect(subject.tv?).to be false }
     it { expect(subject.automotive?).to be true }
-    it { expect(subject.os).to eq AppInfo::Platform::ANDROID }
     it { expect(subject.device_type).to eq AppInfo::APK::Device::AUTOMOTIVE }
     it { expect(subject.file).to eq file }
     it { expect(subject.apk).to be_a Android::Apk }

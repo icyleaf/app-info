@@ -69,7 +69,7 @@ module AppInfo
     end
 
     def initialize(filename)
-      @io = PngReader.new(File.open(filename))
+      @io = PngReader.new(::File.open(filename))
       raise FormatError, 'not a png file' unless @io.png?
     end
 
@@ -125,7 +125,7 @@ module AppInfo
     end
 
     def write_file(path, content)
-      File.write(path, content, encoding: Encoding::BINARY)
+      ::File.write(path, content, encoding: Encoding::BINARY)
       true
     end
 
