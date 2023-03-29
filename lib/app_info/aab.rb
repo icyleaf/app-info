@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'app_info/android/signature'
 require 'app_info/protobuf/manifest'
 require 'image_size'
 require 'forwardable'
@@ -135,23 +136,11 @@ module AppInfo
     end
 
     def signs
-      return @signs if @signs
-
-      @signs = []
-      each_file do |path, data|
-        # find META-INF/xxx.{RSA|DSA}
-        next unless path =~ %r{^META-INF/} && data.unpack('CC') == [0x30, 0x82]
-
-        @signs << APK::Sign.new(path, OpenSSL::PKCS7.new(data))
-      end
-
-      @signs
+      @signs ||= v1sign.signurates
     end
 
     def certificates
-      @certificates ||= signs.each_with_object([]) do |sign, obj|
-        obj << APK::Certificate.new(sign.path, sign.sign.certificates[0])
-      end
+      @certificates ||= v1sign.certificates
     end
 
     def each_file
@@ -226,6 +215,10 @@ module AppInfo
     end
 
     private
+
+    def v1sign
+      @v1sign ||= Android::Signature::V1.new(self)
+    end
 
     def xml_file?(file)
       ::File.extname(file) == '.xml'

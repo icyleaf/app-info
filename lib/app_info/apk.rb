@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'app_info/android/signature'
 require 'ruby_apk'
 require 'image_size'
 require 'forwardable'
@@ -98,15 +99,11 @@ module AppInfo
     end
 
     def signs
-      apk.signs.each_with_object([]) do |(path, sign), obj|
-        obj << Sign.new(path, sign)
-      end
+      @signs ||= v1sign.signurates
     end
 
     def certificates
-      apk.certificates.each_with_object([]) do |(path, certificate), obj|
-        obj << Certificate.new(path, certificate)
-      end
+      @certificates ||= v1sign.certificates
     end
 
     def activities
@@ -149,24 +146,10 @@ module AppInfo
       @contents ||= ::File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
     end
 
-    # Android Certificate
-    class Certificate
-      attr_reader :path, :certificate
+    private
 
-      def initialize(path, certificate)
-        @path = path
-        @certificate = certificate
-      end
-    end
-
-    # Android Sign
-    class Sign
-      attr_reader :path, :sign
-
-      def initialize(path, sign)
-        @path = path
-        @sign = sign
-      end
+    def v1sign
+      @v1sign ||= Android::Signature::V1.new(self)
     end
   end
 end
