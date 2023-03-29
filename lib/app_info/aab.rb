@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
+require 'app_info/android/signature_verify'
 require 'app_info/protobuf/manifest'
 require 'image_size'
 require 'forwardable'
 
 module AppInfo
   # Parse APK file
-  class AAB
+  class AAB < File
     include Helper::HumanFileSize
     extend Forwardable
 
@@ -25,18 +26,17 @@ module AppInfo
     BASE_MANIFEST = "#{BASE_PATH}/manifest/AndroidManifest.xml"
     BASE_RESOURCES = "#{BASE_PATH}/resources.pb"
 
-    def initialize(file)
-      @file = file
-    end
-
     def size(human_size: false)
       file_to_human_size(@file, human_size: human_size)
     end
 
-    def os
+    def file_type
+      Format::AAB
+    end
+
+    def platform
       Platform::ANDROID
     end
-    alias file_type os
 
     def_delegators :manifest, :version_name, :deep_links, :schemes
 
@@ -171,7 +171,7 @@ module AppInfo
     end
 
     def entry(name, base_path: BASE_PATH)
-      entry = @zip.find_entry(File.join(base_path, name))
+      entry = @zip.find_entry(::File.join(base_path, name))
       raise NotFoundError, "'#{name}'" if entry.nil?
 
       entry
@@ -194,13 +194,13 @@ module AppInfo
     def icons
       @icons ||= manifest.icons.each_with_object([]) do |res, obj|
         path = res.value
-        filename = File.basename(path)
-        filepath = File.join(contents, File.dirname(path))
-        file = File.join(filepath, filename)
+        filename = ::File.basename(path)
+        filepath = ::File.join(contents, ::File.dirname(path))
+        file = ::File.join(filepath, filename)
         FileUtils.mkdir_p filepath
 
         binary_data = read_file(path)
-        File.write(file, binary_data, encoding: Encoding::BINARY)
+        ::File.write(file, binary_data, encoding: Encoding::BINARY)
 
         obj << {
           name: filename,
@@ -223,13 +223,13 @@ module AppInfo
     end
 
     def contents
-      @contents ||= File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
+      @contents ||= ::File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
     end
 
     private
 
     def xml_file?(file)
-      File.extname(file) == '.xml'
+      ::File.extname(file) == '.xml'
     end
 
     # TODO: how to convert xml content after decode protoubufed content
