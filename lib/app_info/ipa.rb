@@ -218,13 +218,13 @@ module AppInfo
 
     def icon_keys
       @icon_keys ||= case device_type
-        when 'iPhone'
-          [IPHONE_KEY]
-        when 'iPad'
-          [IPAD_KEY]
-        when 'Universal'
-          [IPHONE_KEY, IPAD_KEY]
-        end
+                     when 'iPhone'
+                       [IPHONE_KEY]
+                     when 'iPad'
+                       [IPAD_KEY]
+                     when 'Universal'
+                       [IPHONE_KEY, IPAD_KEY]
+                     end
     end
   end
 end

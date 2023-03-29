@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'app_info/android/signature_verify'
 require 'app_info/protobuf/manifest'
 require 'image_size'
 require 'forwardable'
