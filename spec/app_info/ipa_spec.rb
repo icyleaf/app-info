@@ -6,7 +6,10 @@ describe AppInfo::IPA do
     after { subject.clear! }
 
     context 'parse' do
-      it { expect(subject.os).to eq 'iOS' }
+      it { expect(subject.file_type).to eq AppInfo::Format::IPA }
+      it { expect(subject.file_type).to eq :ipa }
+      it { expect(subject.platform).to eq 'iOS' }
+      it { expect(subject.platform).to eq AppInfo::Platform::IOS }
       it { expect(subject).to be_iphone }
       it { expect(subject).not_to be_ipad }
       it { expect(subject).not_to be_universal }
@@ -54,7 +57,10 @@ describe AppInfo::IPA do
 
     after { subject.clear! }
 
-    it { expect(subject.os).to eq 'iOS' }
+    it { expect(subject.file_type).to eq AppInfo::Format::IPA }
+    it { expect(subject.file_type).to eq :ipa }
+    it { expect(subject.platform).to eq 'iOS' }
+    it { expect(subject.platform).to eq AppInfo::Platform::IOS }
     it { expect(subject).not_to be_iphone }
     it { expect(subject).to be_ipad }
     it { expect(subject).not_to be_universal }
@@ -108,7 +114,10 @@ describe AppInfo::IPA do
 
     after { subject.clear! }
 
-    it { expect(subject.os).to eq 'iOS' }
+    it { expect(subject.file_type).to eq AppInfo::Format::IPA }
+    it { expect(subject.file_type).to eq :ipa }
+    it { expect(subject.platform).to eq 'iOS' }
+    it { expect(subject.platform).to eq AppInfo::Platform::IOS }
     it { expect(subject).not_to be_iphone }
     it { expect(subject).not_to be_iphone }
     it { expect(subject).to be_universal }
