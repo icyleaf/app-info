@@ -8,7 +8,7 @@ module AppInfo
     extend Forwardable
 
     def self.parse(path, name = 'Frameworks')
-      files = Dir.glob(File.join(path, name.to_s, '*'))
+      files = Dir.glob(::File.join(path, name.to_s, '*'))
       return [] if files.empty?
 
       files.sort.each_with_object([]) do |file, obj|
@@ -26,7 +26,7 @@ module AppInfo
     end
 
     def name
-      File.basename(file)
+      ::File.basename(file)
     end
 
     def macho
@@ -37,11 +37,11 @@ module AppInfo
     end
 
     def lib?
-      File.file?(file)
+      ::File.file?(file)
     end
 
     def info
-      @info ||= InfoPlist.new(File.join(file, 'Info.plist'))
+      @info ||= InfoPlist.new(::File.join(file, 'Info.plist'))
     end
 
     def to_s

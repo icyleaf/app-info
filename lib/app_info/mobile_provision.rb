@@ -5,9 +5,9 @@ require 'cfpropertylist'
 
 module AppInfo
   # .mobileprovision file parser
-  class MobileProvision
-    def initialize(path)
-      @path = path
+  class MobileProvision < File
+    def file_type
+      Format::MOBILEPROVISION
     end
 
     def name
@@ -142,10 +142,10 @@ module AppInfo
         when 'com.apple.developer.networking.vpn.api'
           capabilities << 'Personal VPN'
         when 'com.apple.developer.healthkit',
-             'com.apple.developer.healthkit.access'
+            'com.apple.developer.healthkit.access'
           capabilities << 'HealthKit' unless capabilities.include?('HealthKit')
         when 'com.apple.developer.icloud-services',
-             'com.apple.developer.icloud-container-identifiers'
+            'com.apple.developer.icloud-container-identifiers'
           capabilities << 'iCloud' unless capabilities.include?('iCloud')
         when 'com.apple.developer.in-app-payments'
           capabilities << 'Apple Pay'
@@ -201,9 +201,9 @@ module AppInfo
     end
 
     def mobileprovision
-      return @mobileprovision = nil unless File.exist?(@path)
+      return @mobileprovision = nil unless ::File.exist?(@file)
 
-      data = File.read(@path)
+      data = ::File.read(@file)
       data = strip_plist_wrapper(data) unless bplist?(data)
       list = CFPropertyList::List.new(data: data).value
       @mobileprovision = CFPropertyList.native_types(list)
