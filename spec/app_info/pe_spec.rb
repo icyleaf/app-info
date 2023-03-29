@@ -6,7 +6,10 @@ describe AppInfo::PE do
     after { subject.clear! }
 
     context 'parse' do
-      it { expect(subject.os).to eq AppInfo::Platform::WINDOWS }
+      it { expect(subject.file_type).to eq AppInfo::Format::PE }
+      it { expect(subject.file_type).to eq :pe }
+      it { expect(subject.platform).to eq AppInfo::Platform::WINDOWS }
+      it { expect(subject.platform).to eq 'Windows' }
       it { expect(subject.file).to eq file }
       it { expect(subject.binrary_file).not_to be_nil }
       it { expect(subject.size).to eq 415127 }
@@ -50,7 +53,10 @@ describe AppInfo::PE do
     after { subject.clear! }
 
     context 'parse' do
-      it { expect(subject.os).to eq AppInfo::Platform::WINDOWS }
+      it { expect(subject.file_type).to eq AppInfo::Format::PE }
+      it { expect(subject.file_type).to eq :pe }
+      it { expect(subject.platform).to eq AppInfo::Platform::WINDOWS }
+      it { expect(subject.platform).to eq 'Windows' }
       it { expect(subject.file).to eq file }
       it { expect(subject.binrary_file).not_to be_nil }
       it { expect(subject.size).to eq 293888 }
