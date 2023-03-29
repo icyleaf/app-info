@@ -3,6 +3,8 @@ describe AppInfo::MobileProvision do
     context 'Development' do
       subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/ios_development.mobileprovision')) }
 
+      it { expect(subject.file_type).to eq AppInfo::Format::MOBILEPROVISION }
+      it { expect(subject.file_type).to eq :mobileprovision }
       it { expect(subject.devices).to be_a Array }
       it { expect(subject.platform).to eq :ios }
       it { expect(subject.platforms).to eq [:ios] }
@@ -27,6 +29,8 @@ describe AppInfo::MobileProvision do
     context 'Adhoc' do
       subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/ios_adhoc.mobileprovision')) }
 
+      it { expect(subject.file_type).to eq AppInfo::Format::MOBILEPROVISION }
+      it { expect(subject.file_type).to eq :mobileprovision }
       it { expect(subject.devices).to be_a Array }
       it { expect(subject.platform).to eq :ios }
       it { expect(subject.platforms).to eq [:ios] }
@@ -51,6 +55,8 @@ describe AppInfo::MobileProvision do
     context 'AppStore' do
       subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/ios_appstore.mobileprovision')) }
 
+      it { expect(subject.file_type).to eq AppInfo::Format::MOBILEPROVISION }
+      it { expect(subject.file_type).to eq :mobileprovision }
       it { expect(subject.devices).to be_nil }
       it { expect(subject.platform).to eq :ios }
       it { expect(subject.platforms).to eq [:ios] }
@@ -77,6 +83,8 @@ describe AppInfo::MobileProvision do
     context 'Development' do
       subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/macos_development.provisionprofile')) }
 
+      it { expect(subject.file_type).to eq AppInfo::Format::MOBILEPROVISION }
+      it { expect(subject.file_type).to eq :mobileprovision }
       it { expect(subject.devices).to be_a Array }
       it { expect(subject.platform).to eq :macos }
       it { expect(subject.platforms).to eq [:macos] }
@@ -101,6 +109,8 @@ describe AppInfo::MobileProvision do
     context 'AppStore' do
       subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/macos_appstore.provisionprofile')) }
 
+      it { expect(subject.file_type).to eq AppInfo::Format::MOBILEPROVISION }
+      it { expect(subject.file_type).to eq :mobileprovision }
       it { expect(subject.devices).to be_nil }
       it { expect(subject.platform).to eq :macos }
       it { expect(subject.platforms).to eq [:macos] }
