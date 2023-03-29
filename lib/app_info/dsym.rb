@@ -4,21 +4,17 @@ require 'macho'
 
 module AppInfo
   # DSYM parser
-  class DSYM
+  class DSYM < File
     include Helper::Archive
 
     attr_reader :file
 
-    def initialize(file)
-      @file = file
-    end
-
     def file_type
-      Platform::DSYM
+      Format::DSYM
     end
 
     def object
-      @object ||= File.basename(app_path)
+      @object ||= ::File.basename(app_path)
     end
 
     def macho_type
@@ -28,7 +24,7 @@ module AppInfo
     def machos
       @machos ||= case macho_type
                   when ::MachO::MachOFile
-                    [MachO.new(macho_type, File.size(app_path))]
+                    [MachO.new(macho_type, ::File.size(app_path))]
                   else
                     size = macho_type.fat_archs.each_with_object([]) do |arch, obj|
                       obj << arch.size
@@ -56,20 +52,20 @@ module AppInfo
     alias bundle_id identifier
 
     def info
-      return nil unless File.exist?(info_path)
+      return nil unless ::File.exist?(info_path)
 
       @info ||= CFPropertyList.native_types(CFPropertyList::List.new(file: info_path).value)
     end
 
     def info_path
-      @info_path ||= File.join(contents, 'Contents', 'Info.plist')
+      @info_path ||= ::File.join(contents, 'Contents', 'Info.plist')
     end
 
     def app_path
       unless @app_path
-        path = File.join(contents, 'Contents', 'Resources', 'DWARF')
+        path = ::File.join(contents, 'Contents', 'Resources', 'DWARF')
         name = Dir.entries(path).reject { |f| ['.', '..'].include?(f) }.first
-        @app_path = File.join(path, name)
+        @app_path = ::File.join(path, name)
       end
 
       @app_path
@@ -89,7 +85,7 @@ module AppInfo
 
     def contents
       unless @contents
-        if File.directory?(@file)
+        if ::File.directory?(@file)
           @contents = @file
         else
           dsym_dir = nil
@@ -101,13 +97,13 @@ module AppInfo
                 dsym_dir = dsym_dir.split('/')[0] if dsym_dir.include?('/')
               end
 
-              f_path = File.join(path, f.name)
-              FileUtils.mkdir_p(File.dirname(f_path))
-              f.extract(f_path) unless File.exist?(f_path)
+              f_path = ::File.join(path, f.name)
+              FileUtils.mkdir_p(::File.dirname(f_path))
+              f.extract(f_path) unless ::File.exist?(f_path)
             end
           end
 
-          @contents = File.join(@contents, dsym_dir)
+          @contents = ::File.join(@contents, dsym_dir)
         end
       end
 
