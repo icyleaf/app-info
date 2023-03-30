@@ -217,7 +217,7 @@ module AppInfo
     private
 
     def v1sign
-      @v1sign ||= Android::Signature::V1.new(self)
+      @v1sign ||= Android::Signature::V1.new(Android::Signature::Version::V1, self)
     end
 
     def xml_file?(file)

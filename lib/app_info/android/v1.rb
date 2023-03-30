@@ -3,28 +3,10 @@
 module AppInfo::Android::Signature
   # Android v1 Signature
   class V1 < Base
-    # Android Certificate
-    class Certificate
-      attr_reader :path, :certificate
-
-      def initialize(path, certificate)
-        @path = path
-        @certificate = certificate
-      end
-    end
-
-    # Android Signature
-    class Signature
-      attr_reader :path, :sign
-
-      def initialize(path, sign)
-        @path = path
-        @sign = sign
-      end
-    end
+    DESCRIPTION = 'JAR signing'
 
     def verify
-      signurates || false
+      # lazy parse, do nothing here.
     end
 
     def signurates
@@ -53,7 +35,7 @@ module AppInfo::Android::Signature
         # find META-INF/xxx.{RSA|DSA}
         next unless path =~ %r{^META-INF/} && data.unpack('CC') == [0x30, 0x82]
 
-        signurates << Signature.new(path, OpenSSL::PKCS7.new(data))
+        signurates << OpenSSL::PKCS7.new(data)
       end
 
       signurates
@@ -61,19 +43,19 @@ module AppInfo::Android::Signature
 
     def aab_certificates
       aab_signurates.each_with_object([]) do |sign, obj|
-        obj << Certificate.new(sign.path, sign.sign.certificates[0])
+        obj << sign.certificates[0]
       end
     end
 
     def apk_signurates
       @parser.apk.signs.each_with_object([]) do |(path, sign), obj|
-        obj << Signature.new(path, sign)
+        obj << sign
       end
     end
 
     def apk_certificates
       @parser.apk.certificates.each_with_object([]) do |(path, certificate), obj|
-        obj << Certificate.new(path, certificate)
+        obj << certificate
       end
     end
   end

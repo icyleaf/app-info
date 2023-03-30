@@ -114,6 +114,10 @@ module AppInfo
       @apk ||= ::Android::Apk.new(@file)
     end
 
+    def zip
+      @zip ||= apk.instance_variable_get(:@zip)
+    end
+
     def icons
       @icons ||= apk.icon.each_with_object([]) do |(path, data), obj|
         icon_name = ::File.basename(path)
@@ -149,7 +153,7 @@ module AppInfo
     private
 
     def v1sign
-      @v1sign ||= Android::Signature::V1.new(self)
+      @v1sign ||= Android::Signature::V1.new(Android::Signature::Version::V1, self)
     end
   end
 end

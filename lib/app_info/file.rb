@@ -5,8 +5,9 @@ module AppInfo
   class File
     attr_reader :file
 
-    def initialize(file)
+    def initialize(file, logger: nil)
       @file = file
+      @logger ||= AppInfo.logger
     end
 
     def file_type

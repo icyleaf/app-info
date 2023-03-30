@@ -19,18 +19,18 @@ module AppInfo
       @@versions = {}
 
       class << self
-      #   # Verify Android Signature
-      #   #
-      #   # @params [AppInfo::File] file
-      #   def verify_certs(parser, min_version: nil)
-      #     certs(parser, min_version: min_version, verify: true)
-      #   end
+        # # Verify Android Signature
+        # #
+        # # @params [AppInfo::File] file
+        # def verify_certs(parser, min_version: nil)
+        #   certs(parser, min_version: min_version, verify: true)
+        # end
 
-      #   def verify_versions(parser, min_version: nil, verify: false)
-      #     raise SecurityError, "Not a valid Android AAB"
-      #   end
+        # def verify_versions(parser, min_version: nil, verify: false)
+        #   raise SecurityError, "Not a valid Android AAB"
+        # end
 
-        def versions(parser, min_version: nil, verify: true)
+        def versions(parser, min_version: nil)
           min_version = min_version.to_i if min_version.is_a?(String)
           if min_version && min_version > Version::V4
             raise VersionError, "No signature found in package of version #{min_version} or newer for android file"
@@ -39,16 +39,23 @@ module AppInfo
           # try full version signatures if min_version is nil
           min_version ||= Version::V4
           min_version.downto(Version::V1).each_with_object({}) do |version, signatures|
-            puts "fetching version: #{version}"
             next unless kclass = fetch(version)
 
             signatures[version] = begin
-                                  signatures[version] = kclass.verify(parser)
+                                  verifier = kclass.verify(version, parser)
+                                  certificates = verifier.certificates
+                                  puts version
+                                  puts certificates.class
+                                  certificates.is_a?(Array) && !certificates.empty? ? certificates : false
                                 rescue SecurityError => e
                                   # not this version, try the low version
                                   false
                                 end
           end
+        end
+
+        def registered
+          @@versions.keys
         end
 
         def register(version, verifier)

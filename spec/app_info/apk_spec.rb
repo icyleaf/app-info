@@ -36,12 +36,8 @@ describe AppInfo::APK do
       it { expect(subject.manifest.use_permissions).to eq(subject.use_permissions) }
       it { expect(subject.deep_links).to eq(['icyleaf.com']) }
       it { expect(subject.schemes).to eq(['appinfo']) }
-      it { expect(subject.certificates.first).to be_kind_of(AppInfo::Android::Signature::V1::Certificate) }
-      it { expect(subject.certificates.first.path).to eq('META-INF/CERT.RSA') }
-      it { expect(subject.certificates.first.certificate).to be_kind_of(OpenSSL::X509::Certificate) }
-      it { expect(subject.signs.first).to be_kind_of(AppInfo::Android::Signature::V1::Signature) }
-      it { expect(subject.signs.first.path).to eq('META-INF/CERT.RSA') }
-      it { expect(subject.signs.first.sign).to be_kind_of(OpenSSL::PKCS7) }
+      it { expect(subject.certificates.first).to be_kind_of(OpenSSL::X509::Certificate) }
+      it { expect(subject.signs.first).to be_kind_of(OpenSSL::PKCS7) }
     end
 
     context 'with Android min SDK 24+' do

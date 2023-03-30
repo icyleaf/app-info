@@ -3,52 +3,74 @@
 module AppInfo::Android::Signature
   # Android v2 Signature
   class V2 < Base
+    # Magic value: APK Sig Block 42
+    APK_SIG_V2_MAGIC_VALUE = [0x41, 0x50, 0x4b, 0x20, 0x53, 0x69, 0x67, 0x20, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x20, 0x34, 0x32]
+
+    # V2 Signature ID 0x7109871a
+    APK_SIGNATURE_SCHEME_V2_BLOCK_ID = [0x1a, 0x87, 0x09, 0x71]
+
+    APK_SIG_SIZE_OF_BLOCK_SIZE = 8
+    APK_SIG_MAGIC_BLOCK_SIZE = 16
+    APK_SIG_BLOCK_MIN_SIZE = 32
+
+    attr_reader :certificates, :digests
+
     def verify
-      # @sign ||= V2Sign.parse(sig_block, logger)
+      raise SecurityError, 'ZIP64 APK not supported' if zip64?
+      logger = AppInfo.logger
+      sign = V2Sign.parse(sig_block, logger)
+      @certificates, @digests = sign.verify
     end
 
     def sig_block
       @sig_block ||= lambda {
-        @io.seek(cdir_offset - (APK_SIG_MAGIC_BLOCK_SIZE + APK_SIG_SIZE_OF_BLOCK_SIZE))
-        footer_block = @io.read(APK_SIG_SIZE_OF_BLOCK_SIZE)
+        file_io.seek(cdir_offset - (APK_SIG_MAGIC_BLOCK_SIZE + APK_SIG_SIZE_OF_BLOCK_SIZE))
+        footer_block = file_io.read(APK_SIG_SIZE_OF_BLOCK_SIZE)
         if footer_block.size < APK_SIG_SIZE_OF_BLOCK_SIZE
-          raise "APK Signing Block size out of range: #{footer_block.size}"
+          raise SecurityError, "APK Signing Block size out of range: #{footer_block.size}"
         end
 
         footer = footer_block.unpack1('Q')
         total_size = footer
         offset = cdir_offset - total_size - APK_SIG_SIZE_OF_BLOCK_SIZE
-        if offset < 0
-          raise "APK Signing Block offset out of range: #{offset}"
-        end
+        raise SecurityError, "APK Signing Block offset out of range: #{offset}" if offset.negative?
 
-        @io.seek(offset)
-        header = @io.read(APK_SIG_SIZE_OF_BLOCK_SIZE).unpack1('Q')
+        file_io.seek(offset)
+        header = file_io.read(APK_SIG_SIZE_OF_BLOCK_SIZE).unpack1('Q')
 
         if header != footer
-          raise "APK Signing Block header and footer mismatch: #{header} != #{footer}"
+          raise SecurityError,
+                "APK Signing Block header and footer mismatch: #{header} != #{footer}"
         end
 
-        sign_block = @io.read(total_size)
+        sign_block = file_io.read(total_size)
         StringIO.new(sign_block)
       }.call
     end
 
     # private
+    #
+    def zip_io
+      @zip_io ||= @parser.zip
+    end
+
+    def file_io
+      @file_io ||= File.open(@parser.file, 'rb')
+    end
 
     def cdir_offset
       @cdir_offset ||= lambda {
-        eocd_buffer = @zip_file.get_e_o_c_d(start_buffer)
+        eocd_buffer = zip_io.get_e_o_c_d(start_buffer)
         eocd_buffer[12..16].unpack1('V')
       }.call
     end
 
     def zip64?
-      @zip_file.zip64_file?(start_buffer)
+      zip_io.zip64_file?(start_buffer)
     end
 
     def start_buffer
-      @start_buffer ||= @parser.zip_file.start_buf(@io)
+      @start_buffer ||= zip_io.start_buf(file_io)
     end
 
     # APK V2 Signurate
@@ -60,17 +82,13 @@ module AppInfo::Android::Signature
     # * @-24 bytes uint64:    size in bytes (same as the one above)
     # * @-16 bytes uint128:   magic value "APK Sig Block 42" (16 bytes)
     class V2Sign
-      UINT32_SIZE = 4
-      UINT64_SIZE = 8
-
       def self.parse(io, logger)
         instance = new(io, logger)
         instance.parse
         instance
       end
 
-      attr_reader :logger
-      attr_reader :total_size, :payload, :magic
+      attr_reader :logger, :total_size, :payload, :magic
 
       def initialize(io, logger)
         @logger = logger
@@ -83,12 +101,12 @@ module AppInfo::Android::Signature
 
       def verify
         unless (signers = length_prefix_block(payload))
-          raise "Not found signers"
+          raise SecurityError, 'Not found signers'
         end
 
         certs, content_digests = verified_certs(signers)
-
         logger.debug "Certs: #{certs.size}, content_digests: #{content_digests.size}"
+        [certs, content_digests]
       end
 
       def verified_certs(signers)
@@ -105,14 +123,14 @@ module AppInfo::Android::Signature
 
             certs.concat(signer_certs)
             content_digests.merge!(signer_digests)
-          rescue => e
-            raise e
+          rescue StandardError => e
+            raise SecurityError, e.message
           end
 
           signer_count += 1
         end
 
-        raise 'No signers found' if signer_count.zero?
+        raise SecurityError, 'No signers found' if signer_count.zero?
 
         [certs, content_digests]
       end
@@ -124,11 +142,11 @@ module AppInfo::Android::Signature
         public_keys = length_prefix_block(signer, raw: true)
 
         algorithems = signature_algorithms(signatures)
-        raise 'No signatures found' if algorithems.empty?
+        raise SecurityError, 'No signatures found' if algorithems.empty?
 
         # find best algorithem to verify signed data with public key and signature
         unless best_algorithem = best_algorithem(algorithems)
-          raise 'No supported signatures found'
+          raise SecurityError, 'No supported signatures found'
         end
 
         algorithems_digest = best_algorithem[:digest]
@@ -137,7 +155,7 @@ module AppInfo::Android::Signature
         pkey = OpenSSL::PKey.read(public_keys)
         digest = OpenSSL::Digest.new(algorithems_digest)
         verified = pkey.verify(digest, signature, signed_data.string)
-        raise "#{algorithems_digest} signature did not verify" unless verified
+        raise SecurityError, "#{algorithems_digest} signature did not verify" unless verified
 
         # verify algorithm ID full equal (and sort) between digests and signature
         digests = length_prefix_block(signed_data)
@@ -145,24 +163,24 @@ module AppInfo::Android::Signature
         content_digest = content_digests[algorithems_digest]&.fetch(:content)
 
         unless content_digest
-          raise 'Signature algorithms don\'t match between digests and signatures records'
+          raise SecurityError,
+                'Signature algorithms don\'t match between digests and signatures records'
         end
 
         previous_digest = content_digests.fetch(algorithems_digest)
         content_digests[algorithems_digest] = content_digest
         if previous_digest && previous_digest[:content] != content_digest
-          raise 'Signature algorithms don\'t match between digests and signatures records'
+          raise SecurityError,
+                'Signature algorithms don\'t match between digests and signatures records'
         end
 
         certificates = length_prefix_block(signed_data)
         certs = signed_data_certs(certificates)
-        if certs.empty?
-          raise 'No certificates listed'
-        end
+        raise SecurityError, 'No certificates listed' if certs.empty?
 
         main_cert = certs[0]
         if main_cert.public_key.to_der != pkey.to_der
-          raise 'Public key mismatch between certificate and signature record'
+          raise SecurityError, 'Public key mismatch between certificate and signature record'
         end
 
         additional_attrs = length_prefix_block(signed_data)
@@ -175,16 +193,20 @@ module AppInfo::Android::Signature
       def verify_additional_attrs(io)
         loop_length_prefix_io(io, name: 'Additional Attributes') do |attr|
           id = attr.read(4)
-          logger.debug "attr id #{id} / #{id.size} / #{id.unpack('H*')} / #{id.unpack("I*")} / #{id.unpack('C*')}"
+          logger.debug "attr id #{id} / #{id.size} / #{id.unpack('H*')} / #{id.unpack('I*')} / #{id.unpack('C*')}"
           if id.unpack('C*') == STRIPPING_PROTECTION_ATTR_ID
             offset = attr.size - attr.pos
             if offset < 4
-              raise "V2 Signature Scheme Stripping Protection Attribute value too small. Expected 4 bytes, but found #{offset}"
+              raise SecurityError,
+                    "V2 Signature Scheme Stripping Protection Attribute value too small. \
+                    Expected 4 bytes, but found #{offset}"
             end
 
-            value = attr.read(4).unpack1('I')
-            if vers == ApkSignV3Verify::SF_ATTRIBUTE_ANDROID_APK_SIGNED_ID
-              raise 'V2 signature indicates APK is signed using APK Signature Scheme v3, but none was found. Signature stripped?'
+            # value = attr.read(4).unpack1('I')
+            if vers == VERSION::V3
+              raise SecurityError,
+                    'V2 signature indicates APK is signed using APK Signature Scheme v3, \
+                    but none was found. Signature stripped?'
             end
           end
         end
@@ -276,7 +298,7 @@ module AppInfo::Android::Signature
           if min_bytes_length
             offset = buf.size - buf.pos
             if offset < min_bytes_length
-              raise "#{name} too short: #{offset} < #{min_bytes_length}"
+              raise SecurityError, "#{name} too short: #{offset} < #{min_bytes_length}"
             end
           end
 
@@ -362,16 +384,19 @@ module AppInfo::Android::Signature
         until @pairs.eof?
           offset = @pairs.size - @pairs.pos
           if offset < 8
-            raise "Insufficient data to read size of APK Signing Block entry ##{entry_count}"
+            raise SecurityError,
+                  "Insufficient data to read size of APK Signing Block entry ##{entry_count}"
           end
 
           pair_size = @pairs.read(8).unpack1('Q')
           if pair_size < 4 || pair_size > 2_147_483_647
-            raise "Insufficient data to read size of APK Signing Block entry ##{entry_count}"
+            raise SecurityError,
+                  "Insufficient data to read size of APK Signing Block entry ##{entry_count}"
           end
 
           if pair_size > offset
-            raise "APK Signing Block entry ##{entry_count} size out of range: #{pair_size}, available: #{offset}"
+            raise SecurityError,
+                  "APK Signing Block entry ##{entry_count} size out of range: #{pair_size}, available: #{offset}"
           end
 
           id_block = @pairs.read(4)
@@ -387,7 +412,8 @@ module AppInfo::Android::Signature
           entry_count += 1
         end
 
-        raise "No block with ID #{APK_SIGNATURE_SCHEME_V2_BLOCK_ID} in APK Signing Block."
+        raise SecurityError, "No block with ID #{APK_SIGNATURE_SCHEME_V2_BLOCK_ID} \
+          in APK Signing Block."
 
         pairs_size = @pairs.size
         entry_count = 0
@@ -400,11 +426,12 @@ module AppInfo::Android::Signature
           pair_size = pair_buf.size
 
           if pair_size < UINT64_SIZE
-            raise "Insufficient data to read size of APK Signing Block entry ##{entry_count}"
+            raise SecurityError,
+                  "Insufficient data to read size of APK Signing Block entry ##{entry_count}"
           end
 
           value_size = pair_buf.unpack1('Q')
-          logger.debug "id-value block: bytes size #{pair_buf.size} / hex #{pair_buf.unpack('H*')} / uint32 #{pair_buf.unpack("L*")} / uint64 #{pair_buf.unpack("Q*")}"
+          logger.debug "id-value block: bytes size #{pair_buf.size} / hex #{pair_buf.unpack('H*')} / uint32 #{pair_buf.unpack('L*')} / uint64 #{pair_buf.unpack('Q*')}"
 
           id_start = (pos + offset - 1)
           id_end = id_start + 3
@@ -417,9 +444,7 @@ module AppInfo::Android::Signature
 
           logger.debug "value_size #{value_size} / id range #{id_start}..#{id_end}, value range #{value_start}..#{value_end}"
 
-          if id.unpack('C*') == APK_SIGNATURE_SCHEME_V2_BLOCK_ID
-            sign_value = value
-          end
+          sign_value = value if id.unpack('C*') == APK_SIGNATURE_SCHEME_V2_BLOCK_ID
 
           pos = value_end + 1
           offset = pos + UINT32_SIZE
@@ -432,11 +457,19 @@ module AppInfo::Android::Signature
       def length_prefix_block(io, raw: false)
         offset = io.size - io.pos
         logger.debug "source full size #{io.size}, pos #{io.pos}, offset #{offset}"
-        raise 'Remaining buffer too short to contain length of length-prefixed field.' if offset < 4
+        if offset < 4
+          raise SecurityError,
+                'Remaining buffer too short to contain length of length-prefixed field.'
+        end
 
         size = io.read(4).unpack1('I')
-        raise 'Negative length' if size.negative?
-        raise "Underflow while reading length-prefixed value. length: #{size}, remaining: #{io.size}" if size > io.size
+        raise SecurityError, 'Negative length' if size.negative?
+
+        if size > io.size
+          raise SecurityError,
+                "Underflow while reading length-prefixed value. \
+                length: #{size}, remaining: #{io.size}"
+        end
 
         raw_data = io.read(size)
         raw ? raw_data : StringIO.new(raw_data)

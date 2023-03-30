@@ -9,5 +9,5 @@ module AppInfo::Android::Signature
     end
   end
 
-  register(Version::V4, V4)
+  # register(Version::V4, V4)
 end

@@ -27,14 +27,7 @@ Zip.warn_invalid_date = false
 
 # AppInfo Module
 module AppInfo
-  ZIP_RETGEX = /^\x50\x4b\x03\x04/.freeze
-  PE_REGEX = /^MZ/.freeze
-  PLIST_REGEX = /\x3C\x3F\x78\x6D\x6C/.freeze
-  BPLIST_REGEX = /^\x62\x70\x6C\x69\x73\x74/.freeze
-
   class << self
-    UNKNOWN_FORMAT = :unkown
-
     # Get a new parser for automatic
     def parse(file)
       raise NotFoundError, file unless ::File.exist?(file)
@@ -61,7 +54,7 @@ module AppInfo
     alias dump parse
 
     def parse?(file)
-      file_type(file) != UNKNOWN_FORMAT
+      file_type(file) != Format::UNKNOWN
     end
 
     # Detect file type by read file header
@@ -79,6 +72,14 @@ module AppInfo
       else
         Format::UNKNOWN
       end
+    end
+
+    def logger
+      @logger ||= Logger.new($stdout)
+    end
+
+    def logger=(new_logger)
+      @logger = new_logger
     end
 
     private
@@ -138,4 +139,9 @@ module AppInfo
       end
     end
   end
+
+  ZIP_RETGEX = /^\x50\x4b\x03\x04/.freeze
+  PE_REGEX = /^MZ/.freeze
+  PLIST_REGEX = /\x3C\x3F\x78\x6D\x6C/.freeze
+  BPLIST_REGEX = /^\x62\x70\x6C\x69\x73\x74/.freeze
 end

@@ -25,12 +25,8 @@ describe AppInfo::APK do
       it { expect(subject.target_sdk_version).to eq 31 }
       it { expect(subject.deep_links).to eq(['icyleaf.com']) }
       it { expect(subject.schemes).to eq(['appinfo']) }
-      it { expect(subject.certificates.first).to be_kind_of(AppInfo::Android::Signature::V1::Certificate) }
-      it { expect(subject.certificates.first.path).to eq('META-INF/KEY0.RSA') }
-      it { expect(subject.certificates.first.certificate).to be_kind_of(OpenSSL::X509::Certificate) }
-      it { expect(subject.signs.first).to be_kind_of(AppInfo::Android::Signature::V1::Signature) }
-      it { expect(subject.signs.first.path).to eq('META-INF/KEY0.RSA') }
-      it { expect(subject.signs.first.sign).to be_kind_of(OpenSSL::PKCS7) }
+      it { expect(subject.certificates.first).to be_kind_of(OpenSSL::X509::Certificate) }
+      it { expect(subject.signs.first).to be_kind_of(OpenSSL::PKCS7) }
       it { expect(subject.activities.size).to eq(2) }
       it { expect(subject.services.size).to eq(0) }
       it { expect(subject.components.size).to eq(1) }
