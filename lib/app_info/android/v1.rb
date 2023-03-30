@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 module AppInfo::Android::Signature
-  class V1
+  # Android v1 Signature
+  class V1 < Base
     # Android Certificate
     class Certificate
       attr_reader :path, :certificate
@@ -22,11 +23,8 @@ module AppInfo::Android::Signature
       end
     end
 
-    # Android v1 Signatures
-    #
-    # @params [AppInfo::File] parser
-    def initialize(parser)
-      @parser = parser
+    def verify
+      signurates || false
     end
 
     def signurates
@@ -79,4 +77,6 @@ module AppInfo::Android::Signature
       end
     end
   end
+
+  register(Version::V1, V1)
 end

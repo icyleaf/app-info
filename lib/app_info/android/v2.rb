@@ -1,17 +1,10 @@
 # frozen_string_literal: true
 
 module AppInfo::Android::Signature
-  # Android v2 Signatures
-  class V2
-    # Initialize
-    #
-    # @params [AppInfo::File] parser
-    def initialize(parser)
-      @parser = parser
-    end
-
-    def sign
-      @sign ||= V2Sign.parse(sig_block, logger)
+  # Android v2 Signature
+  class V2 < Base
+    def verify
+      # @sign ||= V2Sign.parse(sig_block, logger)
     end
 
     def sig_block
@@ -55,7 +48,7 @@ module AppInfo::Android::Signature
     end
 
     def start_buffer
-      @start_buffer ||= @zip_file.start_buf(@io)
+      @start_buffer ||= @parser.zip_file.start_buf(@io)
     end
 
     # APK V2 Signurate
@@ -450,4 +443,6 @@ module AppInfo::Android::Signature
       end
     end
   end
+
+  register(Version::V2, V2)
 end

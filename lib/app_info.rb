@@ -39,18 +39,24 @@ module AppInfo
     def parse(file)
       raise NotFoundError, file unless ::File.exist?(file)
 
-      case file_type(file)
-      when Format::IPA then IPA.new(file)
-      when Format::APK then APK.new(file)
-      when Format::AAB then AAB.new(file)
-      when Format::MOBILEPROVISION then MobileProvision.new(file)
-      when Format::DSYM then DSYM.new(file)
-      when Format::PROGUARD then Proguard.new(file)
-      when Format::MACOS then Macos.new(file)
-      when Format::PE then PE.new(file)
-      else
-        raise UnknownFileTypeError, "Do not detect file type: #{file}"
-      end
+      parser = case file_type(file)
+               when Format::IPA then IPA.new(file)
+               when Format::APK then APK.new(file)
+               when Format::AAB then AAB.new(file)
+               when Format::MOBILEPROVISION then MobileProvision.new(file)
+               when Format::DSYM then DSYM.new(file)
+               when Format::PROGUARD then Proguard.new(file)
+               when Format::MACOS then Macos.new(file)
+               when Format::PE then PE.new(file)
+               else
+                 raise UnknownFileTypeError, "Do not detect file type: #{file}"
+               end
+
+      return parser unless block_given?
+
+      # call block and clear!
+      yield parser
+      parser.clear!
     end
     alias dump parse
 
