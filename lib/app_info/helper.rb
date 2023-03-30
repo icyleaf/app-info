@@ -87,9 +87,8 @@ module AppInfo
       # Unarchive zip file
       #
       # source: https://github.com/soffes/lagunitas/blob/master/lib/lagunitas/ipa.rb
-      def unarchive(file, path: nil)
-        path = path ? "#{path}-" : ''
-        root_path = "#{Dir.mktmpdir}/AppInfo-#{path}#{SecureRandom.hex}"
+      def unarchive(file, prefix:, base_path: '/tmp')
+        root_path = Dir.mktmpdir('appinfo-#{prefix}', base_path)
         Zip::File.open(file) do |zip_file|
           if block_given?
             yield root_path, zip_file
@@ -106,15 +105,10 @@ module AppInfo
       end
 
       def tempdir(file, prefix:, system: false)
-        dest_path = if system
-                      Dir.mktmpdir("appinfo-#{prefix}-#{::File.basename(file, '.*')}-", '/tmp')
-                    else
-                      ::File.join(::File.dirname(file), prefix)
-                    end
-
+        base_path = system ? '/tmp' : ::File.dirname(file)
+        full_prefix = "appinfo-#{prefix}-#{::File.basename(file, '.*')}"
+        dest_path = Dir.mktmpdir(full_prefix, base_path)
         dest_file = ::File.join(dest_path, ::File.basename(file))
-        FileUtils.mkdir_p(dest_path, mode: 0_700) unless system
-        dest_file
       end
     end
 

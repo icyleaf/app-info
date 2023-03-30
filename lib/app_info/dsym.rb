@@ -89,7 +89,7 @@ module AppInfo
           @contents = @file
         else
           dsym_dir = nil
-          @contents = unarchive(@file, path: 'dsym') do |path, zip_file|
+          @contents = unarchive(@file, prefix: 'dsym') do |path, zip_file|
             zip_file.each do |f|
               unless dsym_dir
                 dsym_dir = f.name

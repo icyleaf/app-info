@@ -65,7 +65,7 @@ module AppInfo
           next unless res.type == 'ICON'
 
           filename = "#{::File.basename(file, '.*')}-#{res.type}-#{res.id}.bmp"
-          icon_file = tempdir(filename, system: true, prefix: 'pe')
+          icon_file = tempdir(filename, prefix: 'pe', system: true)
           mask_icon_file = icon_file.sub('.bmp', '.mask.bmp')
 
           begin
@@ -124,7 +124,7 @@ module AppInfo
         zip_entry = zip_file.glob('*.exe').first
         raise NotFoundWinBinraryError, 'Not found .exe file in archive file' if zip_entry.nil?
 
-        exe_file = tempdir(zip_entry.name, system: true, prefix: 'pe-exe')
+        exe_file = tempdir(zip_entry.name, prefix: 'pe-exe', system: true)
         zip_entry.extract(exe_file)
         zip_file.close
 
