@@ -7,5 +7,10 @@ gemspec
 
 group :development do
   gem 'awesome_print'
-  gem 'debug' # For ruby 3.0+
+  gem 'debug' # For ruby 3.0+\
+end
+
+group :development, :test do
+  gem 'rspec'
+  gem 'rubocop'
 end
