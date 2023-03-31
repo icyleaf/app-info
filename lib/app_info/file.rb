@@ -3,7 +3,7 @@
 # AppInfo base file
 module AppInfo
   class File
-    attr_reader :file
+    attr_reader :file, :logger
 
     def initialize(file, logger: nil)
       @file = file

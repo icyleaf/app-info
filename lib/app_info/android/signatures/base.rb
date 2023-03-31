@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'app_info/android/certificate'
+require 'app_info/android/signatures/info'
 
 module AppInfo::Android::Signature
   class Base
@@ -37,6 +38,12 @@ module AppInfo::Android::Signature
 
     def certificates
       raise VersionError, ".#{__method__} method implantation required in #{self.class}"
+    end
+
+    private
+
+    def logger
+      @parser.logger
     end
   end
 end

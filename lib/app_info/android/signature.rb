@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'stringio'
-require 'openssl'
-
 module AppInfo
   module Android
 
@@ -52,8 +49,6 @@ module AppInfo
             signatures[version] = begin
                                   verifier = kclass.verify(version, parser)
                                   certificates = verifier.certificates
-                                  puts version
-                                  puts certificates.class
                                   certificates.is_a?(Array) && !certificates.empty? ? certificates : false
                                 rescue SecurityError => e
                                   # not this version, try the low version
@@ -79,6 +74,7 @@ module AppInfo
         end
       end
 
+      UINT32_MAX_VALUE = 2_147_483_647
       UINT32_SIZE = 4
       UINT64_SIZE = 8
     end

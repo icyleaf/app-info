@@ -5,6 +5,8 @@ module AppInfo::Android::Signature
   class V1 < Base
     DESCRIPTION = 'JAR signing'
 
+    PKCS7_HEADER = [0x30, 0x82]
+
     def verify
       # lazy parse, do nothing here.
     end
@@ -33,7 +35,7 @@ module AppInfo::Android::Signature
       signurates = []
       @parser.each_file do |path, data|
         # find META-INF/xxx.{RSA|DSA|EC}
-        next unless path =~ %r{^META-INF/} && data.unpack('CC') == [0x30, 0x82]
+        next unless path =~ %r{^META-INF/} && data.unpack('CC') == PKCS7_HEADER
 
         signurates << OpenSSL::PKCS7.new(data)
       end

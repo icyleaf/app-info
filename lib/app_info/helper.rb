@@ -146,5 +146,135 @@ module AppInfo
         [nil, new_value]
       end
     end
+
+    module SignatureBlock
+      def length_prefix_block(io, raw: false)
+        offset = io.size - io.pos
+        # logger.debug "source full size #{io.size}, pos #{io.pos}, offset #{offset}"
+        if offset < AppInfo::Android::Signature::UINT32_SIZE
+          raise SecurityError,
+                'Remaining buffer too short to contain length of length-prefixed field.'
+        end
+
+        size = io.read(AppInfo::Android::Signature::UINT32_SIZE).unpack1('I')
+        raise SecurityError, 'Negative length' if size.negative?
+
+        if size > io.size
+          raise SecurityError,
+                "Underflow while reading length-prefixed value. length: #{size}, remaining: #{io.size}"
+        end
+
+        raw_data = io.read(size)
+        raw ? raw_data : StringIO.new(raw_data)
+      end
+
+      # Only use for uint32 length-prefixed block
+      def loop_length_prefix_io(io, name:, max_bytes: nil, raw: false, logger: nil, &block)
+        index = 0
+        until io.eof?
+          logger.debug "#{name} count ##{index}" if logger
+          buffer = length_prefix_block(io, raw: raw)
+          left_bytes_check(buffer, max_bytes) do |left_bytes|
+            "#{name} too short: #{left_bytes} < #{max_bytes}"
+          end
+
+          block.call(buffer)
+          index += 1
+        end
+      end
+
+      # Signature certificate identifiers
+      SIG_RSA_PSS_WITH_SHA256 = [0x01, 0x01, 0x00, 0x00].freeze                # 0x0101
+      SIG_RSA_PSS_WITH_SHA512 = [0x02, 0x01, 0x00, 0x00].freeze                # 0x0102
+      SIG_RSA_PKCS1_V1_5_WITH_SHA256 = [0x03, 0x01, 0x00, 0x00].freeze         # 0x0103
+      SIG_RSA_PKCS1_V1_5_WITH_SHA512 = [0x04, 0x01, 0x00, 0x00].freeze         # 0x0104
+      SIG_ECDSA_WITH_SHA256 = [0x01, 0x02, 0x00, 0x00].freeze                  # 0x0201
+      SIG_ECDSA_WITH_SHA512 = [0x02, 0x02, 0x00, 0x00].freeze                  # 0x0202
+      SIG_DSA_WITH_SHA256 = [0x01, 0x03, 0x00, 0x00].freeze                    # 0x0301
+      SIG_VERITY_RSA_PKCS1_V1_5_WITH_SHA256 = [0x21, 0x04, 0x00, 0x00].freeze  # 0x0421
+      SIG_VERITY_ECDSA_WITH_SHA256 = [0x23, 0x04, 0x00, 0x00].freeze           # 0x0423
+      SIG_VERITY_DSA_WITH_SHA256 = [0x25, 0x04, 0x00, 0x00].freeze             # 0x0425
+
+      SIG_STRIPPING_PROTECTION_ATTR_ID = [0x0d, 0xf0, 0xef, 0xbe].freeze       # 0xbeeff00d
+
+      def compare_algorithem(source, target)
+        case algorithem_priority(source) <=> algorithem_priority(target)
+        when -1
+          target
+        else
+          source
+        end
+      end
+
+      def algorithem_priority(algorithm)
+        case algorithm
+        when SIG_RSA_PSS_WITH_SHA256,
+          SIG_RSA_PKCS1_V1_5_WITH_SHA256,
+          SIG_ECDSA_WITH_SHA256,
+          SIG_DSA_WITH_SHA256
+          1
+        when SIG_RSA_PSS_WITH_SHA512,
+          SIG_RSA_PKCS1_V1_5_WITH_SHA512,
+          SIG_ECDSA_WITH_SHA512
+          2
+        when SIG_VERITY_RSA_PKCS1_V1_5_WITH_SHA256,
+          SIG_VERITY_ECDSA_WITH_SHA256,
+          SIG_VERITY_DSA_WITH_SHA256
+          3
+        end
+      end
+
+      def algorithm_method(algorithm)
+        case algorithm
+        when SIG_RSA_PSS_WITH_SHA256,
+          SIG_RSA_PSS_WITH_SHA512,
+          SIG_RSA_PKCS1_V1_5_WITH_SHA256,
+          SIG_RSA_PKCS1_V1_5_WITH_SHA512,
+          SIG_VERITY_RSA_PKCS1_V1_5_WITH_SHA256
+          :rsa
+        when SIG_ECDSA_WITH_SHA256,
+          SIG_ECDSA_WITH_SHA512,
+          SIG_VERITY_ECDSA_WITH_SHA256
+          :ec
+        when SIG_DSA_WITH_SHA256,
+          SIG_VERITY_DSA_WITH_SHA256
+          :dsa
+        end
+      end
+
+      def algorithm_match(algorithm)
+        case algorithm
+        when SIG_RSA_PSS_WITH_SHA256,
+          SIG_RSA_PKCS1_V1_5_WITH_SHA256,
+          SIG_ECDSA_WITH_SHA256,
+          SIG_DSA_WITH_SHA256,
+          SIG_VERITY_RSA_PKCS1_V1_5_WITH_SHA256,
+          SIG_VERITY_ECDSA_WITH_SHA256,
+          SIG_VERITY_DSA_WITH_SHA256
+          'SHA256'
+        when SIG_RSA_PSS_WITH_SHA512,
+          SIG_RSA_PKCS1_V1_5_WITH_SHA512,
+          SIG_ECDSA_WITH_SHA512
+          'SHA512'
+        end
+      end
+
+      def left_bytes_check(io, max_bytes, message = nil, &block)
+        return if max_bytes.nil?
+
+        left_bytes = io.size - io.pos
+        return left_bytes if left_bytes.zero?
+
+        message ||= if block_given?
+                      block.call(left_bytes)
+                    else
+                      "io too short: #{offset} < #{max_bytes}"
+                    end
+
+        raise SecurityError, message if left_bytes < max_bytes
+
+        left_bytes
+      end
+    end
   end
 end
