@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'app_info/android/certificate'
+
 module AppInfo::Android::Signature
   class Base
     def self.verify(version, parser)
@@ -38,3 +40,8 @@ module AppInfo::Android::Signature
     end
   end
 end
+
+require 'app_info/android/signatures/v1'
+require 'app_info/android/signatures/v2'
+require 'app_info/android/signatures/v3'
+require 'app_info/android/signatures/v4'

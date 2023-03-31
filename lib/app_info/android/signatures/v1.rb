@@ -32,7 +32,7 @@ module AppInfo::Android::Signature
     def aab_signurates
       signurates = []
       @parser.each_file do |path, data|
-        # find META-INF/xxx.{RSA|DSA}
+        # find META-INF/xxx.{RSA|DSA|EC}
         next unless path =~ %r{^META-INF/} && data.unpack('CC') == [0x30, 0x82]
 
         signurates << OpenSSL::PKCS7.new(data)

@@ -402,7 +402,7 @@ module AppInfo::Android::Signature
           id_block = @pairs.read(4)
           id = id_block.unpack('C*')
           if id == APK_SIGNATURE_SCHEME_V2_BLOCK_ID
-            logger.debug "You got signing block #{id_block.unpack('H*')} !!!!"
+            logger.info "Signature block id 0x#{id_block.unpack('H*')} match v2 scheme"
             value = @pairs.read(pair_size - 4)
             return StringIO.new(value)
           end

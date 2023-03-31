@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'app_info/android/signature'
 require 'ruby_apk'
 require 'image_size'
 require 'forwardable'

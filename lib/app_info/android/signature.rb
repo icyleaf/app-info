@@ -5,6 +5,14 @@ require 'openssl'
 
 module AppInfo
   module Android
+
+    # Android Signature
+    #
+    # Support digest and length:
+    #
+    # RSA：1024、2048、4096、8192、16384
+    # EC：NIST P-256、P-384、P-521
+    # DSA：1024、2048、3072
     module Signature
       class VersionError < Error; end
       class SecurityError < Error; end
@@ -77,8 +85,4 @@ module AppInfo
   end
 end
 
-require 'app_info/android/base'
-require 'app_info/android/v1'
-require 'app_info/android/v2'
-require 'app_info/android/v3'
-require 'app_info/android/v4'
+require 'app_info/android/signatures/base'
