@@ -143,7 +143,7 @@ module AppInfo
     end
 
     def contents
-      @contents ||= unarchive(@file, path: 'macos')
+      @contents ||= unarchive(@file, prefix: 'macos')
     end
 
     private
