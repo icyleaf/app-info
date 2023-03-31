@@ -79,7 +79,7 @@ module AppInfo
     alias resource_path symbol_path
 
     def contents
-      @contents ||= unarchive(@file, path: 'proguard')
+      @contents ||= unarchive(@file, prefix: 'proguard')
     end
 
     def clear!
