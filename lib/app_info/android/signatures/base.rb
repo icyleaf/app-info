@@ -13,6 +13,8 @@ module AppInfo::Android::Signature
 
     DESCRIPTION = 'APK Signature Scheme'
 
+    attr_reader :verified
+
     def initialize(parser)
       @parser = parser
       @verified = false

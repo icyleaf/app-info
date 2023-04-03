@@ -12,7 +12,7 @@ module AppInfo
     module Signature
       class VersionError < Error; end
       class SecurityError < Error; end
-      class NotFoundError < Error; end
+      class NotFoundError < NotFoundError; end
 
       module Version
         V1    = 1
@@ -46,20 +46,28 @@ module AppInfo
                   "No signature found in #{min_version} scheme or newer for android file"
           end
 
+          if min_version.zero?
+            raise VersionError,
+                  "Unkonwn version: #{min_version}, avaiables in 1/2/3 and 4 (no implantation yet)"
+          end
+
           # try full version signatures if min_version is nil
-          min_version.downto(Version::V1).each_with_object({}) do |version, signatures|
+          versions = min_version.downto(Version::V1).each_with_object([]) do |version, signatures|
             next unless kclass = fetch(version)
 
+            data = { version: version }
             begin
               verifier = kclass.verify(parser)
-              certificates = verifier.certificates
-              has_certs = certificates.is_a?(Array) && !certificates.empty?
-              signatures[version] = has_certs ? certificates : false
-            rescue SecurityError
+              data[:verified] = verifier.verified
+              data[:certificates] = verifier.certificates
+            rescue SecurityError, NotFoundError
               # not this version, try the low version
-              signatures[version] = false
+            ensure
+              signatures << data
             end
           end
+
+          versions.sort_by { |entry| entry[:version] }
         end
 
         def registered

@@ -217,7 +217,7 @@ module AppInfo
 
     def v1sign
       @v1sign ||= Android::Signature::V1.verify(self)
-    rescue Android::Signature::NotFound
+    rescue Android::Signature::NotFoundError
       nil
     end
 

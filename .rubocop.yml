@@ -27,6 +27,16 @@ AllCops:
     - 'lib/app_info/protobuf/models/*_pb.rb'
     - 'main.rb'
 
+Layout/LineLength:
+  Max: 100
+
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'lib/app_info/file.rb'
+
 Metrics/AbcSize:
   Max: 100
 
@@ -50,9 +60,6 @@ Metrics/UselessAssignment:
   Exclude:
     - 'lib/app_info/android/signatures/v3.rb'
 
-Layout/LineLength:
-  Max: 100
-
 Metrics/ClassLength:
   CountComments: false
   Max: 300
@@ -63,8 +70,9 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 18
 
-Lint/AssignmentInCondition:
-  Enabled: false
+Metrics/BlockNesting:
+  Exclude:
+    - 'lib/app_info/dsym.rb'
 
 Style/Documentation:
   Enabled: false
@@ -78,10 +86,6 @@ Style/PerlBackrefs:
 
 Style/DocumentDynamicEvalDefinition:
   Enabled: false
-
-Metrics/BlockNesting:
-  Exclude:
-    - 'lib/app_info/dsym.rb'
 
 Style/SlicingWithRange:
   Enabled: false

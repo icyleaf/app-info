@@ -14,7 +14,7 @@ module AppInfo
       Platform::UNKNOWN
     end
 
-    def size
+    def size(human_size: false)
       raise 'implantation required'
     end
   end

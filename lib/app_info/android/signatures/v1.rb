@@ -21,7 +21,7 @@ module AppInfo::Android::Signature
       @signatures = fetch_signatures
       @certificates = fetch_certificates
 
-      raise NotFound, 'Not found certificates' if @certificates.empty?
+      raise NotFoundError, 'Not found certificates' if @certificates.empty?
     end
 
     private

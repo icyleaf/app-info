@@ -8,8 +8,6 @@ require 'stringio'
 
 module AppInfo
   class PngUncrush
-    class Error < StandardError; end
-
     class FormatError < Error; end
 
     class PngReader # :nodoc:

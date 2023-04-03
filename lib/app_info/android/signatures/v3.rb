@@ -37,7 +37,7 @@ module AppInfo::Android::Signature
     def verify
       begin
         signers_block = singers_block(V3_1_BLOCK_ID)
-      rescue NotFound
+      rescue NotFoundError
         signers_block = singers_block(V3_BLOCK_ID)
       end
 
