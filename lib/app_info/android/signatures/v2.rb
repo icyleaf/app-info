@@ -6,16 +6,16 @@ module AppInfo::Android::Signature
     include AppInfo::Helper::SignatureBlock
 
     # V2 Signature ID 0x7109871a
-    BLOCK_ID = [0x1a, 0x87, 0x09, 0x71]
+    BLOCK_ID = [0x1a, 0x87, 0x09, 0x71].freeze
 
     attr_reader :certificates, :digests
 
     def verify
-      info = Info.new(@version, @parser, @parser.logger)
+      info = Info.new(@version, @parser, logger)
       raise SecurityError, 'ZIP64 APK not supported' if info.zip64?
 
       signers_block = info.signers(BLOCK_ID)
-      verified_certs(signers_block)
+      @certificates, @digests = verified_certs(signers_block)
     end
 
     private
@@ -28,13 +28,9 @@ module AppInfo::Android::Signature
       certificates = []
       content_digests = {}
       loop_length_prefix_io(signers, name: 'Singer', logger: logger) do |signer|
-        begin
-          signer_certs, signer_digests = extract_signer_data(signer)
-          certificates.concat(signer_certs)
-          content_digests.merge!(signer_digests)
-        rescue StandardError => e
-          raise SecurityError, e.message
-        end
+        signer_certs, signer_digests = extract_signer_data(signer)
+        certificates.concat(signer_certs)
+        content_digests.merge!(signer_digests)
       end
       raise SecurityError, 'No signers found' if certificates.empty?
 
@@ -97,9 +93,12 @@ module AppInfo::Android::Signature
 
     def signature_algorithms(signatures)
       algorithems = []
-      loop_length_prefix_io(signatures, name: 'Signature Algorithms',
-                            max_bytes: UINT64_SIZE, logger: logger) do |signature|
-
+      loop_length_prefix_io(
+        signatures,
+        name: 'Signature Algorithms',
+        max_bytes: UINT64_SIZE,
+        logger: logger
+      ) do |signature|
         algorithm = signature.read(UINT32_SIZE).unpack('C*')
         digest = algorithm_match(algorithm)
         next unless digest
@@ -118,7 +117,7 @@ module AppInfo::Android::Signature
     def verify_additional_attrs(io)
       loop_length_prefix_io(io, name: 'Additional Attributes') do |attr|
         id = attr.read(UINT32_SIZE)
-        logger.debug "attr id #{id} / #{id.size} / #{id.unpack('H*')} / #{id.unpack('I*')} / #{id.unpack('C*')}"
+        logger.debug "ID #{id} / #{id.size} / #{id.unpack('H*')} / #{id.unpack('C*')}"
         if id.unpack('C*') == SIG_STRIPPING_PROTECTION_ATTR_ID
           offset = attr.size - attr.pos
           if offset < UINT32_SIZE

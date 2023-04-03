@@ -4,7 +4,7 @@ module AppInfo::Android::Signature
   # Android v3 Signature
   class V3 < Base
     # V3 Signature ID 0xf05368c0
-    BLOCK_ID = [0xc0, 0x68, 0x53, 0xf0]
+    BLOCK_ID = [0xc0, 0x68, 0x53, 0xf0].freeze
 
     attr_reader :certificates, :digests
 

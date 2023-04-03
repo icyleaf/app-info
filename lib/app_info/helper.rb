@@ -150,7 +150,6 @@ module AppInfo
     module SignatureBlock
       def length_prefix_block(io, raw: false)
         offset = io.size - io.pos
-        # logger.debug "source full size #{io.size}, pos #{io.pos}, offset #{offset}"
         if offset < AppInfo::Android::Signature::UINT32_SIZE
           raise SecurityError,
                 'Remaining buffer too short to contain length of length-prefixed field.'
@@ -160,8 +159,8 @@ module AppInfo
         raise SecurityError, 'Negative length' if size.negative?
 
         if size > io.size
-          raise SecurityError,
-                "Underflow while reading length-prefixed value. length: #{size}, remaining: #{io.size}"
+          message = "Underflow while reading length-prefixed value. #{size} > #{io.size}"
+          raise SecurityError, message
         end
 
         raw_data = io.read(size)
@@ -172,7 +171,7 @@ module AppInfo
       def loop_length_prefix_io(io, name:, max_bytes: nil, raw: false, logger: nil, &block)
         index = 0
         until io.eof?
-          logger.debug "#{name} count ##{index}" if logger
+          logger&.debug "#{name} count ##{index}"
           buffer = length_prefix_block(io, raw: raw)
           left_bytes_check(buffer, max_bytes) do |left_bytes|
             "#{name} too short: #{left_bytes} < #{max_bytes}"
@@ -226,35 +225,25 @@ module AppInfo
 
       def algorithm_method(algorithm)
         case algorithm
-        when SIG_RSA_PSS_WITH_SHA256,
-          SIG_RSA_PSS_WITH_SHA512,
-          SIG_RSA_PKCS1_V1_5_WITH_SHA256,
-          SIG_RSA_PKCS1_V1_5_WITH_SHA512,
+        when SIG_RSA_PSS_WITH_SHA256, SIG_RSA_PSS_WITH_SHA512,
+          SIG_RSA_PKCS1_V1_5_WITH_SHA256, SIG_RSA_PKCS1_V1_5_WITH_SHA512,
           SIG_VERITY_RSA_PKCS1_V1_5_WITH_SHA256
           :rsa
-        when SIG_ECDSA_WITH_SHA256,
-          SIG_ECDSA_WITH_SHA512,
-          SIG_VERITY_ECDSA_WITH_SHA256
+        when SIG_ECDSA_WITH_SHA256, SIG_ECDSA_WITH_SHA512, SIG_VERITY_ECDSA_WITH_SHA256
           :ec
-        when SIG_DSA_WITH_SHA256,
-          SIG_VERITY_DSA_WITH_SHA256
+        when SIG_DSA_WITH_SHA256, SIG_VERITY_DSA_WITH_SHA256
           :dsa
         end
       end
 
       def algorithm_match(algorithm)
         case algorithm
-        when SIG_RSA_PSS_WITH_SHA256,
-          SIG_RSA_PKCS1_V1_5_WITH_SHA256,
-          SIG_ECDSA_WITH_SHA256,
-          SIG_DSA_WITH_SHA256,
-          SIG_VERITY_RSA_PKCS1_V1_5_WITH_SHA256,
-          SIG_VERITY_ECDSA_WITH_SHA256,
+        when SIG_RSA_PSS_WITH_SHA256, SIG_RSA_PKCS1_V1_5_WITH_SHA256,
+          SIG_ECDSA_WITH_SHA256, SIG_DSA_WITH_SHA256,
+          SIG_VERITY_RSA_PKCS1_V1_5_WITH_SHA256, SIG_VERITY_ECDSA_WITH_SHA256,
           SIG_VERITY_DSA_WITH_SHA256
           'SHA256'
-        when SIG_RSA_PSS_WITH_SHA512,
-          SIG_RSA_PKCS1_V1_5_WITH_SHA512,
-          SIG_ECDSA_WITH_SHA512
+        when SIG_RSA_PSS_WITH_SHA512, SIG_RSA_PKCS1_V1_5_WITH_SHA512, SIG_ECDSA_WITH_SHA512
           'SHA512'
         end
       end
@@ -268,7 +257,7 @@ module AppInfo
         message ||= if block_given?
                       block.call(left_bytes)
                     else
-                      "io too short: #{offset} < #{max_bytes}"
+                      "IO too short: #{offset} < #{max_bytes}"
                     end
 
         raise SecurityError, message if left_bytes < max_bytes

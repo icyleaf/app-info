@@ -2,7 +2,6 @@
 
 module AppInfo
   module Android
-
     # Android Signature
     #
     # Support digest and length:
@@ -38,7 +37,8 @@ module AppInfo
         def versions(parser, min_version: nil)
           min_version = min_version.to_i if min_version.is_a?(String)
           if min_version && min_version > Version::V4
-            raise VersionError, "No signature found in package of version #{min_version} or newer for android file"
+            raise VersionError,
+                  "No signature found in #{min_version} scheme or newer for android file"
           end
 
           # try full version signatures if min_version is nil
@@ -46,14 +46,15 @@ module AppInfo
           min_version.downto(Version::V1).each_with_object({}) do |version, signatures|
             next unless kclass = fetch(version)
 
-            signatures[version] = begin
-                                  verifier = kclass.verify(version, parser)
-                                  certificates = verifier.certificates
-                                  certificates.is_a?(Array) && !certificates.empty? ? certificates : false
-                                rescue SecurityError => e
-                                  # not this version, try the low version
-                                  false
-                                end
+            begin
+              verifier = kclass.verify(version, parser)
+              certificates = verifier.certificates
+              has_certs = certificates.is_a?(Array) && !certificates.empty?
+              signatures[version] = has_certs ? certificates : false
+            rescue SecurityError
+              # not this version, try the low version
+              signatures[version] = false
+            end
           end
         end
 

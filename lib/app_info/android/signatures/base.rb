@@ -23,12 +23,6 @@ module AppInfo::Android::Signature
     end
 
     def description
-      unless defined?(DESCRIPTION)
-        raise VersionError, ".#{__method__} method implantation required in #{self.class}"
-      end
-
-      return DESCRIPTION if @version == Version::V1
-
       "#{DESCRIPTION} #{scheme}"
     end
 
@@ -39,8 +33,6 @@ module AppInfo::Android::Signature
     def certificates
       raise VersionError, ".#{__method__} method implantation required in #{self.class}"
     end
-
-    private
 
     def logger
       @parser.logger

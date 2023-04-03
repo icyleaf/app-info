@@ -89,9 +89,10 @@ module AppInfo::Android
     # return size of public key
     def size
       case public_key
-      when OpenSSL::PKey::RSA then public_key.n.num_bits
-      when OpenSSL::PKey::DSA then public_key.p.num_bits
-      when OpenSSL::PKey::DH  then public_key.p.num_bits
+      when OpenSSL::PKey::RSA
+        public_key.n.num_bits
+      when OpenSSL::PKey::DSA, OpenSSL::PKey::DH
+        public_key.p.num_bits
       when OpenSSL::PKey::EC
         raise NotImplementedError, "key size for #{public_key.inspect} not implemented"
       end
@@ -99,20 +100,21 @@ module AppInfo::Android
 
     # return fingerprint of certificate
     def fingerprint(name = :sha256, transform: :lower, delimiter: nil)
-      digest = case name.to_sym
-               when :sha1
-                 OpenSSL::Digest::SHA1.new
-               when :sha224
-                 OpenSSL::Digest::SHA224.new
-               when :sha384
-                 OpenSSL::Digest::SHA384.new
-               when :sha512
-                 OpenSSL::Digest::SHA512.new
-               when :md5
-                 OpenSSL::Digest::MD5.new
-               else
-                 OpenSSL::Digest::SHA256.new
-               end
+      digest = OpenSSL::Digest.new(name.to_s.upcase)
+      # digest = case name.to_sym
+      #          when :sha1
+      #            OpenSSL::Digest::SHA1.new
+      #          when :sha224
+      #            OpenSSL::Digest::SHA224.new
+      #          when :sha384
+      #            OpenSSL::Digest::SHA384.new
+      #          when :sha512
+      #            OpenSSL::Digest::SHA512.new
+      #          when :md5
+      #            OpenSSL::Digest::MD5.new
+      #          else
+      #            OpenSSL::Digest::SHA256.new
+      #          end
 
       digest.update(raw.to_der)
       fingerprint = digest.to_s
@@ -129,13 +131,13 @@ module AppInfo::Android
 
     private
 
-    def convert_cert_name(name, format: )
+    def convert_cert_name(name, format:)
       data = name.to_a
       case format
       when :to_a
-        data.map {|k,v,_| [k, v] }
+        data.map { |k, v, _| [k, v] }
       when :to_s
-        data.map {|k,v,_| "#{k}=#{v}" }.join(' ')
+        data.map { |k, v, _| "#{k}=#{v}" }.join(' ')
       else
         name
       end
@@ -145,7 +147,7 @@ module AppInfo::Android
       @cert.send(method.to_sym, *args, &block) || super
     end
 
-    def respond_to?(method)
+    def respond_to_missing?(method)
       @cert.include?(method.to_sym) || super
     end
   end

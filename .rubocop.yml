@@ -36,11 +36,9 @@ Metrics/BlockLength:
     - 'lib/app_info/mobile_provision.rb'
 
 Metrics/MethodLength:
-  Max: 20
+  Max: 30
   Exclude:
-    - 'lib/app_info/png_uncrush.rb'
     - 'lib/app_info/mobile_provision.rb'
-    - 'lib/app_info/pe.rb'
 
 Layout/LineLength:
   Max: 100

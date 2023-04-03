@@ -79,9 +79,7 @@ module AppInfo
       @logger ||= Logger.new($stdout)
     end
 
-    def logger=(new_logger)
-      @logger = new_logger
-    end
+    attr_writer :logger
 
     private
 

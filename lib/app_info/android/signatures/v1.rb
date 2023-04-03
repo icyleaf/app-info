@@ -5,7 +5,11 @@ module AppInfo::Android::Signature
   class V1 < Base
     DESCRIPTION = 'JAR signing'
 
-    PKCS7_HEADER = [0x30, 0x82]
+    PKCS7_HEADER = [0x30, 0x82].freeze
+
+    def description
+      DESCRIPTION
+    end
 
     def verify
       # lazy parse, do nothing here.
@@ -50,13 +54,13 @@ module AppInfo::Android::Signature
     end
 
     def apk_signurates
-      @parser.apk.signs.each_with_object([]) do |(path, sign), obj|
+      @parser.apk.signs.each_with_object([]) do |(_, sign), obj|
         obj << sign
       end
     end
 
     def apk_certificates
-      @parser.apk.certificates.each_with_object([]) do |(path, certificate), obj|
+      @parser.apk.certificates.each_with_object([]) do |(_, certificate), obj|
         obj << certificate
       end
     end

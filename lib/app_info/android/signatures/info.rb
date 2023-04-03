@@ -21,10 +21,13 @@ module AppInfo::Android::Signature
     SIG_BLOCK_MIN_SIZE = 32
 
     # Magic value: APK Sig Block 42
-    SIG_MAGIC = [0x41, 0x50, 0x4b, 0x20, 0x53, 0x69, 0x67, 0x20, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x20, 0x34, 0x32]
+    SIG_MAGIC = [
+      0x41, 0x50, 0x4b, 0x20, 0x53, 0x69,
+      0x67, 0x20, 0x42, 0x6c, 0x6f, 0x63,
+      0x6b, 0x20, 0x34, 0x32
+    ].freeze
 
-    attr_reader :total_size, :pairs, :magic
-    attr_reader :logger
+    attr_reader :total_size, :pairs, :magic, :logger
 
     def initialize(version, parser, logger)
       @version = version
@@ -56,36 +59,35 @@ module AppInfo::Android::Signature
     #   * @+Y  bytes unit32:    public key with size in bytes
     #   * @+Y+4  bytes payload    signed data block
     def signers(block_id)
-      entry_count = 0
+      count = 0
       until @pairs.eof?
         left_bytes = left_bytes_check(
           @pairs, UINT64_SIZE,
-          "Insufficient data to read size of APK Signing Block entry ##{entry_count}"
+          "Insufficient data to read size of APK Signing Block ##{count}"
         )
 
-        pair_buf = @pairs.read(UINT64_SIZE)
-        pair_size = pair_buf.unpack1('Q')
-        # logger.debug "entry count #{entry_count}, read 0..8 bytes: #{pair_buf.size} / bytes #{pair_buf.unpack('C*')} / hex #{pair_buf.unpack('H*')} / uint32 #{pair_buf.unpack('L*')} / uint64 #{pair_buf.unpack('Q*')}"
+        pair_size = @pairs.read(UINT64_SIZE).unpack1('Q')
         if pair_size < UINT32_SIZE || pair_size > UINT32_MAX_VALUE
           raise SecurityError,
-            "APK Signing Block entry ##{entry_count} size out of range: #{pair_size}, max int32: #{UINT32_MAX_VALUE}"
+                "APK Signing Block ##{count} size out of range: #{pair_size} > #{UINT32_MAX_VALUE}"
         end
 
         if pair_size > left_bytes
-          raise SecurityError, "APK Signing Block entry ##{entry_count} size out of range: #{pair_size}, available: #{left_bytes}"
+          raise SecurityError,
+                "APK Signing Block ##{count} size out of range: #{pair_size} > #{left_bytes}"
         end
 
         id_block = @pairs.read(UINT32_SIZE)
         id_bytes = id_block.unpack('C*')
         if id_bytes == block_id
-          logger.debug "Signature block id #{@version} scheme (0x#{id_block.unpack('H*')[0]}) found"
+          logger.debug "Signature block id #{@version} scheme (0x#{id_block.unpack1('H*')}) found"
           value = @pairs.read(pair_size - UINT32_SIZE)
           return StringIO.new(value)
         end
 
         next_pos = @pairs.pos + pair_size.to_i
         @pairs.seek(next_pos)
-        entry_count += 1
+        count += 1
       end
 
       raise SecurityError, "Not found block id #{block_id} in APK Signing Block."
@@ -94,11 +96,6 @@ module AppInfo::Android::Signature
     def zip64?
       zip_io.zip64_file?(start_buffer)
     end
-
-
-
-
-
 
     def pares_signatures_pairs
       block = signature_block
