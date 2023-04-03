@@ -45,20 +45,8 @@ module AppInfo::Android::Signature
     # * @+8  bytes payload    block
     #   * @+0  bytes uint32:    id
     #   * @+4  bytes payload:   value
-    #
-    # FULL FORMAT:
-    # OFFSET       DATA TYPE  DESCRIPTION
-    # * @+0  bytes uint32:    signer size in bytes
-    # * @+4  bytes payload    signer block
-    #   * @+0  bytes unit32:    signed data size in bytes
-    #   * @+4  bytes payload    signed data block
-    #     * @+0  bytes unit32:    digests with size in bytes
-    #     * @+0  bytes unit32:    digests with size in bytes
-    #   * @+X  bytes unit32:    signatures with size in bytes
-    #   * @+X+4  bytes payload    signed data block
-    #   * @+Y  bytes unit32:    public key with size in bytes
-    #   * @+Y+4  bytes payload    signed data block
     def signers(block_id)
+      logger.debug "Singers block total size: #{@pairs.size}"
       count = 0
       until @pairs.eof?
         left_bytes = left_bytes_check(
@@ -66,7 +54,9 @@ module AppInfo::Android::Signature
           "Insufficient data to read size of APK Signing Block ##{count}"
         )
 
-        pair_size = @pairs.read(UINT64_SIZE).unpack1('Q')
+        pair_buf = @pairs.read(UINT64_SIZE)
+        pair_size = pair_buf.unpack1('Q')
+        logger.debug "Signer ##{count} size of block return #{pair_buf.unpack('C*')} / #{pair_buf.unpack1('H*')} / #{pair_size}"
         if pair_size < UINT32_SIZE || pair_size > UINT32_MAX_VALUE
           raise SecurityError,
                 "APK Signing Block ##{count} size out of range: #{pair_size} > #{UINT32_MAX_VALUE}"
@@ -77,15 +67,17 @@ module AppInfo::Android::Signature
                 "APK Signing Block ##{count} size out of range: #{pair_size} > #{left_bytes}"
         end
 
+        # fetch next signer block position
+        next_pos = @pairs.pos + pair_size.to_i
+
         id_block = @pairs.read(UINT32_SIZE)
         id_bytes = id_block.unpack('C*')
         if id_bytes == block_id
-          logger.debug "Signature block id #{@version} scheme (0x#{id_block.unpack1('H*')}) found"
+          logger.debug "Signature block id v#{@version} scheme (0x#{id_block.unpack1('H*')}) found"
           value = @pairs.read(pair_size - UINT32_SIZE)
           return StringIO.new(value)
         end
 
-        next_pos = @pairs.pos + pair_size.to_i
         @pairs.seek(next_pos)
         count += 1
       end

@@ -2,7 +2,7 @@ describe AppInfo::Android::Signature::V2 do
   let(:version) { 2 }
   let(:signature_description) { "#{AppInfo::Android::Signature::V2::DESCRIPTION} v#{version}" }
   before { AppInfo.logger.level = :error }
-  context 'when parse no signature apk' do
+  context 'when parse v1 signature apk' do
     let(:file) { fixture_path('apps/wear.apk') }
     let(:parser) { AppInfo.parse(file) }
     subject { AppInfo::Android::Signature::V2.new(version, parser) }
@@ -26,5 +26,14 @@ describe AppInfo::Android::Signature::V2 do
     it { expect(subject.digests).to have_key('SHA256') }
     it { expect(subject.digests['SHA256']).to be_kind_of(StringIO) }
     it { expect(subject.digests['SHA256']).not_to be_nil }
+  end
+
+  context 'when parse v3 signature apk' do
+    let(:file) { fixture_path('apps/android-v3-signed-only.apk') }
+    let(:parser) { AppInfo.parse(file) }
+    subject { AppInfo::Android::Signature::V2.verify(version, parser) }
+
+    it { expect { AppInfo::Android::Signature::V2.verify(version, parser) }.to raise_error(AppInfo::Android::Signature::SecurityError) }
+    it { expect { subject.verify }.to raise_error(AppInfo::Android::Signature::SecurityError) }
   end
 end

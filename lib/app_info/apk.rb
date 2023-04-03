@@ -98,11 +98,11 @@ module AppInfo
     end
 
     def signs
-      @signs ||= v1sign.signurates
+      @signs ||= v1sign&.signatures || []
     end
 
     def certificates
-      @certificates ||= v1sign.certificates
+      @certificates ||= v1sign&.certificates || []
     end
 
     def activities
@@ -152,7 +152,9 @@ module AppInfo
     private
 
     def v1sign
-      @v1sign ||= Android::Signature::V1.new(Android::Signature::Version::V1, self)
+      @v1sign ||= Android::Signature::V1.verify(Android::Signature::Version::V1, self)
+    rescue Android::Signature::SecurityError
+      nil
     end
   end
 end

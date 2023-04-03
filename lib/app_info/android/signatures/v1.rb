@@ -7,24 +7,31 @@ module AppInfo::Android::Signature
 
     PKCS7_HEADER = [0x30, 0x82].freeze
 
+    attr_reader :certificates, :signatures
+
     def description
       DESCRIPTION
     end
 
     def verify
-      # lazy parse, do nothing here.
+      @signatures = fetch_signatures
+      @certificates = fetch_certificates
+
+      raise SecurityError, 'Not found certificates' if @certificates.empty?
     end
 
-    def signurates
+    private
+
+    def fetch_signatures
       case @parser
       when AppInfo::APK
-        apk_signurates
+        apk_signatures
       when AppInfo::AAB
-        aab_signurates
+        aab_signatures
       end
     end
 
-    def certificates
+    def fetch_certificates
       case @parser
       when AppInfo::APK
         apk_certificates
@@ -33,27 +40,25 @@ module AppInfo::Android::Signature
       end
     end
 
-    private
-
-    def aab_signurates
-      signurates = []
+    def aab_signatures
+      signatures = []
       @parser.each_file do |path, data|
         # find META-INF/xxx.{RSA|DSA|EC}
         next unless path =~ %r{^META-INF/} && data.unpack('CC') == PKCS7_HEADER
 
-        signurates << OpenSSL::PKCS7.new(data)
+        signatures << OpenSSL::PKCS7.new(data)
       end
 
-      signurates
+      signatures
     end
 
     def aab_certificates
-      aab_signurates.each_with_object([]) do |sign, obj|
+      aab_signatures.each_with_object([]) do |sign, obj|
         obj << sign.certificates[0]
       end
     end
 
-    def apk_signurates
+    def apk_signatures
       @parser.apk.signs.each_with_object([]) do |(_, sign), obj|
         obj << sign
       end

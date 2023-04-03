@@ -20,7 +20,11 @@ module AppInfo
         V4    = 4
       end
 
-      @@versions = {}
+      # All registerd verions to verify
+      #
+      # key is the version
+      # value is the class
+      @versions = {}
 
       class << self
         # # Verify Android Signature
@@ -34,7 +38,7 @@ module AppInfo
         #   raise SecurityError, "Not a valid Android AAB"
         # end
 
-        def versions(parser, min_version: nil)
+        def versions(parser, min_version: Version::V4)
           min_version = min_version.to_i if min_version.is_a?(String)
           if min_version && min_version > Version::V4
             raise VersionError,
@@ -42,7 +46,6 @@ module AppInfo
           end
 
           # try full version signatures if min_version is nil
-          min_version ||= Version::V4
           min_version.downto(Version::V1).each_with_object({}) do |version, signatures|
             next unless kclass = fetch(version)
 
@@ -59,19 +62,19 @@ module AppInfo
         end
 
         def registered
-          @@versions.keys
+          @versions.keys
         end
 
         def register(version, verifier)
-          @@versions[version] = verifier
+          @versions[version] = verifier
         end
 
         def fetch(version)
-          @@versions[version]
+          @versions[version]
         end
 
         def exist?(version)
-          @@versions.key?(version)
+          @versions.key?(version)
         end
       end
 

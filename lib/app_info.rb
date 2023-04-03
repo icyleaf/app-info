@@ -76,7 +76,7 @@ module AppInfo
     end
 
     def logger
-      @logger ||= Logger.new($stdout)
+      @logger ||= Logger.new($stdout, level: :warn)
     end
 
     attr_writer :logger

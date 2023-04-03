@@ -2,6 +2,19 @@
 
 module AppInfo::Android::Signature
   # Android v2 Signature
+  #
+  # FULL FORMAT:
+  # OFFSET       DATA TYPE  DESCRIPTION
+  # * @+0  bytes uint32:    signer size in bytes
+  # * @+4  bytes payload    signer block
+  #   * @+0  bytes unit32:    signed data size in bytes
+  #   * @+4  bytes payload    signed data block
+  #     * @+0  bytes unit32:    digests with size in bytes
+  #     * @+0  bytes unit32:    digests with size in bytes
+  #   * @+X  bytes unit32:    signatures with size in bytes
+  #     * @+X+4  bytes payload    signed data block
+  #   * @+Y  bytes unit32:    public key with size in bytes
+  #     * @+Y+4  bytes payload    signed data block
   class V2 < Base
     include AppInfo::Helper::SignatureBlock
 
@@ -15,12 +28,12 @@ module AppInfo::Android::Signature
       raise SecurityError, 'ZIP64 APK not supported' if info.zip64?
 
       signers_block = info.signers(BLOCK_ID)
-      @certificates, @digests = verified_certs(signers_block)
+      @certificates, @digests = verified_certs(signers_block, verify: true)
     end
 
     private
 
-    def verified_certs(signers_block)
+    def verified_certs(signers_block, verify:)
       unless (signers = length_prefix_block(signers_block))
         raise SecurityError, 'Not found signers'
       end
@@ -28,7 +41,7 @@ module AppInfo::Android::Signature
       certificates = []
       content_digests = {}
       loop_length_prefix_io(signers, name: 'Singer', logger: logger) do |signer|
-        signer_certs, signer_digests = extract_signer_data(signer)
+        signer_certs, signer_digests = extract_signer_data(signer, verify: verify)
         certificates.concat(signer_certs)
         content_digests.merge!(signer_digests)
       end
@@ -37,11 +50,14 @@ module AppInfo::Android::Signature
       [certificates, content_digests]
     end
 
-    def extract_signer_data(signer)
+    def extract_signer_data(signer, verify:)
       # raw data
       signed_data = length_prefix_block(signer)
       signatures = length_prefix_block(signer)
-      public_keys = length_prefix_block(signer, raw: true)
+      public_key = length_prefix_block(signer, raw: true)
+
+      # FIXME: extract code below and re-organizate
+      # verify_signature!(signed_data, signatures, public_keys)
 
       algorithems = signature_algorithms(signatures)
       raise SecurityError, 'No signatures found' if algorithems.empty?
@@ -54,7 +70,7 @@ module AppInfo::Android::Signature
       algorithems_digest = best_algorithem[:digest]
       signature = best_algorithem[:signature]
 
-      pkey = OpenSSL::PKey.read(public_keys)
+      pkey = OpenSSL::PKey.read(public_key)
       digest = OpenSSL::Digest.new(algorithems_digest)
       verified = pkey.verify(digest, signature, signed_data.string)
       raise SecurityError, "#{algorithems_digest} signature did not verify" unless verified
@@ -86,7 +102,7 @@ module AppInfo::Android::Signature
       end
 
       additional_attrs = length_prefix_block(signed_data)
-      verify_additional_attrs(additional_attrs) unless additional_attrs.eof?
+      verify_additional_attrs(additional_attrs, certs)
 
       [certs, content_digests]
     end
@@ -114,8 +130,10 @@ module AppInfo::Android::Signature
       algorithems
     end
 
-    def verify_additional_attrs(io)
-      loop_length_prefix_io(io, name: 'Additional Attributes') do |attr|
+    def verify_additional_attrs(attrs, certs)
+      return attrs.eof?
+
+      loop_length_prefix_io(attrs, name: 'Additional Attributes') do |attr|
         id = attr.read(UINT32_SIZE)
         logger.debug "ID #{id} / #{id.size} / #{id.unpack('H*')} / #{id.unpack('C*')}"
         if id.unpack('C*') == SIG_STRIPPING_PROTECTION_ATTR_ID

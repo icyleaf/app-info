@@ -148,14 +148,14 @@ module AppInfo
     end
 
     module SignatureBlock
-      def length_prefix_block(io, raw: false)
+      def length_prefix_block(io, size: Android::Signature::UINT32_SIZE, raw: false)
         offset = io.size - io.pos
-        if offset < AppInfo::Android::Signature::UINT32_SIZE
+        if offset < Android::Signature::UINT32_SIZE
           raise SecurityError,
                 'Remaining buffer too short to contain length of length-prefixed field.'
         end
 
-        size = io.read(AppInfo::Android::Signature::UINT32_SIZE).unpack1('I')
+        size = io.read(size).unpack1('I')
         raise SecurityError, 'Negative length' if size.negative?
 
         if size > io.size
