@@ -118,6 +118,7 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
 end
 
+# @!visibility private
 module Aapt
   module Pb
     Configuration = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.Configuration").msgclass

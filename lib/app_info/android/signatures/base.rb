@@ -5,25 +5,21 @@ require 'app_info/android/signatures/info'
 
 module AppInfo::Android::Signature
   class Base
-    def self.verify(version, parser)
-      instance = new(version, parser)
+    def self.verify(parser)
+      instance = new(parser)
       instance.verify
       instance
     end
 
     DESCRIPTION = 'APK Signature Scheme'
 
-    def initialize(version, parser)
-      @version = version
+    def initialize(parser)
       @parser = parser
+      @verified = false
     end
 
-    def scheme
-      "v#{@version}"
-    end
-
-    def description
-      "#{DESCRIPTION} #{scheme}"
+    def version
+      raise VersionError, ".#{__method__} method implantation required in #{self.class}"
     end
 
     def verify
@@ -32,6 +28,14 @@ module AppInfo::Android::Signature
 
     def certificates
       raise VersionError, ".#{__method__} method implantation required in #{self.class}"
+    end
+
+    def scheme
+      "v#{version}"
+    end
+
+    def description
+      "#{DESCRIPTION} #{scheme}"
     end
 
     def logger

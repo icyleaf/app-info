@@ -16,19 +16,23 @@ module AppInfo::Android::Signature
   #   * @+Y  bytes unit32:    public key with size in bytes
   #     * @+Y+4  bytes payload    signed data block
   class V2 < Base
-    include AppInfo::Helper::SignatureBlock
+    include AppInfo::Helper::IOBlock
+    include AppInfo::Helper::Signatures
+    include AppInfo::Helper::Algorithm
 
     # V2 Signature ID 0x7109871a
     BLOCK_ID = [0x1a, 0x87, 0x09, 0x71].freeze
 
     attr_reader :certificates, :digests
 
-    def verify
-      info = Info.new(@version, @parser, logger)
-      raise SecurityError, 'ZIP64 APK not supported' if info.zip64?
+    def version
+      Version::V2
+    end
 
-      signers_block = info.signers(BLOCK_ID)
+    def verify
+      signers_block = singers_block(BLOCK_ID)
       @certificates, @digests = verified_certs(signers_block, verify: true)
+      @verified = true
     end
 
     private
@@ -57,10 +61,9 @@ module AppInfo::Android::Signature
       public_key = length_prefix_block(signer, raw: true)
 
       # FIXME: extract code below and re-organizate
-      # verify_signature!(signed_data, signatures, public_keys)
 
       algorithems = signature_algorithms(signatures)
-      raise SecurityError, 'No signatures found' if algorithems.empty?
+      raise SecurityError, 'No signatures found' if verify && algorithems.empty?
 
       # find best algorithem to verify signed data with public key and signature
       unless best_algorithem = best_algorithem(algorithems)
@@ -105,85 +108,6 @@ module AppInfo::Android::Signature
       verify_additional_attrs(additional_attrs, certs)
 
       [certs, content_digests]
-    end
-
-    def signature_algorithms(signatures)
-      algorithems = []
-      loop_length_prefix_io(
-        signatures,
-        name: 'Signature Algorithms',
-        max_bytes: UINT64_SIZE,
-        logger: logger
-      ) do |signature|
-        algorithm = signature.read(UINT32_SIZE).unpack('C*')
-        digest = algorithm_match(algorithm)
-        next unless digest
-
-        signature = length_prefix_block(signature, raw: true)
-        algorithems << {
-          id: algorithm,
-          digest: digest,
-          signature: signature
-        }
-      end
-
-      algorithems
-    end
-
-    def verify_additional_attrs(attrs, certs)
-      return attrs.eof?
-
-      loop_length_prefix_io(attrs, name: 'Additional Attributes') do |attr|
-        id = attr.read(UINT32_SIZE)
-        logger.debug "ID #{id} / #{id.size} / #{id.unpack('H*')} / #{id.unpack('C*')}"
-        if id.unpack('C*') == SIG_STRIPPING_PROTECTION_ATTR_ID
-          offset = attr.size - attr.pos
-          if offset < UINT32_SIZE
-            raise SecurityError,
-                  "V2 Signature Scheme Stripping Protection Attribute value too small. \
-                  Expected #{UINT32_SIZE} bytes, but found #{offset}"
-          end
-
-          # value = attr.read(UINT32_SIZE).unpack1('I')
-          if @version == Version::V3
-            raise SecurityError,
-                  'V2 signature indicates APK is signed using APK Signature Scheme v3, \
-                  but none was found. Signature stripped?'
-          end
-        end
-      end
-    end
-
-    def signed_data_certs(io)
-      certificates = []
-      loop_length_prefix_io(io, name: 'Certificates', raw: true) do |cert|
-        certificates << OpenSSL::X509::Certificate.new(cert)
-      end
-      certificates
-    end
-
-    def signed_data_digests(io)
-      content_digests = {}
-      loop_length_prefix_io(io, name: 'Digests', max_bytes: UINT64_SIZE) do |digest|
-        algorithm = digest.read(UINT32_SIZE).unpack('C*')
-        digest_name = algorithm_match(algorithm)
-        next unless digest_name
-
-        content = length_prefix_block(digest)
-        content_digests[digest_name] = {
-          id: algorithm,
-          content: content
-        }
-      end
-
-      content_digests
-    end
-
-    def best_algorithem(algorithems)
-      methods = algorithems.map { |algorithem| algorithem[:method] }
-      best_method = methods.max { |a, b| algorithem_priority(a) <=> algorithem_priority(b) }
-      best_method_index = methods.index(best_method)
-      algorithems[best_method_index]
     end
   end
 

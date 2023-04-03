@@ -152,8 +152,8 @@ module AppInfo
     private
 
     def v1sign
-      @v1sign ||= Android::Signature::V1.verify(Android::Signature::Version::V1, self)
-    rescue Android::Signature::SecurityError
+      @v1sign ||= Android::Signature::V1.verify(self)
+    rescue Android::Signature::NotFound
       nil
     end
   end

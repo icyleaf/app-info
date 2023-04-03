@@ -18,18 +18,29 @@ module AppInfo::Android::Signature
   #   * @+Z    bytes unit32:    public key with size in bytes
   #     * @+Z+4    bytes payload    signed data block
   class V3 < Base
-    include AppInfo::Helper::SignatureBlock
+    include AppInfo::Helper::IOBlock
+    include AppInfo::Helper::Signatures
+    include AppInfo::Helper::Algorithm
 
     # V3 Signature ID 0xf05368c0
-    BLOCK_ID = [0xc0, 0x68, 0x53, 0xf0].freeze
+    V3_BLOCK_ID   = [0xc0, 0x68, 0x53, 0xf0].freeze
+
+    # V3.1 Signature ID 0x1b93ad61
+    V3_1_BLOCK_ID = [0x61, 0xad, 0x93, 0x1b].freeze
 
     attr_reader :certificates, :digests
 
-    def verify
-      info = Info.new(@version, @parser, logger)
-      raise SecurityError, 'ZIP64 APK not supported' if info.zip64?
+    def version
+      Version::V3
+    end
 
-      signers_block = info.signers(BLOCK_ID)
+    def verify
+      begin
+        signers_block = singers_block(V3_1_BLOCK_ID)
+      rescue NotFound
+        signers_block = singers_block(V3_BLOCK_ID)
+      end
+
       @certificates, @digests = verified_certs(signers_block)
     end
 
@@ -51,7 +62,6 @@ module AppInfo::Android::Signature
 
       [certificates, content_digests]
     end
-
 
     def extract_signer_data(signer)
       # raw data
@@ -110,87 +120,6 @@ module AppInfo::Android::Signature
       verify_additional_attrs(additional_attrs, certs)
 
       [certs, content_digests]
-    end
-
-    def signature_algorithms(signatures)
-      algorithems = []
-      loop_length_prefix_io(
-        signatures,
-        name: 'Signature Algorithms',
-        max_bytes: UINT64_SIZE,
-        logger: logger
-      ) do |signature|
-        algorithm = signature.read(UINT32_SIZE).unpack('C*')
-        digest = algorithm_match(algorithm)
-        next unless digest
-
-        signature = length_prefix_block(signature, raw: true)
-        algorithems << {
-          id: algorithm,
-          digest: digest,
-          signature: signature
-        }
-      end
-
-      algorithems
-    end
-
-    def verify_additional_attrs(attrs, certs)
-      return attrs.eof?
-
-      loop_length_prefix_io(io, name: 'Additional Attributes') do |attr|
-        next if attr.size.zero?
-
-        id = attr.read(UINT32_SIZE)
-        logger.debug "ID #{id} / #{id.size} / #{id.unpack('H*')} / #{id.unpack('C*')}"
-        if id.unpack('C*') == SIG_STRIPPING_PROTECTION_ATTR_ID
-          offset = attr.size - attr.pos
-          if offset < UINT32_SIZE
-            raise SecurityError,
-                  "V2 Signature Scheme Stripping Protection Attribute value too small. \
-                  Expected #{UINT32_SIZE} bytes, but found #{offset}"
-          end
-
-          # value = attr.read(UINT32_SIZE).unpack1('I')
-          if @version == Version::V3
-            raise SecurityError,
-                  'V2 signature indicates APK is signed using APK Signature Scheme v3, \
-                  but none was found. Signature stripped?'
-          end
-        end
-      end
-    end
-
-    def signed_data_certs(io)
-      certificates = []
-      loop_length_prefix_io(io, name: 'Certificates', raw: true) do |cert|
-        certificates << OpenSSL::X509::Certificate.new(cert)
-      end
-      certificates
-    end
-
-    def signed_data_digests(io)
-      content_digests = {}
-      loop_length_prefix_io(io, name: 'Digests', max_bytes: UINT64_SIZE) do |digest|
-        algorithm = digest.read(UINT32_SIZE).unpack('C*')
-        digest_name = algorithm_match(algorithm)
-        next unless digest_name
-
-        content = length_prefix_block(digest)
-        content_digests[digest_name] = {
-          id: algorithm,
-          content: content
-        }
-      end
-
-      content_digests
-    end
-
-    def best_algorithem(algorithems)
-      methods = algorithems.map { |algorithem| algorithem[:method] }
-      best_method = methods.max { |a, b| algorithem_priority(a) <=> algorithem_priority(b) }
-      best_method_index = methods.index(best_method)
-      algorithems[best_method_index]
     end
   end
 

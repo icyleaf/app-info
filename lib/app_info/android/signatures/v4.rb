@@ -2,10 +2,11 @@
 
 module AppInfo::Android::Signature
   # Android v4 Signature
+  #
+  # TODO: ApkSignatureSchemeV4Verifier.java
   class V4 < Base
-    def verify
-      # TODO: ApkSignatureSchemeV4Verifier.java
-      false
+    def version
+      Version::V4
     end
   end
 

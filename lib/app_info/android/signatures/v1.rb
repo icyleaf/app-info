@@ -9,6 +9,10 @@ module AppInfo::Android::Signature
 
     attr_reader :certificates, :signatures
 
+    def version
+      Version::V1
+    end
+
     def description
       DESCRIPTION
     end
@@ -17,7 +21,7 @@ module AppInfo::Android::Signature
       @signatures = fetch_signatures
       @certificates = fetch_certificates
 
-      raise SecurityError, 'Not found certificates' if @certificates.empty?
+      raise NotFound, 'Not found certificates' if @certificates.empty?
     end
 
     private

@@ -7,7 +7,7 @@ require 'app_info/core_ext'
 module AppInfo
   module Protobuf
     class Base
-      include Helper::Defines
+      include Helper::GenerateClass
 
       def initialize(doc, resources = nil)
         @resources = resources

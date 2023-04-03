@@ -39,6 +39,16 @@ Metrics/MethodLength:
   Max: 30
   Exclude:
     - 'lib/app_info/mobile_provision.rb'
+    - 'lib/app_info/android/signatures/v2.rb'
+    - 'lib/app_info/android/signatures/v3.rb'
+
+Metrics/ParameterLists:
+  Exclude:
+    - 'lib/app_info/helper/signatures.rb'
+
+Metrics/UselessAssignment:
+  Exclude:
+    - 'lib/app_info/android/signatures/v3.rb'
 
 Layout/LineLength:
   Max: 100

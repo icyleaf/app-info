@@ -2,29 +2,31 @@ describe AppInfo::Android::Signature::V3 do
   let(:version) { 3 }
   let(:signature_description) { "#{AppInfo::Android::Signature::V3::DESCRIPTION} v#{version}" }
   before { AppInfo.logger.level = :error }
-  context 'when parse v1 signature apk' do
-    let(:file) { fixture_path('apps/android.apk') }
-    let(:parser) { AppInfo.parse(file) }
-    subject { AppInfo::Android::Signature::V3.new(version, parser) }
 
-    it { expect { AppInfo::Android::Signature::V3.verify(version, parser) }.to raise_error(AppInfo::Android::Signature::SecurityError) }
-    it { expect { subject.verify }.to raise_error(AppInfo::Android::Signature::SecurityError) }
+  context 'when parse v1 signature apk' do
+    let(:file) { fixture_path('apps/wear.apk') }
+    let(:parser) { AppInfo.parse(file) }
+    subject { AppInfo::Android::Signature::V3.new(parser) }
+
+    it { expect { AppInfo::Android::Signature::V3.verify(parser) }.to raise_error(AppInfo::Android::Signature::NotFoundError) }
+    it { expect { subject.verify }.to raise_error(AppInfo::Android::Signature::NotFoundError) }
   end
 
   context 'when parse v2 signature apk' do
     let(:file) { fixture_path('apps/android-v2-signed-only.apk') }
     let(:parser) { AppInfo.parse(file) }
-    subject { AppInfo::Android::Signature::V3.verify(version, parser) }
+    subject { AppInfo::Android::Signature::V3.verify(parser) }
 
-    it { expect { AppInfo::Android::Signature::V3.verify(version, parser) }.to raise_error(AppInfo::Android::Signature::SecurityError) }
-    it { expect { subject.verify }.to raise_error(AppInfo::Android::Signature::SecurityError) }
+    it { expect { AppInfo::Android::Signature::V3.verify(parser) }.to raise_error(AppInfo::Android::Signature::NotFoundError) }
+    it { expect { subject.verify }.to raise_error(AppInfo::Android::Signature::NotFoundError) }
   end
 
   context 'when parse v3 signature apk' do
     let(:file) { fixture_path('apps/android-v3-signed-only.apk') }
     let(:parser) { AppInfo.parse(file) }
-    subject { AppInfo::Android::Signature::V3.verify(version, parser) }
+    subject { AppInfo::Android::Signature::V3.verify(parser) }
 
+    it { expect(subject.version).to eq(version) }
     it { expect(subject.scheme).to eq("v#{version}") }
     it { expect(subject.description).to eq(signature_description) }
     it { expect(subject.certificates).to be_kind_of(Array) }

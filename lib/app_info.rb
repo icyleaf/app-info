@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 require 'app_info/version'
-require 'app_info/error'
 require 'app_info/core_ext'
+require 'app_info/const'
 require 'app_info/helper'
+require 'app_info/error'
 
 require 'app_info/file'
 require 'app_info/info_plist'

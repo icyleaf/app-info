@@ -12,6 +12,7 @@ module AppInfo
     module Signature
       class VersionError < Error; end
       class SecurityError < Error; end
+      class NotFoundError < Error; end
 
       module Version
         V1    = 1
@@ -50,7 +51,7 @@ module AppInfo
             next unless kclass = fetch(version)
 
             begin
-              verifier = kclass.verify(version, parser)
+              verifier = kclass.verify(parser)
               certificates = verifier.certificates
               has_certs = certificates.is_a?(Array) && !certificates.empty?
               signatures[version] = has_certs ? certificates : false

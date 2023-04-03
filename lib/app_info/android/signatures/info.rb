@@ -13,7 +13,7 @@ module AppInfo::Android::Signature
   # * @-24 bytes uint64:    size in bytes (same as the one above)
   # * @-16 bytes uint128:   magic value
   class Info
-    include AppInfo::Helper::SignatureBlock
+    include AppInfo::Helper::IOBlock
 
     # Signature block information
     SIG_SIZE_OF_BLOCK_SIZE = 8
@@ -46,24 +46,22 @@ module AppInfo::Android::Signature
     #   * @+0  bytes uint32:    id
     #   * @+4  bytes payload:   value
     def signers(block_id)
-      logger.debug "Singers block total size: #{@pairs.size}"
       count = 0
       until @pairs.eof?
         left_bytes = left_bytes_check(
-          @pairs, UINT64_SIZE,
+          @pairs, UINT64_SIZE, NotFound,
           "Insufficient data to read size of APK Signing Block ##{count}"
         )
 
         pair_buf = @pairs.read(UINT64_SIZE)
         pair_size = pair_buf.unpack1('Q')
-        logger.debug "Signer ##{count} size of block return #{pair_buf.unpack('C*')} / #{pair_buf.unpack1('H*')} / #{pair_size}"
         if pair_size < UINT32_SIZE || pair_size > UINT32_MAX_VALUE
-          raise SecurityError,
+          raise NotFound,
                 "APK Signing Block ##{count} size out of range: #{pair_size} > #{UINT32_MAX_VALUE}"
         end
 
         if pair_size > left_bytes
-          raise SecurityError,
+          raise NotFound,
                 "APK Signing Block ##{count} size out of range: #{pair_size} > #{left_bytes}"
         end
 
@@ -82,7 +80,8 @@ module AppInfo::Android::Signature
         count += 1
       end
 
-      raise SecurityError, "Not found block id #{block_id} in APK Signing Block."
+      block_id_hex = block_id.reverse.pack('C*').unpack1('H*')
+      raise NotFound, "Not found block id 0x#{block_id_hex} in APK Signing Block."
     end
 
     def zip64?
@@ -110,19 +109,19 @@ module AppInfo::Android::Signature
         file_io.seek(cdir_offset - (Info::SIG_MAGIC_BLOCK_SIZE + Info::SIG_SIZE_OF_BLOCK_SIZE))
         footer_block = file_io.read(Info::SIG_SIZE_OF_BLOCK_SIZE)
         if footer_block.size < Info::SIG_SIZE_OF_BLOCK_SIZE
-          raise SecurityError, "APK Signing Block size out of range: #{footer_block.size}"
+          raise NotFound, "APK Signing Block size out of range: #{footer_block.size}"
         end
 
         footer = footer_block.unpack1('Q')
         total_size = footer
         offset = cdir_offset - total_size - Info::SIG_SIZE_OF_BLOCK_SIZE
-        raise SecurityError, "APK Signing Block offset out of range: #{offset}" if offset.negative?
+        raise NotFound, "APK Signing Block offset out of range: #{offset}" if offset.negative?
 
         file_io.seek(offset)
         header = file_io.read(Info::SIG_SIZE_OF_BLOCK_SIZE).unpack1('Q')
 
         if header != footer
-          raise SecurityError,
+          raise NotFound,
                 "APK Signing Block header and footer mismatch: #{header} != #{footer}"
         end
 
