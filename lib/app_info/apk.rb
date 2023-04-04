@@ -94,10 +94,23 @@ module AppInfo
     end
     alias min_os_version min_sdk_version
 
+    # Return multi version certifiates of signatures
+    # @return [Array<Hash>]
+    # @see AppInfo::Android::Signature.verify
+    def signatures
+      @signatures ||= Signature.verify(self)
+    end
+
+    # Legacy v1 scheme signatures, it will remove soon.
+    # @deprecated Use {#signatures}
+    # @return [Array<OpenSSL::PKCS7, nil>]
     def signs
       @signs ||= v1sign&.signatures || []
     end
 
+    # Legacy v1 scheme certificates, it will remove soon.
+    # @deprecated Use {#signatures}
+    # @return [Array<OpenSSL::PKCS7, nil>]
     def certificates
       @certificates ||= v1sign&.certificates || []
     end

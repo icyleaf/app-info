@@ -28,17 +28,6 @@ module AppInfo
       @versions = {}
 
       class << self
-        # # Verify Android Signature
-        # #
-        # # @params [AppInfo::File] file
-        # def verify_certs(parser, min_version: nil)
-        #   certs(parser, min_version: min_version, verify: true)
-        # end
-
-        # def verify_versions(parser, min_version: nil, verify: false)
-        #   raise SecurityError, "Not a valid Android AAB"
-        # end
-
         # Verify Android Signature
         #
         # @example Get unverified v1 certificates, verified v2 certificates,
@@ -49,12 +38,14 @@ module AppInfo
         #   #   {
         #   #     version: 1,
         #   #     verified: false,
-        #   #     certificates: [<AppInfo::Certificate>, ...]
+        #   #     certificates: [<AppInfo::Certificate>, ...],
+        #   #     verifier: AppInfo::Androig::Signature
         #   #   },
         #   #   {
         #   #     version: 2,
         #   #     verified: false,
-        #   #     certificates: [<AppInfo::Certificate>, ...]
+        #   #     certificates: [<AppInfo::Certificate>, ...],
+        #   #     verifier: AppInfo::Androig::Signature
         #   #   },
         #   #   {
         #   #     version: 3
@@ -64,7 +55,7 @@ module AppInfo
         # @param [AppInfo::File] parser
         # @param [Version, Integer] min_version
         # @return [Array<Hash>] versions
-        def verify(parser, min_version: Version::V3)
+        def verify(parser, min_version: Version::V4)
           min_version = min_version.to_i if min_version.is_a?(String)
           if min_version && min_version > Version::V4
             raise VersionError,
@@ -85,6 +76,7 @@ module AppInfo
               verifier = kclass.verify(parser)
               data[:verified] = verifier.verified
               data[:certificates] = verifier.certificates
+              data[:verifier] = verifier
             rescue SecurityError, NotFoundError
               # not this version, try the low version
             ensure

@@ -29,10 +29,12 @@ module AppInfo::Android::Signature
       Version::V2
     end
 
+    # Verify
+    # @todo verified signatures
     def verify
       signers_block = singers_block(BLOCK_ID)
       @certificates, @digests = verified_certs(signers_block, verify: true)
-      @verified = true
+      # @verified = true
     end
 
     private

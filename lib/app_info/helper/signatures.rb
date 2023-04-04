@@ -119,7 +119,7 @@ module AppInfo::Helper
           end
 
           # value = attr.read(UINT32_SIZE).unpack1('I')
-          if @version == Version::V3
+          if @version == AppInfo::Android::Signature::Version::V3
             raise SecurityError,
                   'V2 signature indicates APK is signed using APK Signature Scheme v3, but none was found. Signature stripped?'
           end

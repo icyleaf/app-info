@@ -144,10 +144,23 @@ module AppInfo
       @components ||= manifest.components.transform_values
     end
 
+    # Return multi version certifiates of signatures
+    # @return [Array<Hash>] signatures
+    # @see AppInfo::Android::Signature.verify
+    def signatures
+      @signatures ||= Signature.verify(self)
+    end
+
+    # Legacy v1 scheme signatures, it will remove soon.
+    # @deprecated Use {#signatures}
+    # @return [Array<OpenSSL::PKCS7, nil>] signatures
     def signs
       @signs ||= v1sign&.signatures || []
     end
 
+    # Legacy v1 scheme certificates, it will remove soon.
+    # @deprecated Use {#signatures}
+    # @return [Array<OpenSSL::PKCS7, nil>] certificates
     def certificates
       @certificates ||= v1sign&.certificates || []
     end
