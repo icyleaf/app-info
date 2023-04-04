@@ -5,7 +5,8 @@
 [![Gem version](https://img.shields.io/gem/v/app-info.svg?style=flat)](https://rubygems.org/gems/app_info)
 [![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](LICENSE)
 
-Teardown tool for mobile app (ipa, apk and aab file), macOS app and dSYM.zip file, analysis metedata like version, name, icon etc.
+Teardown tool for mobile app (ipa, apk and aab file), macOS app, dSYM.zip file and Windows PE file.
+Analysis metedata like version, name, icon etc.
 
 ## Support
 
@@ -16,10 +17,13 @@ Teardown tool for mobile app (ipa, apk and aab file), macOS app and dSYM.zip fil
   - `.ipa`
   - `Info.plist` file
   - `.mobileprovision`/`.provisionprofile` file
-- Zipped macOS App file
+- macOS App file (archived by starnd pkzip format)
   - `.app.zip`
-- Zipped dSYMs file
+- dSYMs file (archived by starnd pkzip format)
   - `.dSYM.zip`
+- Windows PE file
+  - `.exe`
+  - `.zip` (binary in a zip file)
 
 <hr />
 
@@ -65,6 +69,8 @@ parser = AppInfo.parse('android.aab')
 parser = AppInfo.parse('u-u-i-d.mobileprovision')
 parser = AppInfo.parse('macOS.App.zip')
 parser = AppInfo.parse('App.dSYm.zip')
+parser = AppInfo.parse('win.exe')
+parser = AppInfo.parse('win.zip')
 
 # If detect file type failed, you can parse in other way
 parser = AppInfo::IPA.new('iphone.ipa')
@@ -74,6 +80,7 @@ parser = AppInfo::InfoPlist.new('Info.plist')
 parser = AppInfo::MobileProvision.new('uuid.mobileprovision')
 parser = AppInfo::Macos.new('App.dSYm.zip')
 parser = AppInfo::DSYM.new('App.dSYm.zip')
+parser = AppInfo::PE.new('win.exe')
 ```
 
 ### iOS
@@ -220,12 +227,8 @@ android.deep_links
 android.schemes
 # => ['appinfo']
 
-# get sign list (only v1 sign)
-android.signs
-# => [...]
-
-# get certificate list (only v1 sign)
-android.certificates
+# get v1-v3 scheme singature information (included unverified certificate and more)
+android.signatures
 # => [...]
 ```
 
@@ -311,6 +314,58 @@ dsym.machos.each do |macho|
   macho.to_h
   # => {uuid:"26dfc15d-bdce-351f-b5de-6ee9f5dd6d85", cpu_type: :arm, cpu_name: :armv7, ...}
 end
+```
+
+### Windows
+
+Accept any PE format file, such like `.exe` or `.exe` binary fin a zip file.
+
+```ruby
+win = AppInfo.parse('win.exe')
+
+# get given file size
+win.size
+# => 3093823
+
+# get given file size in human reable.
+win.size(human_size: true)
+# => 29 MB
+
+# get given file size
+win.binary_size
+# => 20940
+
+# get given file size in human reable.
+win.size(human_size: true)
+# => 20 MB
+
+# get product name
+win.name
+# => AppInfo
+
+# get app company name
+win.company_name
+# => EWS Studio
+
+# get app product version (alias to release_version)
+win.product_version
+# => 1.0.0
+
+# get app assembly version (alias to build_version)
+win.assembly_version
+# => 1.0.0
+
+# detect architecture(s)
+win.archs
+# => x64
+
+# get all imports files
+win.imports
+# => [KERNEL32.dll, ...]
+
+# get app icons (bmp format image)
+win.icons
+# => [{:name=>"ICON.bmp", :file=>"{path}/ICON.bmp"}, :dimensions=>[64, 64]}, ...]
 ```
 
 ## CLI Shell (Interactive console)
