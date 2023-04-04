@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module AppInfo
+  # @!visibility private
   module Inflector
     def ai_snakecase
       gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
@@ -30,6 +31,7 @@ module AppInfo
   end
 end
 
+# @!visibility private
 class String
   include AppInfo::Inflector
 end

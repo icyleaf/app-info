@@ -29,6 +29,8 @@ AllCops:
 
 Layout/LineLength:
   Max: 100
+  Exclude:
+    - 'lib/app_info/helper/signatures.rb'
 
 Lint/AssignmentInCondition:
   Enabled: false
@@ -36,6 +38,10 @@ Lint/AssignmentInCondition:
 Lint/UnusedMethodArgument:
   Exclude:
     - 'lib/app_info/file.rb'
+
+Lint/UselessAssignment:
+  Exclude:
+    - 'lib/app_info/android/signatures/v3.rb'
 
 Metrics/AbcSize:
   Max: 100
@@ -55,10 +61,6 @@ Metrics/MethodLength:
 Metrics/ParameterLists:
   Exclude:
     - 'lib/app_info/helper/signatures.rb'
-
-Metrics/UselessAssignment:
-  Exclude:
-    - 'lib/app_info/android/signatures/v3.rb'
 
 Metrics/ClassLength:
   CountComments: false
