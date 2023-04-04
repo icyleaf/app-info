@@ -11,12 +11,11 @@ RSpec::Core::RakeTask.new(:spec)
 
 task default: :spec
 
-
 task :doc do
   YARD::Rake::YardocTask.new do |t|
     t.files   = ['lib/**/*.rb', 'README.md', 'LICENSE']
     # t.options = ['--any', '--extra', '--opts'] # optional
-    t.stats_options = ['--list-undoc']         # optional
+    # t.stats_options = ['--list-undoc']         # optional
   end
 end
 
