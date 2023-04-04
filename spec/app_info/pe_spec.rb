@@ -11,11 +11,11 @@ describe AppInfo::PE do
       it { expect(subject.platform).to eq AppInfo::Platform::WINDOWS }
       it { expect(subject.platform).to eq 'Windows' }
       it { expect(subject.file).to eq file }
-      it { expect(subject.binrary_file).not_to be_nil }
+      it { expect(subject.binary_file).not_to be_nil }
       it { expect(subject.size).to eq 415127 }
       it { expect(subject.size(human_size: true)).to eq "405.40 KB" }
-      it { expect(subject.binrary_size).to eq 443392 }
-      it { expect(subject.binrary_size(human_size: true)).to eq "433.00 KB" }
+      it { expect(subject.binary_size).to eq 443392 }
+      it { expect(subject.binary_size(human_size: true)).to eq "433.00 KB" }
       it { expect(subject.product_version).to eq('1.0.0') }
       it { expect(subject.release_version).to eq('1.0.0') }
       it { expect(subject.assembly_version).to eq('1.0.0.0') }
@@ -58,11 +58,11 @@ describe AppInfo::PE do
       it { expect(subject.platform).to eq AppInfo::Platform::WINDOWS }
       it { expect(subject.platform).to eq 'Windows' }
       it { expect(subject.file).to eq file }
-      it { expect(subject.binrary_file).not_to be_nil }
+      it { expect(subject.binary_file).not_to be_nil }
       it { expect(subject.size).to eq 293888 }
       it { expect(subject.size(human_size: true)).to eq "287.00 KB" }
-      it { expect(subject.binrary_size).to eq 293888 }
-      it { expect(subject.binrary_size(human_size: true)).to eq "287.00 KB" }
+      it { expect(subject.binary_size).to eq 293888 }
+      it { expect(subject.binary_size(human_size: true)).to eq "287.00 KB" }
       it { expect(subject.product_version).to eq('3.08 (2011-12-12)') }
       it { expect(subject.release_version).to eq('3.08 (2011-12-12)') }
       it { expect(subject.assembly_version).to be_nil }

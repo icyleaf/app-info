@@ -45,8 +45,8 @@ module AppInfo
       file_to_human_size(@file, human_size: human_size)
     end
 
-    def binrary_size(human_size: false)
-      file_to_human_size(binrary_file, human_size: human_size)
+    def binary_size(human_size: false)
+      file_to_human_size(binary_file, human_size: human_size)
     end
 
     def_delegators :version_info, :product_name, :product_version, :company_name, :assembly_version
@@ -124,8 +124,8 @@ module AppInfo
       @imports = nil
     end
 
-    def binrary_file
-      @binrary_file ||= lambda {
+    def binary_file
+      @binary_file ||= lambda {
         file_io = ::File.open(@file, 'rb')
         return @file unless file_io.read(100) =~ AppInfo::ZIP_RETGEX
 
@@ -157,7 +157,7 @@ module AppInfo
     end
 
     def io
-      @io ||= ::File.open(binrary_file, 'rb')
+      @io ||= ::File.open(binary_file, 'rb')
     end
 
     # VersionInfo class
