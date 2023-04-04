@@ -10,12 +10,11 @@ describe AppInfo::Android::Signature::V1 do
     it { expect(subject.version).to eq(version) }
     it { expect(subject.scheme).to eq("v#{version}") }
     it { expect(subject.description).to eq(signature_description) }
-    it { expect(subject.signatures).to be_kind_of(Array) }
-    it { expect(subject.signatures).not_to be_empty }
-    it { expect(subject.signatures[0]).to be_kind_of(OpenSSL::PKCS7) }
+    it { expect(subject.signatures).to be_kind_of(Hash) }
+    it { expect(subject.signatures).to have_key('META-INF/CERT.RSA') }
+    it { expect(subject.signatures['META-INF/CERT.RSA']).to be_kind_of(OpenSSL::PKCS7) }
     it { expect(subject.certificates).to be_kind_of(Array) }
-    it { expect(subject.certificates).not_to be_empty }
-    it { expect(subject.certificates[0]).to be_kind_of(OpenSSL::X509::Certificate) }
+    it { expect(subject.certificates[0]).to be_kind_of(AppInfo::Certificate) }
   end
 
   context 'when parse v2 signature only apk' do

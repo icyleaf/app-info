@@ -29,49 +29,31 @@ module AppInfo::Android::Signature
     def fetch_signatures
       case @parser
       when AppInfo::APK
-        apk_signatures
+        signatures_from(@parser.apk)
       when AppInfo::AAB
-        aab_signatures
+        signatures_from(@parser)
       end
     end
 
     def fetch_certificates
-      case @parser
-      when AppInfo::APK
-        apk_certificates
-      when AppInfo::AAB
-        aab_certificates
+      @signatures.each_with_object([]) do |(path, sign), obj|
+        next if sign.certificates.empty?
+
+        obj << AppInfo::Certificate.new(sign.certificates[0])
       end
     end
 
-    def aab_signatures
-      signatures = []
-      @parser.each_file do |path, data|
+    private
+
+    def signatures_from(parser)
+      signs = {}
+      parser.each_file do |path, data|
         # find META-INF/xxx.{RSA|DSA|EC}
-        next unless path =~ %r{^META-INF/} && data.unpack('CC') == PKCS7_HEADER
+        next unless path =~ /^META-INF\// && data.unpack('CC') == PKCS7_HEADER
 
-        signatures << OpenSSL::PKCS7.new(data)
+        signs[path] = OpenSSL::PKCS7.new(data)
       end
-
-      signatures
-    end
-
-    def aab_certificates
-      aab_signatures.each_with_object([]) do |sign, obj|
-        obj << sign.certificates[0]
-      end
-    end
-
-    def apk_signatures
-      @parser.apk.signs.each_with_object([]) do |(_, sign), obj|
-        obj << sign
-      end
-    end
-
-    def apk_certificates
-      @parser.apk.certificates.each_with_object([]) do |(_, certificate), obj|
-        obj << certificate
-      end
+      signs
     end
   end
 
