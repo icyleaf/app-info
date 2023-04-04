@@ -39,7 +39,32 @@ module AppInfo
         #   raise SecurityError, "Not a valid Android AAB"
         # end
 
-        def versions(parser, min_version: Version::V4)
+        # Verify Android Signature
+        #
+        # @example Get unverified v1 certificates, verified v2 certificates,
+        #  and not found v3 certificate
+        #
+        #   signature.versions(parser)
+        #   # => [
+        #   #   {
+        #   #     version: 1,
+        #   #     verified: false,
+        #   #     certificates: [<AppInfo::Certificate>, ...]
+        #   #   },
+        #   #   {
+        #   #     version: 2,
+        #   #     verified: false,
+        #   #     certificates: [<AppInfo::Certificate>, ...]
+        #   #   },
+        #   #   {
+        #   #     version: 3
+        #   #   }
+        #   # ]
+        # @todo version 4 no implantation yet
+        # @param [AppInfo::File] parser
+        # @param [Version, Integer] min_version
+        # @return [Array<Hash>] versions
+        def verify(parser, min_version: Version::V3)
           min_version = min_version.to_i if min_version.is_a?(String)
           if min_version && min_version > Version::V4
             raise VersionError,

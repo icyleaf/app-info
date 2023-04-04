@@ -77,8 +77,8 @@ module AppInfo::Helper
 
     def signed_data_certs(io)
       certificates = []
-      loop_length_prefix_io(io, name: 'Certificates', raw: true) do |cert|
-        certificates << OpenSSL::X509::Certificate.new(cert)
+      loop_length_prefix_io(io, name: 'Certificates', raw: true) do |cert_data|
+        certificates << AppInfo::Certificate.parse(cert_data)
       end
       certificates
     end

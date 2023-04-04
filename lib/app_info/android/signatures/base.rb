@@ -19,16 +19,14 @@ module AppInfo::Android::Signature
       @verified = false
     end
 
-    def version
-      raise VersionError, ".#{__method__} method implantation required in #{self.class}"
-    end
-
+    # @abstract Subclass and override {#verify} to implement
     def verify
-      raise VersionError, ".#{__method__} method implantation required in #{self.class}"
+      raise NotImplementedError, ".#{__method__} method implantation required in #{self.class}"
     end
 
+    # @abstract Subclass and override {#certificates} to implement
     def certificates
-      raise VersionError, ".#{__method__} method implantation required in #{self.class}"
+      raise NotImplementedError, ".#{__method__} method implantation required in #{self.class}"
     end
 
     def scheme

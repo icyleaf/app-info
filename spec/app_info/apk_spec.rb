@@ -26,7 +26,6 @@ describe AppInfo::APK do
       it { expect(subject.icons.length).not_to be_nil }
       it { expect(subject.min_sdk_version).to eq 14 }
       it { expect(subject.target_sdk_version).to eq 31 }
-      it { expect(subject.sign_version).to eq 'v1' }
       it { expect(subject.activities.size).to eq(2) }
       it { expect(subject.services.size).to eq(0) }
       it { expect(subject.components.size).to eq(2) }
@@ -36,13 +35,13 @@ describe AppInfo::APK do
       it { expect(subject.manifest.use_permissions).to eq(subject.use_permissions) }
       it { expect(subject.deep_links).to eq(['icyleaf.com']) }
       it { expect(subject.schemes).to eq(['appinfo']) }
-      it { expect(subject.certificates.first).to be_kind_of(OpenSSL::X509::Certificate) }
-      it { expect(subject.signs.first).to be_kind_of(OpenSSL::PKCS7) }
-    end
 
-    context 'with Android min SDK 24+' do
-      let(:file) { fixture_path('apps/android-24.apk') }
-      it { expect(subject.sign_version).to eq 'unknown' }
+      # TODO: it will remove soon.
+      it { expect(subject.certificates).to be_kind_of(Array) }
+      it { expect(subject.certificates[0]).to be_kind_of(AppInfo::Certificate) }
+      it { expect(subject.signs).to be_kind_of(Hash) }
+      it { expect(subject.signs).to have_key('META-INF/CERT.RSA') }
+      it { expect(subject.signs['META-INF/CERT.RSA']).to be_kind_of(OpenSSL::PKCS7) }
     end
   end
 

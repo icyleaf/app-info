@@ -1,13 +1,12 @@
 # Android file list:
 # - wear.apk v1
 # - android.apk v1/v2
-# - android-24.apk v1/v2
 describe AppInfo::Android::Signature do
   describe "#versions" do
     let(:file) { fixture_path('apps/wear.apk') }
     let(:parser) { AppInfo.parse(file) }
     context 'when not set min_version' do
-      subject { AppInfo::Android::Signature.versions(parser) }
+      subject { AppInfo::Android::Signature.verify(parser) }
       it { expect(subject).not_to be_empty }
       it { expect(subject.size).to eq(3) }
       it { expect(subject[0][:version]).to eq(1) }
@@ -24,7 +23,7 @@ describe AppInfo::Android::Signature do
     context 'when given integer value 2 to min_version param' do
       let(:file) { fixture_path('apps/wear.apk') }
       let(:parser) { AppInfo.parse(file) }
-      subject { AppInfo::Android::Signature.versions(parser, min_version: 1) }
+      subject { AppInfo::Android::Signature.verify(parser, min_version: 1) }
 
       it { expect(subject).not_to be_empty }
       it { expect(subject.size).to eq(1) }
@@ -36,7 +35,7 @@ describe AppInfo::Android::Signature do
     context 'when given string value 2 to min_version param' do
       let(:file) { fixture_path('apps/wear.apk') }
       let(:parser) { AppInfo.parse(file) }
-      subject { AppInfo::Android::Signature.versions(parser, min_version: '2') }
+      subject { AppInfo::Android::Signature.verify(parser, min_version: '2') }
 
       it { expect(subject).not_to be_empty }
       it { expect(subject.size).to eq(2) }
@@ -51,7 +50,7 @@ describe AppInfo::Android::Signature do
     context 'when given integer value 3 to min_version param' do
       let(:file) { fixture_path('apps/wear.apk') }
       let(:parser) { AppInfo.parse(file) }
-      subject { AppInfo::Android::Signature.versions(parser, min_version: 3) }
+      subject { AppInfo::Android::Signature.verify(parser, min_version: 3) }
 
       it { expect(subject).not_to be_empty }
       it { expect(subject.size).to eq(3) }

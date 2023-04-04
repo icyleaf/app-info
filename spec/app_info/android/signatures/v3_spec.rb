@@ -31,7 +31,7 @@ describe AppInfo::Android::Signature::V3 do
     it { expect(subject.description).to eq(signature_description) }
     it { expect(subject.certificates).to be_kind_of(Array) }
     it { expect(subject.certificates).not_to be_empty }
-    it { expect(subject.certificates[0]).to be_kind_of(OpenSSL::X509::Certificate) }
+    it { expect(subject.certificates[0]).to be_kind_of(AppInfo::Certificate) }
     it { expect(subject.digests).to be_kind_of(Hash) }
     it { expect(subject.digests).not_to be_empty }
     it { expect(subject.digests).to have_key('SHA256') }

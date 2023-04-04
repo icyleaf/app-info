@@ -4,7 +4,6 @@ require 'securerandom'
 
 MATCH_FILE_TYPES = {
   'android.apk' => :apk,
-  'android-24.apk' => :apk,
   'android-v1-v2-signed.apk' => :apk,
   'android-v1-v2-v3-signed.apk' => :apk,
   'android-v2-signed-only.apk' => :apk,

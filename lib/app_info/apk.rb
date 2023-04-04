@@ -94,18 +94,6 @@ module AppInfo
     end
     alias min_os_version min_sdk_version
 
-    def sign_version
-      return 'v1' unless signs.empty?
-
-      # when ?
-      # https://source.android.com/security/apksigning/v2?hl=zh-cn
-      #   'v2'
-      # when ?
-      # https://source.android.com/security/apksigning/v3?hl=zh-cn
-      #   'v3'
-      'unknown'
-    end
-
     def signs
       @signs ||= v1sign&.signatures || []
     end

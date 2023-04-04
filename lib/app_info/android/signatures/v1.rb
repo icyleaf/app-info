@@ -36,20 +36,18 @@ module AppInfo::Android::Signature
     end
 
     def fetch_certificates
-      @signatures.each_with_object([]) do |(path, sign), obj|
+      @signatures.each_with_object([]) do |(_, sign), obj|
         next if sign.certificates.empty?
 
         obj << AppInfo::Certificate.new(sign.certificates[0])
       end
     end
 
-    private
-
     def signatures_from(parser)
       signs = {}
       parser.each_file do |path, data|
         # find META-INF/xxx.{RSA|DSA|EC}
-        next unless path =~ /^META-INF\// && data.unpack('CC') == PKCS7_HEADER
+        next unless path =~ %r{^META-INF/} && data.unpack('CC') == PKCS7_HEADER
 
         signs[path] = OpenSSL::PKCS7.new(data)
       end

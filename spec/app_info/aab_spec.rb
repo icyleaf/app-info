@@ -25,8 +25,6 @@ describe AppInfo::APK do
       it { expect(subject.target_sdk_version).to eq 31 }
       it { expect(subject.deep_links).to eq(['icyleaf.com']) }
       it { expect(subject.schemes).to eq(['appinfo']) }
-      it { expect(subject.certificates.first).to be_kind_of(OpenSSL::X509::Certificate) }
-      it { expect(subject.signs.first).to be_kind_of(OpenSSL::PKCS7) }
       it { expect(subject.activities.size).to eq(2) }
       it { expect(subject.services.size).to eq(0) }
       it { expect(subject.components.size).to eq(1) }
@@ -36,6 +34,12 @@ describe AppInfo::APK do
       it { expect(subject.manifest.label).to eq('AppInfoDemo') }
       it { expect(subject.manifest.label(locale: 'en')).to eq('AppInfoDemo') }
       it { expect(subject.manifest.label(locale: 'zh-CN')).to eq('AppInfo演示') }
+
+      it { expect(subject.signs).to be_kind_of(Hash) }
+      it { expect(subject.signs).to have_key('META-INF/KEY0.RSA') }
+      it { expect(subject.signs['META-INF/KEY0.RSA']).to be_kind_of(OpenSSL::PKCS7) }
+      it { expect(subject.certificates).to be_kind_of(Array) }
+      it { expect(subject.certificates[0]).to be_kind_of(AppInfo::Certificate) }
     end
 
     context 'with Android target SDK above 31' do
@@ -60,8 +64,6 @@ describe AppInfo::APK do
       it { expect(subject.target_sdk_version).to eq 33 }
       it { expect(subject.deep_links).to eq([]) }
       it { expect(subject.schemes).to eq([]) }
-      it { expect(subject.certificates).to be_empty }
-      it { expect(subject.signs).to be_empty }
       it { expect(subject.activities.size).to eq(3) }
       it { expect(subject.services.size).to eq(0) }
       it { expect(subject.components.size).to eq(3) }
@@ -71,6 +73,9 @@ describe AppInfo::APK do
       it { expect(subject.manifest.label).to eq('My Application') }
       it { expect(subject.manifest.label(locale: 'en')).to eq('My Application') }
       it { expect(subject.manifest.label(locale: 'zh-CN')).to eq('My Application') }
+
+      it { expect(subject.certificates).to be_empty }
+      it { expect(subject.signs).to be_empty }
     end
   end
 end

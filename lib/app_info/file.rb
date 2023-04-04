@@ -10,21 +10,14 @@ module AppInfo
       @logger = logger
     end
 
+    # @abstract Subclass and override {#file_type} to implement
     def file_type
       Platform::UNKNOWN
     end
 
-    # return file size
-    # @example Read file size in integer
-    #   aab.size                    # => 3618865
-    #
-    # @example Read file size in human readabale
-    #   aab.size(human_size: true)  # => '3.45 MB'
-    #
-    # @param [Boolean] human_size Convert integer value to human readable.
-    # @return [Integer, String]
+    # @abstract Subclass and override {#size} to implement
     def size(human_size: false)
-      raise 'implantation required'
+      raise NotImplementedError, ".#{__method__} method implantation required in #{self.class}"
     end
   end
 end
