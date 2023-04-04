@@ -5,7 +5,7 @@ require 'image_size'
 require 'forwardable'
 
 module AppInfo
-  # Parse APK file
+  # Parse APK file parser, wrapper for {https://github.com/icyleaf/android_parser android_parser}.
   class APK < File
     include Helper::HumanFileSize
     extend Forwardable
@@ -21,6 +21,15 @@ module AppInfo
       AUTOMOTIVE  = 'Automotive'
     end
 
+    # return file size
+    # @example Read file size in integer
+    #   aab.size                    # => 3618865
+    #
+    # @example Read file size in human readabale
+    #   aab.size(human_size: true)  # => '3.45 MB'
+    #
+    # @param [Boolean] human_size Convert integer value to human readable.
+    # @return [Integer, String]
     def size(human_size: false)
       file_to_human_size(@file, human_size: human_size)
     end
@@ -85,28 +94,25 @@ module AppInfo
     end
     alias min_os_version min_sdk_version
 
-    def sign_version
-      return 'v1' unless signs.empty?
-
-      # when ?
-      # https://source.android.com/security/apksigning/v2?hl=zh-cn
-      #   'v2'
-      # when ?
-      # https://source.android.com/security/apksigning/v3?hl=zh-cn
-      #   'v3'
-      'unknown'
+    # Return multi version certifiates of signatures
+    # @return [Array<Hash>]
+    # @see AppInfo::Android::Signature.verify
+    def signatures
+      @signatures ||= Android::Signature.verify(self)
     end
 
+    # Legacy v1 scheme signatures, it will remove soon.
+    # @deprecated Use {#signatures}
+    # @return [Array<OpenSSL::PKCS7, nil>]
     def signs
-      apk.signs.each_with_object([]) do |(path, sign), obj|
-        obj << Sign.new(path, sign)
-      end
+      @signs ||= v1sign&.signatures || []
     end
 
+    # Legacy v1 scheme certificates, it will remove soon.
+    # @deprecated Use {#signatures}
+    # @return [Array<OpenSSL::PKCS7, nil>]
     def certificates
-      apk.certificates.each_with_object([]) do |(path, certificate), obj|
-        obj << Certificate.new(path, certificate)
-      end
+      @certificates ||= v1sign&.certificates || []
     end
 
     def activities
@@ -115,6 +121,10 @@ module AppInfo
 
     def apk
       @apk ||= ::Android::Apk.new(@file)
+    end
+
+    def zip
+      @zip ||= apk.instance_variable_get(:@zip)
     end
 
     def icons
@@ -149,24 +159,12 @@ module AppInfo
       @contents ||= ::File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
     end
 
-    # Android Certificate
-    class Certificate
-      attr_reader :path, :certificate
+    private
 
-      def initialize(path, certificate)
-        @path = path
-        @certificate = certificate
-      end
-    end
-
-    # Android Sign
-    class Sign
-      attr_reader :path, :sign
-
-      def initialize(path, sign)
-        @path = path
-        @sign = sign
-      end
+    def v1sign
+      @v1sign ||= Android::Signature::V1.verify(self)
+    rescue Android::Signature::NotFoundError
+      nil
     end
   end
 end

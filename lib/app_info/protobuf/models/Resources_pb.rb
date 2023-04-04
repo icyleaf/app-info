@@ -322,7 +322,9 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
 end
 
+# @!visibility private
 module Aapt
+
   module Pb
     StringPool = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.StringPool").msgclass
     SourcePosition = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("aapt.pb.SourcePosition").msgclass

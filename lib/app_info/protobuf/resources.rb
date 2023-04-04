@@ -12,7 +12,7 @@ module AppInfo
         new(doc)
       end
 
-      include Helper::ReferenceParser
+      include Helper::Protobuf
 
       attr_reader :packages, :tool_fingerprint
 
@@ -53,7 +53,7 @@ module AppInfo
       end
 
       class Package
-        include Helper::Defines
+        include Helper::GenerateClass
 
         attr_reader :name, :types
 
@@ -113,13 +113,13 @@ module AppInfo
       end
 
       class Entry
+        include Helper::GenerateClass
+
         def self.parse_from(type, package)
           type.entry.each_with_object([]) do |entry, obj|
             obj << Entry.new(entry, package)
           end
         end
-
-        include Helper::Defines
 
         attr_reader :name, :values
 
@@ -155,7 +155,7 @@ module AppInfo
       end
 
       class Value
-        include Helper::ReferenceParser
+        include Helper::Protobuf
         extend Forwardable
 
         attr_reader :locale, :config, :original_value, :value, :type

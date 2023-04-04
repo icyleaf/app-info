@@ -66,12 +66,22 @@ module AppInfo
       mobileprovision.try(:[], 'Entitlements')
     end
 
+    # return developer certificates.
+    #
+    # @deprecated Use {#certificates} instead of this method.
     def developer_certs
+      certificates
+    end
+
+    # return developer certificates.
+    #
+    # @return [Array<Certificate>]
+    def certificates
       certs = mobileprovision.try(:[], 'DeveloperCertificates')
       return if certs.empty?
 
-      certs.each_with_object([]) do |cert, obj|
-        obj << DeveloperCertificate.new(cert)
+      certs.each_with_object([]) do |cert_data, obj|
+        obj << Certificate.parse(cert_data)
       end
     end
 
@@ -234,27 +244,6 @@ module AppInfo
       start_point = raw.index('<?xml version=')
       end_point = raw.index(end_tag) + end_tag.size - 1
       raw[start_point..end_point]
-    end
-
-    # Developer Certificate
-    class DeveloperCertificate
-      attr_reader :raw
-
-      def initialize(data)
-        @raw = OpenSSL::X509::Certificate.new(data)
-      end
-
-      def name
-        @raw.subject.to_a.find { |name, _, _| name == 'CN' }[1].force_encoding('UTF-8')
-      end
-
-      def created_date
-        @raw.not_after
-      end
-
-      def expired_date
-        @raw.not_before
-      end
     end
   end
 end

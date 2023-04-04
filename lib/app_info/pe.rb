@@ -7,7 +7,7 @@ require 'forwardable'
 module AppInfo
   # Windows PE parser
   #
-  # Ref: https://learn.microsoft.com/zh-cn/windows/win32/debug/pe-format
+  # @see https://learn.microsoft.com/zh-cn/windows/win32/debug/pe-format Microsoft PE Format
   class PE < File
     include Helper::HumanFileSize
     include Helper::Archive
@@ -32,6 +32,15 @@ module AppInfo
       Platform::WINDOWS
     end
 
+    # return file size
+    # @example Read file size in integer
+    #   aab.size                    # => 3618865
+    #
+    # @example Read file size in human readabale
+    #   aab.size(human_size: true)  # => '3.45 MB'
+    #
+    # @param [Boolean] human_size Convert integer value to human readable.
+    # @return [Integer, String]
     def size(human_size: false)
       file_to_human_size(@file, human_size: human_size)
     end

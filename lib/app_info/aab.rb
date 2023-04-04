@@ -5,7 +5,7 @@ require 'image_size'
 require 'forwardable'
 
 module AppInfo
-  # Parse APK file
+  # Parse APK file parser
   class AAB < File
     include Helper::HumanFileSize
     extend Forwardable
@@ -25,14 +25,25 @@ module AppInfo
     BASE_MANIFEST = "#{BASE_PATH}/manifest/AndroidManifest.xml"
     BASE_RESOURCES = "#{BASE_PATH}/resources.pb"
 
+    # return file size
+    # @example Read file size in integer
+    #   aab.size                    # => 3618865
+    #
+    # @example Read file size in human readabale
+    #   aab.size(human_size: true)  # => '3.45 MB'
+    #
+    # @param [Boolean] human_size Convert integer value to human readable.
+    # @return [Integer, String]
     def size(human_size: false)
       file_to_human_size(@file, human_size: human_size)
     end
 
+    # @return [Symbol] {Format::AAB}
     def file_type
       Format::AAB
     end
 
+    # @return [String] {Platform::ANDROID}
     def platform
       Platform::ANDROID
     end
@@ -41,21 +52,25 @@ module AppInfo
 
     alias release_version version_name
 
+    # @return [String]
     def package_name
       manifest.package
     end
     alias identifier package_name
     alias bundle_id package_name
 
+    # @return [String]
     def version_code
       manifest.version_code.to_s
     end
     alias build_version version_code
 
+    # @return [String]
     def name
       manifest.label
     end
 
+    # @return [String] {Device}
     def device_type
       if wear?
         Device::WATCH
@@ -77,33 +92,40 @@ module AppInfo
     #           .size >= 1
     # end
 
+    # @return [Boolean]
     def wear?
       !!use_features&.include?('android.hardware.type.watch')
     end
 
+    # @return [Boolean]
     def tv?
       !!use_features&.include?('android.software.leanback')
     end
 
+    # @return [Boolean]
     def automotive?
       !!use_features&.include?('android.hardware.type.automotive')
     end
 
+    # @return [String]
     def min_sdk_version
       manifest.uses_sdk.min_sdk_version
     end
     alias min_os_version min_sdk_version
 
+    # @return [String]
     def target_sdk_version
       manifest.uses_sdk.target_sdk_version
     end
 
+    # @return [Array<String>]
     def use_features
       return [] unless manifest.respond_to?(:uses_feature)
 
       @use_features ||= manifest&.uses_feature&.map(&:name)
     end
 
+    # @return [Array<String>]
     def use_permissions
       return [] unless manifest.respond_to?(:uses_permission)
 
@@ -122,36 +144,25 @@ module AppInfo
       @components ||= manifest.components.transform_values
     end
 
-    def sign_version
-      return 'v1' unless signs.empty?
-
-      # when ?
-      # https://source.android.com/security/apksigning/v2?hl=zh-cn
-      #   'v2'
-      # when ?
-      # https://source.android.com/security/apksigning/v3?hl=zh-cn
-      #   'v3'
-      'unknown'
+    # Return multi version certifiates of signatures
+    # @return [Array<Hash>] signatures
+    # @see AppInfo::Android::Signature.verify
+    def signatures
+      @signatures ||= Android::Signature.verify(self)
     end
 
+    # Legacy v1 scheme signatures, it will remove soon.
+    # @deprecated Use {#signatures}
+    # @return [Array<OpenSSL::PKCS7, nil>] signatures
     def signs
-      return @signs if @signs
-
-      @signs = []
-      each_file do |path, data|
-        # find META-INF/xxx.{RSA|DSA}
-        next unless path =~ %r{^META-INF/} && data.unpack('CC') == [0x30, 0x82]
-
-        @signs << APK::Sign.new(path, OpenSSL::PKCS7.new(data))
-      end
-
-      @signs
+      @signs ||= v1sign&.signatures || []
     end
 
+    # Legacy v1 scheme certificates, it will remove soon.
+    # @deprecated Use {#signatures}
+    # @return [Array<OpenSSL::PKCS7, nil>] certificates
     def certificates
-      @certificates ||= signs.each_with_object([]) do |sign, obj|
-        obj << APK::Certificate.new(sign.path, sign.sign.certificates[0])
-      end
+      @certificates ||= v1sign&.certificates || []
     end
 
     def each_file
@@ -181,15 +192,18 @@ module AppInfo
       @manifest ||= Protobuf::Manifest.parse(io, resource)
     end
 
+    # @return [Protobuf::Resources]
     def resource
       io = zip.read(zip.find_entry(BASE_RESOURCES))
       @resource ||= Protobuf::Resources.parse(io)
     end
 
+    # @return [Zip::File]
     def zip
       @zip ||= Zip::File.open(@file)
     end
 
+    # @return [Array<Hash>]
     def icons
       @icons ||= manifest.icons.each_with_object([]) do |res, obj|
         path = res.value
@@ -226,6 +240,12 @@ module AppInfo
     end
 
     private
+
+    def v1sign
+      @v1sign ||= Android::Signature::V1.verify(self)
+    rescue Android::Signature::NotFoundError
+      nil
+    end
 
     def xml_file?(file)
       ::File.extname(file) == '.xml'

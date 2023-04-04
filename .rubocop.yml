@@ -27,6 +27,22 @@ AllCops:
     - 'lib/app_info/protobuf/models/*_pb.rb'
     - 'main.rb'
 
+Layout/LineLength:
+  Max: 100
+  Exclude:
+    - 'lib/app_info/helper/signatures.rb'
+
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'lib/app_info/file.rb'
+
+Lint/UselessAssignment:
+  Exclude:
+    - 'lib/app_info/android/signatures/v3.rb'
+
 Metrics/AbcSize:
   Max: 100
 
@@ -36,14 +52,15 @@ Metrics/BlockLength:
     - 'lib/app_info/mobile_provision.rb'
 
 Metrics/MethodLength:
-  Max: 20
+  Max: 30
   Exclude:
-    - 'lib/app_info/png_uncrush.rb'
     - 'lib/app_info/mobile_provision.rb'
-    - 'lib/app_info/pe.rb'
+    - 'lib/app_info/android/signatures/v2.rb'
+    - 'lib/app_info/android/signatures/v3.rb'
 
-Layout/LineLength:
-  Max: 100
+Metrics/ParameterLists:
+  Exclude:
+    - 'lib/app_info/helper/signatures.rb'
 
 Metrics/ClassLength:
   CountComments: false
@@ -55,10 +72,14 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 18
 
-Lint/AssignmentInCondition:
-  Enabled: false
+Metrics/BlockNesting:
+  Exclude:
+    - 'lib/app_info/dsym.rb'
 
 Style/Documentation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
   Enabled: false
 
 Style/PerlBackrefs:
@@ -68,10 +89,8 @@ Style/PerlBackrefs:
 Style/DocumentDynamicEvalDefinition:
   Enabled: false
 
-Metrics/BlockNesting:
-  Exclude:
-    - 'lib/app_info/dsym.rb'
-
-
 Style/SlicingWithRange:
+  Enabled: false
+
+Style/ClassVars:
   Enabled: false

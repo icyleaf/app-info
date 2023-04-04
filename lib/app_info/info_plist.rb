@@ -9,6 +9,14 @@ module AppInfo
   class InfoPlist < File
     extend Forwardable
 
+    # Icon Key
+    ICON_KEYS = {
+      Device::IPHONE => ['CFBundleIcons'],
+      Device::IPAD => ['CFBundleIcons~ipad'],
+      Device::UNIVERSAL => ['CFBundleIcons', 'CFBundleIcons~ipad'],
+      Device::MACOS => %w[CFBundleIconFile CFBundleIconName]
+    }.freeze
+
     def file_type
       Format::INFOPLIST
     end

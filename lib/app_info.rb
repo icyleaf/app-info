@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require 'app_info/version'
-require 'app_info/error'
 require 'app_info/core_ext'
+require 'app_info/const'
+require 'app_info/certificate'
 require 'app_info/helper'
+require 'app_info/error'
 
 require 'app_info/file'
 require 'app_info/info_plist'
@@ -13,6 +15,7 @@ require 'app_info/ipa'
 require 'app_info/ipa/plugin'
 require 'app_info/ipa/framework'
 
+require 'app_info/android/signature'
 require 'app_info/apk'
 require 'app_info/aab'
 
@@ -27,35 +30,34 @@ Zip.warn_invalid_date = false
 
 # AppInfo Module
 module AppInfo
-  ZIP_RETGEX = /^\x50\x4b\x03\x04/.freeze
-  PE_REGEX = /^MZ/.freeze
-  PLIST_REGEX = /\x3C\x3F\x78\x6D\x6C/.freeze
-  BPLIST_REGEX = /^\x62\x70\x6C\x69\x73\x74/.freeze
-
   class << self
-    UNKNOWN_FORMAT = :unkown
-
     # Get a new parser for automatic
     def parse(file)
       raise NotFoundError, file unless ::File.exist?(file)
 
-      case file_type(file)
-      when Format::IPA then IPA.new(file)
-      when Format::APK then APK.new(file)
-      when Format::AAB then AAB.new(file)
-      when Format::MOBILEPROVISION then MobileProvision.new(file)
-      when Format::DSYM then DSYM.new(file)
-      when Format::PROGUARD then Proguard.new(file)
-      when Format::MACOS then Macos.new(file)
-      when Format::PE then PE.new(file)
-      else
-        raise UnknownFileTypeError, "Do not detect file type: #{file}"
-      end
+      parser = case file_type(file)
+               when Format::IPA then IPA.new(file)
+               when Format::APK then APK.new(file)
+               when Format::AAB then AAB.new(file)
+               when Format::MOBILEPROVISION then MobileProvision.new(file)
+               when Format::DSYM then DSYM.new(file)
+               when Format::PROGUARD then Proguard.new(file)
+               when Format::MACOS then Macos.new(file)
+               when Format::PE then PE.new(file)
+               else
+                 raise UnknownFileTypeError, "Do not detect file type: #{file}"
+               end
+
+      return parser unless block_given?
+
+      # call block and clear!
+      yield parser
+      parser.clear!
     end
     alias dump parse
 
     def parse?(file)
-      file_type(file) != UNKNOWN_FORMAT
+      file_type(file) != Format::UNKNOWN
     end
 
     # Detect file type by read file header
@@ -74,6 +76,12 @@ module AppInfo
         Format::UNKNOWN
       end
     end
+
+    def logger
+      @logger ||= Logger.new($stdout, level: :warn)
+    end
+
+    attr_writer :logger
 
     private
 
@@ -132,4 +140,9 @@ module AppInfo
       end
     end
   end
+
+  ZIP_RETGEX = /^\x50\x4b\x03\x04/.freeze
+  PE_REGEX = /^MZ/.freeze
+  PLIST_REGEX = /\x3C\x3F\x78\x6D\x6C/.freeze
+  BPLIST_REGEX = /^\x62\x70\x6C\x69\x73\x74/.freeze
 end

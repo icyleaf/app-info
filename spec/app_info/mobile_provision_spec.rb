@@ -23,6 +23,9 @@ describe AppInfo::MobileProvision do
       it { expect(subject.expired_date).to be_a Time }
       it { expect(subject.entitlements).to be_a Hash }
       it { expect(subject.developer_certs).to be_a Array }
+      it { expect(subject.certificates).to be_a Array }
+      it { expect(subject.certificates.size).to eq(1) }
+      it { expect(subject.certificates[0]).to be_a(AppInfo::Certificate) }  # see spec/app_info/certificate_spec.rb
       it { expect(subject.enabled_capabilities).not_to be_empty }
     end
 

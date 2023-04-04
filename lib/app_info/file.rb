@@ -3,18 +3,21 @@
 # AppInfo base file
 module AppInfo
   class File
-    attr_reader :file
+    attr_reader :file, :logger
 
-    def initialize(file)
+    def initialize(file, logger: AppInfo.logger)
       @file = file
+      @logger = logger
     end
 
+    # @abstract Subclass and override {#file_type} to implement
     def file_type
       Platform::UNKNOWN
     end
 
-    def size
-      raise 'implantation required'
+    # @abstract Subclass and override {#size} to implement
+    def size(human_size: false)
+      raise NotImplementedError, ".#{__method__} method implantation required in #{self.class}"
     end
   end
 end
