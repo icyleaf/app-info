@@ -3,6 +3,7 @@
 require 'app_info/version'
 require 'app_info/core_ext'
 require 'app_info/const'
+require 'app_info/certificate'
 require 'app_info/helper'
 require 'app_info/error'
 

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'app_info/android/certificate'
 require 'app_info/android/signatures/info'
 
 module AppInfo::Android::Signature

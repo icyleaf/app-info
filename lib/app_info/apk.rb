@@ -5,7 +5,7 @@ require 'image_size'
 require 'forwardable'
 
 module AppInfo
-  # Parse APK file
+  # Parse APK file parser, wrapper for {https://github.com/icyleaf/android_parser android_parser}.
   class APK < File
     include Helper::HumanFileSize
     extend Forwardable
@@ -21,6 +21,15 @@ module AppInfo
       AUTOMOTIVE  = 'Automotive'
     end
 
+    # return file size
+    # @example Read file size in integer
+    #   aab.size                    # => 3618865
+    #
+    # @example Read file size in human readabale
+    #   aab.size(human_size: true)  # => '3.45 MB'
+    #
+    # @param [Boolean] human_size Convert integer value to human readable.
+    # @return [Integer, String]
     def size(human_size: false)
       file_to_human_size(@file, human_size: human_size)
     end

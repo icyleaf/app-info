@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module AppInfo
-  # App format
+  # Full Format
   module Format
     # iOS
     IPA = :ipa
@@ -23,7 +23,7 @@ module AppInfo
     UNKNOWN = :unknown
   end
 
-  # App Platform
+  # Platform
   module Platform
     WINDOWS = 'Windows'
     MACOS = 'macOS'

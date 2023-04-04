@@ -25,6 +25,15 @@ module AppInfo
       INHOUSE = 'Enterprise' # Rename and Alias to enterprise
     end
 
+    # return file size
+    # @example Read file size in integer
+    #   aab.size                    # => 3618865
+    #
+    # @example Read file size in human readabale
+    #   aab.size(human_size: true)  # => '3.45 MB'
+    #
+    # @param [Boolean] human_size Convert integer value to human readable.
+    # @return [Integer, String]
     def size(human_size: false)
       file_to_human_size(@file, human_size: human_size)
     end

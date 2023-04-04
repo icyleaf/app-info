@@ -1,16 +1,34 @@
 # frozen_string_literal: true
 
-module AppInfo::Android
-  # Android Certificate of signature
+module AppInfo
+  # Certificate wrapper for
+  # {https://docs.ruby-lang.org/en/3.0/OpenSSL/X509/Certificate.html OpenSSL::X509::Certifiate}.
   class Certificate
+    # Parse Raw data into X509 cerificate wrapper
+    # @param [String] certificate raw data
+    def self.parse(data)
+      cert = OpenSSL::X509::Certificate.new(data)
+      new(cert)
+    end
+
+    # @param [OpenSSL::X509::Certificate] certificate
     def initialize(cert)
       @cert = cert
     end
 
+    # return version of certificate
+    # @param [String] prefix
+    # @param [Integer] base
+    # @return [String] version
     def version(prefix: 'v', base: 1)
       "#{prefix}#{raw.version + base}"
     end
 
+    # return serial of certificate
+    # @param [Integer] base
+    # @param [Symbol] transform avaiables in :lower, :upper
+    # @param [String] prefix
+    # @return [String] serial
     def serial(base = 10, transform: :lower, prefix: nil)
       serial = raw.serial.to_s(base)
       serial = transform == :lower ? serial.downcase : serial.upcase
@@ -19,10 +37,19 @@ module AppInfo::Android
       "#{prefix}#{serial}"
     end
 
+    # return issuer from DN, similar to {#subject}.
+    #
+    # Example:
+    #
+    # @param [Symbol] format avaiables in `:to_a`, `:to_s` and `:raw`
+    # @return [Array, String, OpenSSL::X509::Name] the object converted into the expected format.
     def issuer(format: :raw)
       convert_cert_name(raw.issuer, format: format)
     end
 
+    # return subject from DN, similar to {#issuer}.
+    # @param [Symbol] format avaiables in `:to_a`, `:to_s` and `:raw`
+    # @return [Array, String, OpenSSL::X509::Name] the object converted into the expected format.
     def subject(format: :raw)
       convert_cert_name(raw.subject, format: format)
     end

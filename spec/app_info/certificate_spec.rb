@@ -1,4 +1,4 @@
-describe AppInfo::Android::Certificate do
+describe AppInfo::Certificate do
   context 'parse RSA 256 cert' do
     let(:pem) {
       <<-EOF
@@ -27,7 +27,7 @@ mnTWWLrfyvXhs4LJuHMyNXSCJ57fJQBOHTaU5V1n6MxVzji5RsBB+1v3kD+k0iqN
     }
 
     let(:cert) { OpenSSL::X509::Certificate.new(pem) }
-    subject { AppInfo::Android::Certificate.new(cert) }
+    subject { AppInfo::Certificate.new(cert) }
 
     it { expect(subject.raw).to eq(cert) }
     it { expect(subject.version).to eq('v3') }
@@ -76,7 +76,7 @@ qp1EYem0z/DbqBVZ9gU+Kk+MCPswCwYJYIZIAWUDBAMEAzAAMC0CFQDFfCKf1wre
     }
 
     let(:cert) { OpenSSL::X509::Certificate.new(pem) }
-    subject { AppInfo::Android::Certificate.new(cert) }
+    subject { AppInfo::Certificate.new(cert) }
 
     it { expect(subject.raw).to eq(cert) }
     it { expect(subject.version).to eq('v3') }
@@ -118,7 +118,7 @@ w+n4RPwCIQCII6aF8nsElheWUaJey3qE+eaxjcELsuLTuZjIkJFz/g==
     }
 
     let(:cert) { OpenSSL::X509::Certificate.new(pem) }
-    subject { AppInfo::Android::Certificate.new(cert) }
+    subject { AppInfo::Certificate.new(cert) }
 
     it { expect(subject.raw).to eq(cert) }
     it { expect(subject.version).to eq('v3') }

@@ -7,6 +7,9 @@ require 'zlib'
 require 'stringio'
 
 module AppInfo
+  # Decompress iOS Png image file.
+  # @see https://github.com/swcai/iphone-png-normalizer swcai/iphone-png-normalizer
+  # @author Wenwei Cai
   class PngUncrush
     class FormatError < Error; end
 
