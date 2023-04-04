@@ -148,7 +148,7 @@ module AppInfo
     # @return [Array<Hash>] signatures
     # @see AppInfo::Android::Signature.verify
     def signatures
-      @signatures ||= Signature.verify(self)
+      @signatures ||= Android::Signature.verify(self)
     end
 
     # Legacy v1 scheme signatures, it will remove soon.
