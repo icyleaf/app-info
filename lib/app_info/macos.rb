@@ -145,7 +145,7 @@ module AppInfo
 
       @contents = nil
       @app_path = nil
-      @binrary_path = nil
+      @binary_path = nil
       @info_path = nil
       @info = nil
       @icons = nil
