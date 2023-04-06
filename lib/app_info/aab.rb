@@ -10,8 +10,6 @@ module AppInfo
     include Helper::HumanFileSize
     extend Forwardable
 
-    attr_reader :file
-
     BASE_PATH = 'base'
     BASE_MANIFEST = "#{BASE_PATH}/manifest/AndroidManifest.xml"
     BASE_RESOURCES = "#{BASE_PATH}/resources.pb"

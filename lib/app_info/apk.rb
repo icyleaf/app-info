@@ -10,8 +10,6 @@ module AppInfo
     include Helper::HumanFileSize
     extend Forwardable
 
-    attr_reader :file
-
     # return file size
     # @example Read file size in integer
     #   aab.size                    # => 3618865

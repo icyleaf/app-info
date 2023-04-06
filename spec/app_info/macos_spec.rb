@@ -28,7 +28,7 @@ describe AppInfo::Macos do
         it { expect(subject.info['CFBundleVersion']).to eq('1') }
         it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.0') }
         it { expect(subject.archs).to eq(%i[x86_64 arm64]) }
-        it { expect(subject.release_type).to eq('Debug') }
+        it { expect(subject.release_type).to eq(:debug) }
         it { expect(subject.mobileprovision?).to be false }
         it { expect(subject.stored?).to be false }
         it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
@@ -72,7 +72,7 @@ describe AppInfo::Macos do
         it { expect(subject.info['CFBundleVersion']).to eq('1') }
         it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.0') }
         it { expect(subject.archs).to eq(%i[x86_64 arm64]) }
-        it { expect(subject.release_type).to eq('Release') }
+        it { expect(subject.release_type).to eq(:release) }
         it { expect(subject.stored?).to be false }
         it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
         it { expect(subject.mobileprovision).to be_kind_of AppInfo::MobileProvision }

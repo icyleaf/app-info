@@ -13,7 +13,9 @@ module AppInfo
     # @return [Symbol] {Format}
     def format
       @format ||= lambda {
-        not_implemented_error!(__method__) if instance_of?(AppInfo::File)
+        if instance_of?(AppInfo::File) || instance_of?(AppInfo::Apple)
+          not_implemented_error!(__method__)
+        end
 
         self.class.name.split('::')[-1].downcase.to_sym
       }.call

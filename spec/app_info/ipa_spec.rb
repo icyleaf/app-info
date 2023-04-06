@@ -31,8 +31,8 @@ describe AppInfo::IPA do
     it { expect(subject.icons).to be_kind_of Array }
     it { expect(subject.icons).to be_empty }
 
-    it { expect(subject.release_type).to eq('AdHoc') }
-    it { expect(subject.build_type).to eq('AdHoc') }
+    it { expect(subject.release_type).to eq(:adhoc) }
+    it { expect(subject.build_type).to eq(:adhoc) }
     it { expect(subject.devices).to be_kind_of Array }
     it { expect(subject.team_name).to eq('QYER Inc') }
     it { expect(subject.profile_name).to eq('iOS Team Provisioning Profile: *') }
@@ -82,8 +82,8 @@ describe AppInfo::IPA do
     it { expect(subject.icons).to be_kind_of Array }
     it { expect(subject.icons).not_to be_empty }
 
-    it { expect(subject.release_type).to eq('Enterprise') }
-    it { expect(subject.build_type).to eq('Enterprise') }
+    it { expect(subject.release_type).to eq(:enterprise) }
+    it { expect(subject.build_type).to eq(:enterprise) }
     it { expect(subject.devices).to be_nil }
     it { expect(subject.team_name).to eq('QYER Inc') }
     it { expect(subject.profile_name).to eq('XC: *') }
@@ -140,8 +140,8 @@ describe AppInfo::IPA do
     it { expect(subject.bundle_id).to eq('com.icyleaf.test.Demo') }
     it { expect(subject.archs).to eq(%i[arm64]) }
 
-    it { expect(subject.release_type).to eq('Enterprise') }
-    it { expect(subject.build_type).to eq('Enterprise') }
+    it { expect(subject.release_type).to eq(:enterprise) }
+    it { expect(subject.build_type).to eq(:enterprise) }
     it { expect(subject.devices).to be_nil }
 
     it { expect(subject.mobileprovision?).to be true }

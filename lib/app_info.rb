@@ -11,6 +11,8 @@ require 'app_info/file'
 require 'app_info/info_plist'
 require 'app_info/mobile_provision'
 
+require 'app_info/apple'
+require 'app_info/macos'
 require 'app_info/ipa'
 require 'app_info/ipa/plugin'
 require 'app_info/ipa/framework'
@@ -22,7 +24,6 @@ require 'app_info/aab'
 require 'app_info/proguard'
 require 'app_info/dsym'
 
-require 'app_info/macos'
 require 'app_info/pe'
 
 # fix invaild date format warnings
