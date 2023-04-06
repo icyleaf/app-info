@@ -12,15 +12,6 @@ module AppInfo
 
     attr_reader :file
 
-    # APK Devices
-    module Device
-      PHONE       = 'Phone'
-      TABLET      = 'Tablet'
-      WATCH       = 'Watch'
-      TV          = 'Television'
-      AUTOMOTIVE  = 'Automotive'
-    end
-
     # return file size
     # @example Read file size in integer
     #   aab.size                    # => 3618865
@@ -34,12 +25,57 @@ module AppInfo
       file_to_human_size(@file, human_size: human_size)
     end
 
+    # @return [Symbol] {Platform}
     def platform
-      Platform::ANDROID
+      Platform::GOOGLE
     end
 
+    # @return [Symbol] {OperaSystem}
+    def opera_system
+      OperaSystem::ANDROID
+    end
+
+    # @return [Symbol] {Device}
+    def device
+      if watch?
+        Device::WATCH
+      elsif television?
+        Device::TELEVISION
+      elsif automotive?
+        Device::AUTOMOTIVE
+      elsif tablet?
+        Device::TABLET
+      else
+        Device::PHONE
+      end
+    end
+
+    # @!method manifest
+    #   @see https://rubydoc.info/gems/android_parser/Android/Apk#manifest-instance_method ::Android::Apk#manifest
+    # @!method resource
+    #   @see https://rubydoc.info/gems/android_parser/Android/Apk#resource-instance_method ::Android::Apk#resource
+    # @!method dex
+    #   @see https://rubydoc.info/gems/android_parser/Android/Apk#dex-instance_method ::Android::Apk#dex
     def_delegators :apk, :manifest, :resource, :dex
 
+    # @!method version_name
+    #   @see https://rubydoc.info/gems/android_parser/Android/Manifest#version_name-instance_method  ::Android::Manifest#version_name
+    # @!method package_name
+    #   @see https://rubydoc.info/gems/android_parser/Android/Manifest#package_name-instance_method  ::Android::Manifest#package_name
+    # @!method target_sdk_versionx
+    #   @see https://rubydoc.info/gems/android_parser/Android/Manifest#target_sdk_versionx-instance_method  ::Android::Manifest#target_sdk_version
+    # @!method components
+    #   @see https://rubydoc.info/gems/android_parser/Android/Manifest#components-instance_method  ::Android::Manifest#components
+    # @!method services
+    #   @see https://rubydoc.info/gems/android_parser/Android/Manifest#services-instance_method  ::Android::Manifest#services
+    # @!method use_permissions
+    #   @see https://rubydoc.info/gems/android_parser/Android/Manifest#use_permissions-instance_method  ::Android::Manifest#use_permissions
+    # @!method use_features
+    #   @see https://rubydoc.info/gems/android_parser/Android/Manifest#use_features-instance_method  ::Android::Manifest#use_features
+    # @!method deep_links
+    #   @see https://rubydoc.info/gems/android_parser/Android/Manifest#deep_links-instance_method ::Android::Manifest#deep_links
+    # @!method schemes
+    #   @see https://rubydoc.info/gems/android_parser/Android/Manifest#schemes-instance_method ::Android::Manifest#schemes
     def_delegators :manifest, :version_name, :package_name, :target_sdk_version,
                    :components, :services, :use_permissions, :use_features,
                    :deep_links, :schemes
@@ -57,27 +93,22 @@ module AppInfo
       manifest.label || resource.find('@string/app_name')
     end
 
-    def device_type
-      if wear?
-        Device::WATCH
-      elsif tv?
-        Device::TV
-      elsif automotive?
-        Device::AUTOMOTIVE
-      else
-        Device::PHONE
-      end
+    # @todo find a way to detect, no way!
+    # @see https://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet
+    def tablet?
+      # Not works!
+      # resource.first_package
+      #         .entries('bool')
+      #         .select{|e| e.name == 'isTablet' }
+      #         .size >= 1
+      false
     end
 
-    # TODO: find a way to detect, no way!
-    # def tablet?
-    # end
-
-    def wear?
+    def watch?
       use_features.include?('android.hardware.type.watch')
     end
 
-    def tv?
+    def television?
       use_features.include?('android.software.leanback')
     end
 

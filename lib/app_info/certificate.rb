@@ -174,8 +174,10 @@ module AppInfo
       @cert.send(method.to_sym, *args, &block) || super
     end
 
-    def respond_to_missing?(method, *args)
-      @cert.include?(method.to_sym) || super
+    def respond_to_missing?(method_name, *args)
+      @cert.key?(method_name.to_sym) ||
+        @cert.respond_to?(method_name) ||
+        super
     end
   end
 end

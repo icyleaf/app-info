@@ -16,7 +16,7 @@ module AppInfo::Helper
         max_exp = FILE_SIZE_UNITS.size - 1
         exponent = (Math.log(number) / Math.log(1024)).to_i
         exponent = max_exp if exponent > max_exp
-        number = format('%<number>.2f', number: (number / (1024**exponent.to_f)))
+        number = Kernel.format('%<number>.2f', number: (number / (1024**exponent.to_f)))
       end
 
       "#{number} #{FILE_SIZE_UNITS[exponent]}"

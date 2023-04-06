@@ -4,8 +4,26 @@ require 'openssl'
 require 'cfpropertylist'
 
 module AppInfo
-  # .mobileprovision file parser
+  # Apple code signing: provisioning profile parser
+  # @see https://developer.apple.com/documentation/technotes/tn3125-inside-code-signing-provisioning-profiles
   class MobileProvision < File
+    # @return [Symbol] {Platform}
+    def platform
+      Platform::APPLE
+    end
+
+    # @return [Symbol] {OperaSystem}
+    def opera_system
+      case opera_systems[0]
+      when :macos
+        OperaSystem::MACOS
+      when :ios
+        OperaSystem::IOS
+      else
+        raise NotImplementedError, "Unkonwn opera_system: #{opera_systems[0]}"
+      end
+    end
+
     def name
       mobileprovision.try(:[], 'Name')
     end
@@ -21,17 +39,14 @@ module AppInfo
       return :enterprise if enterprise?
     end
 
-    def platforms
+    # @return [Array<Symbol>]
+    def opera_systems
       return unless platforms = mobileprovision.try(:[], 'Platform')
 
       platforms.map do |v|
         v = 'macOS' if v == 'OSX'
         v.downcase.to_sym
       end
-    end
-
-    def platform
-      platforms[0]
     end
 
     def devices
@@ -85,13 +100,13 @@ module AppInfo
     #
     # related link: https://stackoverflow.com/questions/1003066/what-does-get-task-allow-do-in-xcode
     def development?
-      case platform.downcase.to_sym
-      when :ios
+      case opera_system
+      when OperaSystem::IOS
         entitlements['get-task-allow'] == true
-      when :macos
+      when OperaSystem::MACOS
         !devices.nil?
       else
-        raise Error, "Not implement with platform: #{platform}"
+        raise Error, "Not implement with opera_system: #{opera_system}"
       end
     end
 
@@ -99,24 +114,24 @@ module AppInfo
     #
     # related link: https://developer.apple.com/library/archive/qa/qa1830/_index.html
     def appstore?
-      case platform.downcase.to_sym
-      when :ios
+      case opera_system
+      when OperaSystem::IOS
         !development? && entitlements.key?('beta-reports-active')
-      when :macos
+      when OperaSystem::MACOS
         !development?
       else
-        raise Error, "Not implement with platform: #{platform}"
+        raise Error, "Not implement with opera_system: #{opera_system}"
       end
     end
 
     def adhoc?
-      return false if platform == :macos # macOS no need adhoc
+      return false if opera_system == OperaSystem::MACOS # macOS no need adhoc
 
       !development? && !devices.nil?
     end
 
     def enterprise?
-      return false if platform == :macos # macOS no need adhoc
+      return false if opera_system == OperaSystem::MACOS # macOS no need adhoc
 
       !development? && !adhoc? && !appstore?
     end

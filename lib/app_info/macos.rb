@@ -21,6 +21,11 @@ module AppInfo
       APPSTORE = 'AppStore'
     end
 
+    # @return [Symbol] {Platform}
+    def platform
+      Platform::APPLE
+    end
+
     # return file size
     # @example Read file size in integer
     #   aab.size                    # => 3618865
@@ -34,14 +39,40 @@ module AppInfo
       file_to_human_size(@file, human_size: human_size)
     end
 
-    def platform
-      Platform::MACOS
-    end
+    # @!method device
+    #   @see InfoPlist#device
+    # @!method opera_system
+    #   @see InfoPlist#opera_system
+    # @!method build_version
+    #   @see InfoPlist#build_version
+    # @!method name
+    #   @see InfoPlist#name
+    # @!method release_version
+    #   @see InfoPlist#release_version
+    # @!method identifier
+    #   @see InfoPlist#identifier
+    # @!method bundle_id
+    #   @see InfoPlist#bundle_id
+    # @!method display_name
+    #   @see InfoPlist#display_name
+    # @!method bundle_name
+    #   @see InfoPlist#bundle_name
+    # @!method min_sdk_version
+    #   @see InfoPlist#min_sdk_version
+    # @!method min_os_version
+    #   @see InfoPlist#min_os_version
+    def_delegators :info, :device, :opera_system, :build_version, :name,
+                   :release_version,:identifier, :bundle_id, :display_name,
+                   :bundle_name, :min_system_version, :min_os_version
 
-    def_delegators :info, :macos?, :iphone?, :ipad?, :universal?, :build_version, :name,
-                   :release_version, :identifier, :bundle_id, :display_name,
-                   :bundle_name, :min_system_version, :min_os_version, :device_type
-
+    # @!method team_name
+    #   @see MobileProvision#team_name
+    # @!method team_identifier
+    #   @see MobileProvision#team_identifier
+    # @!method profile_name
+    #   @see MobileProvision#profile_name
+    # @!method expired_date
+    #   @see MobileProvision#expired_date
     def_delegators :mobileprovision, :team_name, :team_identifier,
                    :profile_name, :expired_date
 

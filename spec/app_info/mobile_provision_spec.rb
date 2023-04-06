@@ -3,11 +3,15 @@ describe AppInfo::MobileProvision do
     context 'Development' do
       subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/ios_development.mobileprovision')) }
 
-      it { expect(subject.file_type).to eq AppInfo::Format::MOBILEPROVISION }
-      it { expect(subject.file_type).to eq :mobileprovision }
-      it { expect(subject.devices).to be_a Array }
-      it { expect(subject.platform).to eq :ios }
-      it { expect(subject.platforms).to eq [:ios] }
+      it { expect(subject.format).to eq AppInfo::Format::MOBILEPROVISION }
+      it { expect(subject.format).to eq :mobileprovision }
+      it { expect(subject.platform).to eq AppInfo::Platform::APPLE }
+      it { expect(subject.platform).to eq :apple }
+      it { expect(subject.opera_system).to eq AppInfo::OperaSystem::IOS }
+      it { expect(subject.opera_system).to eq :ios }
+      it { expect(subject.opera_systems).to eq [:ios] }
+      it { expect{ subject.device }.to raise_error NotImplementedError }
+      it { expect(subject.devices).to eq(['e801228c2086d3aacc917b9c3d19bfa56efcab5b']) }
       it { expect(subject.name).to_not be_empty }
       it { expect(subject.app_name).to_not be_empty }
       it { expect(subject.type).to eq :development }
@@ -32,11 +36,18 @@ describe AppInfo::MobileProvision do
     context 'Adhoc' do
       subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/ios_adhoc.mobileprovision')) }
 
-      it { expect(subject.file_type).to eq AppInfo::Format::MOBILEPROVISION }
-      it { expect(subject.file_type).to eq :mobileprovision }
+      it { expect(subject.format).to eq AppInfo::Format::MOBILEPROVISION }
+      it { expect(subject.format).to eq :mobileprovision }
+      it { expect(subject.platform).to eq AppInfo::Platform::APPLE }
+      it { expect(subject.platform).to eq :apple }
+      it { expect(subject.opera_system).to eq AppInfo::OperaSystem::IOS }
+      it { expect(subject.opera_system).to eq :ios }
+      it { expect(subject.opera_system).to eq AppInfo::OperaSystem::IOS }
+      it { expect(subject.opera_system).to eq :ios }
+      it { expect(subject.opera_systems).to eq [:ios] }
+      it { expect{ subject.device }.to raise_error NotImplementedError }
       it { expect(subject.devices).to be_a Array }
-      it { expect(subject.platform).to eq :ios }
-      it { expect(subject.platforms).to eq [:ios] }
+      it { expect(subject.devices).to eq(['e801228c2086d3aacc917b9c3d19bfa56efcab5b']) }
       it { expect(subject.name).to_not be_empty }
       it { expect(subject.app_name).to_not be_empty }
       it { expect(subject.type).to eq :adhoc }
@@ -58,11 +69,15 @@ describe AppInfo::MobileProvision do
     context 'AppStore' do
       subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/ios_appstore.mobileprovision')) }
 
-      it { expect(subject.file_type).to eq AppInfo::Format::MOBILEPROVISION }
-      it { expect(subject.file_type).to eq :mobileprovision }
+      it { expect(subject.format).to eq AppInfo::Format::MOBILEPROVISION }
+      it { expect(subject.format).to eq :mobileprovision }
+      it { expect(subject.platform).to eq AppInfo::Platform::APPLE }
+      it { expect(subject.platform).to eq :apple }
+      it { expect(subject.opera_system).to eq AppInfo::OperaSystem::IOS }
+      it { expect(subject.opera_system).to eq :ios }
+      it { expect(subject.opera_systems).to eq [:ios] }
+      it { expect{ subject.device }.to raise_error NotImplementedError }
       it { expect(subject.devices).to be_nil }
-      it { expect(subject.platform).to eq :ios }
-      it { expect(subject.platforms).to eq [:ios] }
       it { expect(subject.name).to_not be_empty }
       it { expect(subject.app_name).to_not be_empty }
       it { expect(subject.type).to eq :appstore }
@@ -86,11 +101,15 @@ describe AppInfo::MobileProvision do
     context 'Development' do
       subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/macos_development.provisionprofile')) }
 
-      it { expect(subject.file_type).to eq AppInfo::Format::MOBILEPROVISION }
-      it { expect(subject.file_type).to eq :mobileprovision }
+      it { expect(subject.format).to eq AppInfo::Format::MOBILEPROVISION }
+      it { expect(subject.format).to eq :mobileprovision }
+      it { expect(subject.platform).to eq AppInfo::Platform::APPLE }
+      it { expect(subject.platform).to eq :apple }
+      it { expect(subject.opera_system).to eq AppInfo::OperaSystem::MACOS }
+      it { expect(subject.opera_system).to eq :macos }
+      it { expect(subject.opera_systems).to eq [:macos] }
+      it { expect{ subject.device }.to raise_error NotImplementedError }
       it { expect(subject.devices).to be_a Array }
-      it { expect(subject.platform).to eq :macos }
-      it { expect(subject.platforms).to eq [:macos] }
       it { expect(subject.name).to_not be_empty }
       it { expect(subject.app_name).to_not be_empty }
       it { expect(subject.type).to eq :development }
@@ -112,11 +131,15 @@ describe AppInfo::MobileProvision do
     context 'AppStore' do
       subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/macos_appstore.provisionprofile')) }
 
-      it { expect(subject.file_type).to eq AppInfo::Format::MOBILEPROVISION }
-      it { expect(subject.file_type).to eq :mobileprovision }
+      it { expect(subject.format).to eq AppInfo::Format::MOBILEPROVISION }
+      it { expect(subject.format).to eq :mobileprovision }
+      it { expect(subject.platform).to eq AppInfo::Platform::APPLE }
+      it { expect(subject.platform).to eq :apple }
+      it { expect(subject.opera_system).to eq AppInfo::OperaSystem::MACOS }
+      it { expect(subject.opera_system).to eq :macos }
+      it { expect(subject.opera_systems).to eq [:macos] }
+      it { expect{ subject.device }.to raise_error NotImplementedError }
       it { expect(subject.devices).to be_nil }
-      it { expect(subject.platform).to eq :macos }
-      it { expect(subject.platforms).to eq [:macos] }
       it { expect(subject.name).to_not be_empty }
       it { expect(subject.app_name).to_not be_empty }
       it { expect(subject.type).to eq :appstore }

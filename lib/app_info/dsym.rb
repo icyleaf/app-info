@@ -7,6 +7,11 @@ module AppInfo
   class DSYM < File
     include Helper::Archive
 
+    # @return [Symbol] {Platform}
+    def platform
+      Platform::APPLE
+    end
+
     def each_file(&block)
       files.each { |file| block.call(file) }
     end

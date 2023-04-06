@@ -17,6 +17,36 @@ module AppInfo
       Device::MACOS => %w[CFBundleIconFile CFBundleIconName]
     }.freeze
 
+    # @return [Symbol] {Platform}
+    def platform
+      Platform::APPLE
+    end
+
+    # @return [Symbol] {OperaSystem}
+    def opera_system
+      case device
+      when Device::MACOS
+        OperaSystem::MACOS
+      when Device::IPHONE, Device::IPAD, Device::UNIVERSAL
+        OperaSystem::IOS
+      end
+    end
+
+    # @return [Symbol] {Device}
+    def device
+      if device_family == [1]
+        Device::IPHONE
+      elsif device_family == [2]
+        Device::IPAD
+      elsif device_family == [1, 2]
+        Device::UNIVERSAL
+      elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTPlatformName').nil?
+        Device::MACOS
+      else
+        raise NotImplementedError, "Unkonwn device: #{device_family}"
+      end
+    end
+
     def version
       release_version || build_version
     end
@@ -65,36 +95,23 @@ module AppInfo
     end
 
     def icons
-      @icons ||= ICON_KEYS[device_type]
-    end
-
-    def device_type
-      device_family = info.try(:[], 'UIDeviceFamily')
-      if device_family == [1]
-        Device::IPHONE
-      elsif device_family == [2]
-        Device::IPAD
-      elsif device_family == [1, 2]
-        Device::UNIVERSAL
-      elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTPlatformName').nil?
-        Device::MACOS
-      end
+      @icons ||= ICON_KEYS[device]
     end
 
     def iphone?
-      device_type == Device::IPHONE
+      device == Device::IPHONE
     end
 
     def ipad?
-      device_type == Device::IPAD
+      device == Device::IPAD
     end
 
     def universal?
-      device_type == Device::UNIVERSAL
+      device == Device::UNIVERSAL
     end
 
     def macos?
-      device_type == Device::MACOS
+      device == Device::MACOS
     end
 
     def device_family
@@ -113,6 +130,8 @@ module AppInfo
       info.try(:[], key.to_s)
     end
 
+    # @!method to_h
+    #   @see CFPropertyList#to_h
     def_delegators :info, :to_h
 
     def method_missing(method_name, *args, &block)
@@ -136,7 +155,7 @@ module AppInfo
     end
 
     def app_path
-      @app_path ||= case device_type
+      @app_path ||= case device
                     when Device::MACOS
                       ::File.dirname(@file)
                     else

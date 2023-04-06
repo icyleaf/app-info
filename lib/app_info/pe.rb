@@ -24,8 +24,19 @@ module AppInfo
       0x5128 => 'RISC-v 128'
     }.freeze
 
+    # @return [Symbol] {Platform}
     def platform
       Platform::WINDOWS
+    end
+
+    # @return [Symbol] {OperaSystem}
+    def opera_system
+      OperaSystem::WINDOWS
+    end
+
+    # @return [Symbol] {Device}
+    def device
+      Device::WINDOWS
     end
 
     # return file size

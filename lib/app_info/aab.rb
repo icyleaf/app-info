@@ -12,15 +12,6 @@ module AppInfo
 
     attr_reader :file
 
-    # APK Devices
-    module Device
-      PHONE       = 'Phone'
-      TABLET      = 'Tablet'
-      WATCH       = 'Watch'
-      TV          = 'Television'
-      AUTOMOTIVE  = 'Automotive'
-    end
-
     BASE_PATH = 'base'
     BASE_MANIFEST = "#{BASE_PATH}/manifest/AndroidManifest.xml"
     BASE_RESOURCES = "#{BASE_PATH}/resources.pb"
@@ -38,11 +29,37 @@ module AppInfo
       file_to_human_size(@file, human_size: human_size)
     end
 
-    # @return [String] {Platform::ANDROID}
+    # @return [Symbol] {Platform}
     def platform
-      Platform::ANDROID
+      Platform::GOOGLE
     end
 
+    # @return [Symbol] {OperaSystem}
+    def opera_system
+      OperaSystem::ANDROID
+    end
+
+    # @return [Symbol] {Device}
+    def device
+      if watch?
+        Device::WATCH
+      elsif television?
+        Device::TELEVISION
+      elsif automotive?
+        Device::AUTOMOTIVE
+      elsif tablet?
+        Device::TABLET
+      else
+        Device::PHONE
+      end
+    end
+
+    # @!method version_name
+    #   @see Protobuf::Manifest#version_name
+    # @!method deep_links
+    #   @see Protobuf::Manifest#deep_links
+    # @!method schemes
+    #   @see Protobuf::Manifest#schemes
     def_delegators :manifest, :version_name, :deep_links, :schemes
 
     alias release_version version_name
@@ -65,35 +82,24 @@ module AppInfo
       manifest.label
     end
 
-    # @return [String] {Device}
-    def device_type
-      if wear?
-        Device::WATCH
-      elsif tv?
-        Device::TV
-      elsif automotive?
-        Device::AUTOMOTIVE
-      else
-        Device::PHONE
-      end
+    # @todo find a way to detect, no way!
+    # @see https://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet
+    def tablet?
+      # Not works!
+      # resource.first_package
+      #         .entries('bool')
+      #         .select{|e| e.name == 'isTablet' }
+      #         .size >= 1
+      false
     end
 
-    # TODO: find a way to detect
-    # Found answer but not works: https://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet
-    # def tablet?
-    #   resource.first_package
-    #           .entries('bool')
-    #           .select{|e| e.name == 'isTablet' }
-    #           .size >= 1
-    # end
-
     # @return [Boolean]
-    def wear?
+    def watch?
       !!use_features&.include?('android.hardware.type.watch')
     end
 
     # @return [Boolean]
-    def tv?
+    def television?
       !!use_features&.include?('android.software.leanback')
     end
 
