@@ -1,53 +1,10 @@
 # frozen_string_literal: true
 
 require 'ruby_apk'
-require 'image_size'
-require 'forwardable'
 
 module AppInfo
   # Parse APK file parser, wrapper for {https://github.com/icyleaf/android_parser android_parser}.
-  class APK < File
-    include Helper::HumanFileSize
-    extend Forwardable
-
-    # return file size
-    # @example Read file size in integer
-    #   aab.size                    # => 3618865
-    #
-    # @example Read file size in human readabale
-    #   aab.size(human_size: true)  # => '3.45 MB'
-    #
-    # @param [Boolean] human_size Convert integer value to human readable.
-    # @return [Integer, String]
-    def size(human_size: false)
-      file_to_human_size(@file, human_size: human_size)
-    end
-
-    # @return [Symbol] {Platform}
-    def platform
-      Platform::GOOGLE
-    end
-
-    # @return [Symbol] {OperaSystem}
-    def opera_system
-      OperaSystem::ANDROID
-    end
-
-    # @return [Symbol] {Device}
-    def device
-      if watch?
-        Device::WATCH
-      elsif television?
-        Device::TELEVISION
-      elsif automotive?
-        Device::AUTOMOTIVE
-      elsif tablet?
-        Device::TABLET
-      else
-        Device::PHONE
-      end
-    end
-
+  class APK < Android
     # @!method manifest
     #   @see https://rubydoc.info/gems/android_parser/Android/Apk#manifest-instance_method ::Android::Apk#manifest
     # @!method resource
@@ -91,58 +48,11 @@ module AppInfo
       manifest.label || resource.find('@string/app_name')
     end
 
-    # @todo find a way to detect, no way!
-    # @see https://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet
-    def tablet?
-      # Not works!
-      # resource.first_package
-      #         .entries('bool')
-      #         .select{|e| e.name == 'isTablet' }
-      #         .size >= 1
-      false
-    end
-
-    # @return [Boolean]
-    def watch?
-      use_features.include?('android.hardware.type.watch')
-    end
-
-    # @return [Boolean]
-    def television?
-      use_features.include?('android.software.leanback')
-    end
-
-    # @return [Boolean]
-    def automotive?
-      use_features.include?('android.hardware.type.automotive')
-    end
-
     # @return [String]
     def min_sdk_version
       manifest.min_sdk_ver
     end
     alias min_os_version min_sdk_version
-
-    # Return multi version certifiates of signatures
-    # @return [Array<Hash>]
-    # @see AppInfo::Android::Signature.verify
-    def signatures
-      @signatures ||= Android::Signature.verify(self)
-    end
-
-    # Legacy v1 scheme signatures, it will remove soon.
-    # @deprecated Use {#signatures}
-    # @return [Array<OpenSSL::PKCS7, nil>]
-    def signs
-      @signs ||= v1sign&.signatures || []
-    end
-
-    # Legacy v1 scheme certificates, it will remove soon.
-    # @deprecated Use {#signatures}
-    # @return [Array<OpenSSL::PKCS7, nil>]
-    def certificates
-      @certificates ||= v1sign&.certificates || []
-    end
 
     # @return [String]
     def activities
@@ -201,19 +111,6 @@ module AppInfo
       @icons = nil
       @app_path = nil
       @info = nil
-    end
-
-    # @return [String] contents path of contents
-    def contents
-      @contents ||= ::File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
-    end
-
-    private
-
-    def v1sign
-      @v1sign ||= Android::Signature::V1.verify(self)
-    rescue Android::Signature::NotFoundError
-      nil
     end
   end
 end

@@ -22,7 +22,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add `AppInfo::File` base class for all parsers.
 - Add `AppInfo::Certifiate` X509 certificate wrapped and apply in Android/MobileProvision.
-- Re-orgainze categories `.platform`, `.opera_sytem` and `.device` for all parsers. [#58](https://github.com/icyleaf/app_info/pull/58)
+- Re-organize categories `.platform`, `.opera_sytem` and `.device` for all parsers. [#58](https://github.com/icyleaf/app_info/pull/58)
+- Change ExportType values type to symbol both IPA and macOS parsers. [#58](https://github.com/icyleaf/app_info/pull/58)
 - Remove `.sign_version` method in Android parser.
 - Rename `.file_type` to `.format` method in all parers and return a `AppInfo::Format` type.
 - Remove duplice `AppInfo::AndroidDevice` class.

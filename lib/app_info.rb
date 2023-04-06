@@ -17,7 +17,7 @@ require 'app_info/ipa'
 require 'app_info/ipa/plugin'
 require 'app_info/ipa/framework'
 
-require 'app_info/android/signature'
+require 'app_info/android'
 require 'app_info/apk'
 require 'app_info/aab'
 

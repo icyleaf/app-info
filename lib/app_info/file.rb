@@ -13,7 +13,8 @@ module AppInfo
     # @return [Symbol] {Format}
     def format
       @format ||= lambda {
-        if instance_of?(AppInfo::File) || instance_of?(AppInfo::Apple)
+        if instance_of?(AppInfo::File) || instance_of?(AppInfo::Apple) ||
+           instance_of?(AppInfo::Android)
           not_implemented_error!(__method__)
         end
 
