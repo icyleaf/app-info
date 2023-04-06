@@ -32,4 +32,14 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '>= 1.12'
   spec.add_development_dependency 'rake', '>= 10.0'
+
+  spec.post_install_message = <<~ENDBANNER
+    AppInfo 3.0 is coming!
+    **********************
+    The public API of some AppInfo classes has been changed.
+
+    Please ensure that your Gemfiles and .gemspecs are suitably restrictive
+    to avoid an unexpected breakage when 3.0 is released (e.g. ~> 2.8.5).
+    See https://github.com/icyleaf/app_info for details.
+  ENDBANNER
 end

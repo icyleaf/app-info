@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [3.0.0.beta1] (2023-04-?)
+
+### Added
+
+- New Windows PE format parser. [#47](https://github.com/icyleaf/app_info/pull/47)
+- Android parser add v2, v3 scheme signature support. [#55](https://github.com/icyleaf/app_info/pull/55]
+- dSYM parer accept multi dSYM target in a zip file. [#56](https://github.com/icyleaf/app_info/pull/56)
+
+### Changed
+
+- Add `AppInfo::File` base class for all parsers.
+- Add `AppInfo::Certifiate` X509 certificate wrapped and apply in Android/MobileProvision.
+- Remove `AppInfo::MobileProvision::DeveloperCertificate` class, use `AppInfo::Certifiate` instead.
+- Remove `.sign_version` method in Android parser.
+- Remove duplice `AppInfo::AndroidDevice` class.
+- Deprecate `.signs` and `.certifiates` methods in Android parser, use `.signatures` instead.
+- Deprecate `.developer_certs` method in MobileProvision parser, use `.certificates` instead.
+
+### Fixed
+
+- Fixed minor typo.
+
 ## [2.8.5] (2023-03-16)
 
 ### Fixed
