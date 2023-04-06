@@ -88,10 +88,12 @@ module AppInfo
     def_delegators :mobileprovision, :devices, :team_name, :team_identifier,
                    :profile_name, :expired_date
 
+    # @return [String, nil]
     def distribution_name
       "#{profile_name} - #{team_name}" if profile_name && team_name
     end
 
+    # @return [String]
     def release_type
       if stored?
         ExportType::RELEASE
@@ -100,6 +102,7 @@ module AppInfo
       end
     end
 
+    # @return [String]
     def build_type
       if mobileprovision?
         if devices
@@ -112,6 +115,7 @@ module AppInfo
       end
     end
 
+    # @return [MachO]
     def archs
       return unless ::File.exist?(bundle_path)
 
@@ -127,28 +131,52 @@ module AppInfo
     end
     alias architectures archs
 
+    # Full icons metadata
+    # @example
+    #   aab.icons
+    #   # => [
+    #   #   {
+    #   #     name: 'icon.png',
+    #   #     file: '/path/to/icon.png',
+    #   #     uncrushed_file: '/path/to/uncrushed_icon.png',
+    #   #     dimensions: [64, 64]
+    #   #   },
+    #   #   {
+    #   #     name: 'icon1.png',
+    #   #     file: '/path/to/icon1.png',
+    #   #     uncrushed_file: '/path/to/uncrushed_icon1.png',
+    #   #     dimensions: [120, 120]
+    #   #   }
+    #   # ]
+    # @return [Array<Hash{Symbol => String, Array<Integer>}>] icons paths of icons
     def icons(uncrush: true)
       @icons ||= icons_path.each_with_object([]) do |file, obj|
         obj << build_icon_metadata(file, uncrush: uncrush)
       end
     end
 
+    # @return [Boolean]
     def stored?
       !!metadata?
     end
 
+    # @return [Array<Plugin>]
     def plugins
       @plugins ||= Plugin.parse(app_path)
     end
 
+    # @return [Array<Framework>]
     def frameworks
       @frameworks ||= Framework.parse(app_path)
     end
 
+    # force remove developer certificate data from {#mobileprovision} method
+    # @return [nil]
     def hide_developer_certificates
       mobileprovision.delete('DeveloperCertificates') if mobileprovision?
     end
 
+    # @return [MobileProvision]
     def mobileprovision
       return unless mobileprovision?
       return @mobileprovision if @mobileprovision
@@ -156,10 +184,12 @@ module AppInfo
       @mobileprovision = MobileProvision.new(mobileprovision_path)
     end
 
+    # @return [Boolean]
     def mobileprovision?
       ::File.exist?(mobileprovision_path)
     end
 
+    # @return [String]
     def mobileprovision_path
       filename = 'embedded.mobileprovision'
       @mobileprovision_path ||= ::File.join(@file, filename)
@@ -170,32 +200,39 @@ module AppInfo
       @mobileprovision_path
     end
 
+    # @return [CFPropertyList]
     def metadata
       return unless metadata?
 
       @metadata ||= CFPropertyList.native_types(CFPropertyList::List.new(file: metadata_path).value)
     end
 
+    # @return [Boolean]
     def metadata?
       ::File.exist?(metadata_path)
     end
 
+    # @return [String]
     def metadata_path
       @metadata_path ||= ::File.join(contents, 'iTunesMetadata.plist')
     end
 
+    # @return [String]
     def bundle_path
       @bundle_path ||= ::File.join(app_path, info.bundle_name)
     end
 
+    # @return [InfoPlist]
     def info
       @info ||= InfoPlist.new(info_path)
     end
 
+    # @return [String]
     def info_path
       @info_path ||= ::File.join(app_path, 'Info.plist')
     end
 
+    # @return [String]
     def app_path
       @app_path ||= Dir.glob(::File.join(contents, 'Payload', '*.app')).first
     end
@@ -203,6 +240,7 @@ module AppInfo
     IPHONE_KEY = 'CFBundleIcons'
     IPAD_KEY = 'CFBundleIcons~ipad'
 
+    # @return [Array<String>]
     def icons_path
       @icons_path ||= lambda {
         icon_keys.each_with_object([]) do |name, icons|
@@ -236,6 +274,7 @@ module AppInfo
       @icons = nil
     end
 
+    # @return [String] contents path of contents
     def contents
       @contents ||= unarchive(@file, prefix: 'ios')
     end

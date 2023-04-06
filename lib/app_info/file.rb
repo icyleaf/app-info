@@ -10,6 +10,7 @@ module AppInfo
       @logger = logger
     end
 
+    # @return [Symbol] {Format}
     def format
       @format ||= lambda {
         class_name = self.class

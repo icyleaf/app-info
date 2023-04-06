@@ -104,18 +104,22 @@ module AppInfo
       false
     end
 
+    # @return [Boolean]
     def watch?
       use_features.include?('android.hardware.type.watch')
     end
 
+    # @return [Boolean]
     def television?
       use_features.include?('android.software.leanback')
     end
 
+    # @return [Boolean]
     def automotive?
       use_features.include?('android.hardware.type.automotive')
     end
 
+    # @return [String]
     def min_sdk_version
       manifest.min_sdk_ver
     end
@@ -142,18 +146,37 @@ module AppInfo
       @certificates ||= v1sign&.certificates || []
     end
 
+    # @return [String]
     def activities
       components.select { |c| c.type == 'activity' }
     end
 
+    # @return [::Android::Apk]
     def apk
       @apk ||= ::Android::Apk.new(@file)
     end
 
+    # @return [Zip::File]
     def zip
       @zip ||= apk.instance_variable_get(:@zip)
     end
 
+    # Full icons metadata
+    # @example
+    #   apk.icons
+    #   # => [
+    #   #   {
+    #   #     name: 'icon.png',
+    #   #     file: '/path/to/icon.png',
+    #   #     dimensions: [29, 29]
+    #   #   },
+    #   #   {
+    #   #     name: 'icon1.png',
+    #   #     file: '/path/to/icon1.png',
+    #   #     dimensions: [120, 120]
+    #   #   }
+    #   # ]
+    # @return [Array<Hash{Symbol => String, Array<Integer>}>] icons paths of icons
     def icons
       @icons ||= apk.icon.each_with_object([]) do |(path, data), obj|
         icon_name = ::File.basename(path)
@@ -182,6 +205,7 @@ module AppInfo
       @info = nil
     end
 
+    # @return [String] contents path of contents
     def contents
       @contents ||= ::File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
     end

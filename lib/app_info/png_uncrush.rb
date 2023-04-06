@@ -32,18 +32,24 @@ module AppInfo
         @data = String.new
       end
 
+      # @return [Integer]
       def size
         @io.size
       end
 
+      # @param [String] format
+      # @return [String]
+      # @see IO package data
       def unpack(format)
         @io.unpack(format)
       end
 
+      # @return [String]
       def header
         @header ||= self[0, 8]
       end
 
+      # @return [Boolean]
       def png?
         header.bytes == PNG_HEADER
       end
@@ -61,10 +67,17 @@ module AppInfo
       end
     end
 
+    # Decompress crushed png file.
+    # @param [String] input path of png file
+    # @param [String] output path of output file
+    # @return [Boolean] result whether decompress successfully
     def self.decompress(input, output)
       new(input).decompress(output)
     end
 
+    # get png dimensions
+    # @param [String] input path of png file
+    # @return [Array<Integer>] dimensions width, height value of png file
     def self.dimensions(input)
       new(input).dimensions
     end
@@ -74,10 +87,16 @@ module AppInfo
       raise FormatError, 'not a png file' unless @io.png?
     end
 
+    # get png dimensions
+    # @param [String] input path of png file
+    # @return [Array<Integer>] dimensions width, height value of png file
     def dimensions
       _dump_sections(dimensions: true)
     end
 
+    # Decompress crushed png file.
+    # @param [String] output path of output file
+    # @return [Boolean] result whether decompress successfully
     def decompress(output)
       content = _remap(_dump_sections)
       return false unless content

@@ -62,7 +62,7 @@ module AppInfo
     # @!method min_os_version
     #   @see InfoPlist#min_os_version
     def_delegators :info, :device, :opera_system, :build_version, :name,
-                   :release_version,:identifier, :bundle_id, :display_name,
+                   :release_version, :identifier, :bundle_id, :display_name,
                    :bundle_name, :min_system_version, :min_os_version
 
     # @!method team_name
@@ -76,10 +76,12 @@ module AppInfo
     def_delegators :mobileprovision, :team_name, :team_identifier,
                    :profile_name, :expired_date
 
+    # @return [String, nil]
     def distribution_name
       "#{profile_name} - #{team_name}" if profile_name && team_name
     end
 
+    # @return [String]
     def release_type
       if stored?
         ExportType::APPSTORE
@@ -90,10 +92,37 @@ module AppInfo
       end
     end
 
+    # @return [Boolean]
     def stored?
       ::File.exist?(store_path)
     end
 
+    # Full icons metadata
+    # @param [Boolean] convert Convert .icons to .png format
+    # @example uncovert .icons
+    #   macos.icons
+    #   # => [
+    #   #   {
+    #   #     name: 'icon.icns',
+    #   #     file: '/path/to/icon.icns',
+    #   #   }
+    #   # ]
+    #
+    # @example coverted .icons
+    #   macos.icons(convert: true)
+    #   # => [
+    #   #   {
+    #   #     name: 'converted_icon_32x32.png',
+    #   #     file: '/path/to/converted_icon_32x32.png',
+    #   #     dimensions: [32, 32]
+    #   #   },
+    #   #   {
+    #   #     name: 'converted_icon_120x120.png',
+    #   #     file: '/path/to/converted_icon_120x120.png',
+    #   #     dimensions: [120, 120]
+    #   #   },
+    #   # ]
+    # @return [Array<Hash{Symbol => String, Array<Integer>}>] icons paths of icons
     def icons(convert: true)
       return unless icon_file
 
@@ -106,6 +135,7 @@ module AppInfo
       data
     end
 
+    # @return [MachO]
     def archs
       return unless ::File.exist?(binary_path)
 
@@ -121,28 +151,35 @@ module AppInfo
     end
     alias architectures archs
 
+    # force remove developer certificate data from {#mobileprovision} method
+    # @return [nil]
     def hide_developer_certificates
       mobileprovision.delete('DeveloperCertificates') if mobileprovision?
     end
 
+    # @return [MobileProvision]
     def mobileprovision
       return unless mobileprovision?
 
       @mobileprovision ||= MobileProvision.new(mobileprovision_path)
     end
 
+    # @return [Boolean]
     def mobileprovision?
       ::File.exist?(mobileprovision_path)
     end
 
+    # @return [String]
     def mobileprovision_path
       @mobileprovision_path ||= ::File.join(app_path, 'Contents', 'embedded.provisionprofile')
     end
 
+    # @return [String]
     def store_path
       @store_path ||= ::File.join(app_path, 'Contents', '_MASReceipt', 'receipt')
     end
 
+    # @return [String]
     def binary_path
       return @binary_path if @binary_path
 
@@ -153,14 +190,17 @@ module AppInfo
       @binary_path ||= Dir.glob(::File.join(base_path, '*')).first
     end
 
+    # @return [InfoPlist]
     def info
       @info ||= InfoPlist.new(info_path)
     end
 
+    # @return [String]
     def info_path
       @info_path ||= ::File.join(app_path, 'Contents', 'Info.plist')
     end
 
+    # @return [String]
     def app_path
       @app_path ||= Dir.glob(::File.join(contents, '*.app')).first
     end

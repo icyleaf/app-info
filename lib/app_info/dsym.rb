@@ -16,6 +16,7 @@ module AppInfo
       files.each { |file| block.call(file) }
     end
 
+    # @return [Array<DebugInfo>] dsym_files
     def files
       @files ||= Dir.children(contents).each_with_object([]) do |file, obj|
         obj << DebugInfo.new(::File.join(contents, file))
@@ -31,6 +32,7 @@ module AppInfo
       @files = nil
     end
 
+    # @return [String] contents path of dsym
     def contents
       @contents ||= lambda {
         return @file if ::File.directory?(@file)

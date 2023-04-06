@@ -6,6 +6,7 @@ require 'app_info/core_ext'
 
 module AppInfo
   module Protobuf
+    # AAB Protobuf Base class
     class Base
       include Helper::GenerateClass
 
@@ -21,6 +22,7 @@ module AppInfo
       end
     end
 
+    # AAB Protobuf Attribute
     class Attribute < Base
       attr_reader :namespace, :name, :value, :resource_id
 
@@ -47,6 +49,8 @@ module AppInfo
       end
     end
 
+    # AAB Protobuf Node class.
+    #   example: manifest,activity, activity-alias, service, receiver, provider, application
     class Node < Base
       attr_reader :name, :attributes, :children
 
@@ -106,6 +110,7 @@ module AppInfo
       end
     end
 
+    # AAB Protobuf Manifest
     class Manifest < Node
       def self.parse(io, resources = nil)
         doc = Aapt::Pb::XmlNode.decode(io)
@@ -170,7 +175,6 @@ module AppInfo
         end.flatten.uniq
       end
 
-      # :nodoc:
       # Workaround ruby always return true by called `Object.const_defined?(Data)`
       class Data < Node; end
 

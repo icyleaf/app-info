@@ -56,10 +56,13 @@ module AppInfo
 
     # @!method version_name
     #   @see Protobuf::Manifest#version_name
+    #   @return [String]
     # @!method deep_links
     #   @see Protobuf::Manifest#deep_links
+    #   @return [String]
     # @!method schemes
     #   @see Protobuf::Manifest#schemes
+    #   @return [String]
     def_delegators :manifest, :version_name, :deep_links, :schemes
 
     alias release_version version_name
@@ -84,6 +87,7 @@ module AppInfo
 
     # @todo find a way to detect, no way!
     # @see https://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet
+    # @return [Boolean] false always false
     def tablet?
       # Not works!
       # resource.first_package
@@ -133,14 +137,17 @@ module AppInfo
       @use_permissions ||= manifest&.uses_permission&.map(&:name)
     end
 
+    # @return [Protobuf::Node]
     def activities
       @activities ||= manifest.activities
     end
 
+    # @return [Protobuf::Node]
     def services
       @services ||= manifest.services
     end
 
+    # @return [Protobuf::Node]
     def components
       @components ||= manifest.components.transform_values
     end
@@ -188,6 +195,7 @@ module AppInfo
       entry
     end
 
+    # @return [Protobuf::Manifest]
     def manifest
       io = zip.read(zip.find_entry(BASE_MANIFEST))
       @manifest ||= Protobuf::Manifest.parse(io, resource)
@@ -204,7 +212,22 @@ module AppInfo
       @zip ||= Zip::File.open(@file)
     end
 
-    # @return [Array<Hash>]
+    # Full icons metadata
+    # @example
+    #   aab.icons
+    #   # => [
+    #   #   {
+    #   #     name: 'icon.png',
+    #   #     file: '/path/to/icon.png',
+    #   #     dimensions: [29, 29]
+    #   #   },
+    #   #   {
+    #   #     name: 'icon1.png',
+    #   #     file: '/path/to/icon1.png',
+    #   #     dimensions: [120, 120]
+    #   #   }
+    #   # ]
+    # @return [Array<Hash{Symbol => String, Array<Integer>}>] icons paths of icons
     def icons
       @icons ||= manifest.icons.each_with_object([]) do |res, obj|
         path = res.value
@@ -236,6 +259,7 @@ module AppInfo
       @info = nil
     end
 
+    # @return [String] contents path of contents
     def contents
       @contents ||= ::File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
     end

@@ -54,18 +54,22 @@ module AppInfo
       convert_cert_name(raw.subject, format: format)
     end
 
+    # @return [Time]
     def created_at
       raw.not_before
     end
 
+    # @return [Time]
     def expired_at
       raw.not_after
     end
 
+    # @return [Boolean]
     def expired?
       expired_at < Time.now.utc
     end
 
+    # @return [String] format always be :x509.
     def format
       :x509
     end
@@ -114,6 +118,7 @@ module AppInfo
     end
 
     # return size of public key
+    # @return [Integer]
     def size
       case public_key
       when OpenSSL::PKey::RSA
@@ -126,23 +131,9 @@ module AppInfo
     end
 
     # return fingerprint of certificate
+    # @return [String]
     def fingerprint(name = :sha256, transform: :lower, delimiter: nil)
       digest = OpenSSL::Digest.new(name.to_s.upcase)
-      # digest = case name.to_sym
-      #          when :sha1
-      #            OpenSSL::Digest::SHA1.new
-      #          when :sha224
-      #            OpenSSL::Digest::SHA224.new
-      #          when :sha384
-      #            OpenSSL::Digest::SHA384.new
-      #          when :sha512
-      #            OpenSSL::Digest::SHA512.new
-      #          when :md5
-      #            OpenSSL::Digest::MD5.new
-      #          else
-      #            OpenSSL::Digest::SHA256.new
-      #          end
-
       digest.update(raw.to_der)
       fingerprint = digest.to_s
       fingerprint = fingerprint.upcase if transform.to_sym == :upper
@@ -152,6 +143,7 @@ module AppInfo
     end
 
     # Orginal OpenSSL X509 certificate
+    # @return [OpenSSL::X509::Certificate]
     def raw
       @cert
     end

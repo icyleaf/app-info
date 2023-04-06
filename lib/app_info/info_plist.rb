@@ -47,77 +47,90 @@ module AppInfo
       end
     end
 
+    # @return [String, nil]
     def version
       release_version || build_version
     end
 
+    # @return [String, nil]
     def build_version
       info.try(:[], 'CFBundleVersion')
     end
 
+    # @return [String, nil]
     def release_version
       info.try(:[], 'CFBundleShortVersionString')
     end
 
+    # @return [String, nil]
     def identifier
       info.try(:[], 'CFBundleIdentifier')
     end
     alias bundle_id identifier
 
+    # @return [String, nil]
     def name
       display_name || bundle_name
     end
 
+    # @return [String, nil]
     def display_name
       info.try(:[], 'CFBundleDisplayName')
     end
 
+    # @return [String, nil]
     def bundle_name
       info.try(:[], 'CFBundleName')
     end
 
+    # @return [String, nil]
     def min_os_version
       min_sdk_version || min_system_version
     end
 
-    #
     # Extract the Minimum OS Version from the Info.plist (iOS Only)
-    #
+    # @return [String, nil]
     def min_sdk_version
       info.try(:[], 'MinimumOSVersion')
     end
 
-    #
     # Extract the Minimum OS Version from the Info.plist (macOS Only)
-    #
+    # @return [String, nil]
     def min_system_version
       info.try(:[], 'LSMinimumSystemVersion')
     end
 
+    # @return [Array<String>]
     def icons
       @icons ||= ICON_KEYS[device]
     end
 
+    # @return [Boolean]
     def iphone?
       device == Device::IPHONE
     end
 
+    # @return [Boolean]
     def ipad?
       device == Device::IPAD
     end
 
+    # @return [Boolean]
     def universal?
       device == Device::UNIVERSAL
     end
 
+    # @return [Boolean]
     def macos?
       device == Device::MACOS
     end
 
+    # @return [Array<String>]
     def device_family
       info.try(:[], 'UIDeviceFamily') || []
     end
 
+    # @return [String]
     def release_type
       if stored?
         'Store'
@@ -126,6 +139,7 @@ module AppInfo
       end
     end
 
+    # @return [String, nil]
     def [](key)
       info.try(:[], key.to_s)
     end

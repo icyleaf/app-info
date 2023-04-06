@@ -24,14 +24,17 @@ module AppInfo
       end
     end
 
+    # @return [String, nil]
     def name
       mobileprovision.try(:[], 'Name')
     end
 
+    # @return [String, nil]
     def app_name
       mobileprovision.try(:[], 'AppIDName')
     end
 
+    # @return [Symbol, nil]
     def type
       return :development if development?
       return :adhoc if adhoc?
@@ -49,30 +52,37 @@ module AppInfo
       end
     end
 
+    # @return [Array<String>, nil]
     def devices
       mobileprovision.try(:[], 'ProvisionedDevices')
     end
 
+    # @return [String, nil]
     def team_identifier
       mobileprovision.try(:[], 'TeamIdentifier')
     end
 
+    # @return [String, nil]
     def team_name
       mobileprovision.try(:[], 'TeamName')
     end
 
+    # @return [String, nil]
     def profile_name
       mobileprovision.try(:[], 'Name')
     end
 
+    # @return [String, nil]
     def created_date
       mobileprovision.try(:[], 'CreationDate')
     end
 
+    # @return [String, nil]
     def expired_date
       mobileprovision.try(:[], 'ExpirationDate')
     end
 
+    # @return [Array<String>, nil]
     def entitlements
       mobileprovision.try(:[], 'Entitlements')
     end
@@ -98,7 +108,8 @@ module AppInfo
 
     # Detect is development type of mobileprovision
     #
-    # related link: https://stackoverflow.com/questions/1003066/what-does-get-task-allow-do-in-xcode
+    # @see https://stackoverflow.com/questions/1003066/what-does-get-task-allow-do-in-xcode
+    # @return [Boolea]
     def development?
       case opera_system
       when OperaSystem::IOS
@@ -112,7 +123,8 @@ module AppInfo
 
     # Detect app store type
     #
-    # related link: https://developer.apple.com/library/archive/qa/qa1830/_index.html
+    # @see https://developer.apple.com/library/archive/qa/qa1830/_index.html
+    # @return [Boolea]
     def appstore?
       case opera_system
       when OperaSystem::IOS
@@ -124,12 +136,14 @@ module AppInfo
       end
     end
 
+    # @return [Boolea]
     def adhoc?
       return false if opera_system == OperaSystem::MACOS # macOS no need adhoc
 
       !development? && !devices.nil?
     end
 
+    # @return [Boolea]
     def enterprise?
       return false if opera_system == OperaSystem::MACOS # macOS no need adhoc
 
@@ -139,7 +153,8 @@ module AppInfo
 
     # Enabled Capabilites
     #
-    # Related link: https://developer.apple.com/support/app-capabilities/
+    # @see https://developer.apple.com/support/app-capabilities/
+    # @return [Array<String>]
     def enabled_capabilities
       capabilities = []
       capabilities << 'In-App Purchase' << 'GameKit' if adhoc? || appstore?
@@ -213,14 +228,17 @@ module AppInfo
       capabilities
     end
 
+    # @return [String, nil]
     def [](key)
       mobileprovision.try(:[], key.to_s)
     end
 
+    # @return [Boolea]
     def empty?
       mobileprovision.nil?
     end
 
+    # @return [CFPropertyList]
     def mobileprovision
       return @mobileprovision = nil unless ::File.exist?(@file)
 

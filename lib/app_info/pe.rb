@@ -56,23 +56,38 @@ module AppInfo
       file_to_human_size(binary_file, human_size: human_size)
     end
 
+    # @!method product_name
+    #   @see VersionInfo#product_name
+    #   @return [String]
+    # @!method product_version
+    #   @see VersionInfo#product_version
+    #   @return [String]
+    # @!method company_name
+    #   @see VersionInfo#company_name
+    #   @return [String]
+    # @!method assembly_version
+    #   @see VersionInfo#assembly_version
+    #   @return [String]
     def_delegators :version_info, :product_name, :product_version, :company_name, :assembly_version
 
     alias name product_name
     alias release_version product_version
     alias build_version assembly_version
 
+    # @return [String]
     def archs
       ARCH[image_file_header.Machine] || 'unknown'
     end
     alias architectures archs
 
+    # @return [Hash{String => String}] imports imports of libraries
     def imports
       @imports ||= pe.imports.each_with_object({}) do |import, obj|
         obj[import.module_name] = import.first_thunk.map(&:name).compact
       end
     end
 
+    # @return [Array{String}] icons paths of bmp image icons
     def icons
       @icons ||= lambda {
         # Fetch the largest size icon
@@ -112,6 +127,7 @@ module AppInfo
       }.call
     end
 
+    # @return [PEdump]
     def pe
       @pe ||= lambda {
         pe = PEdump.new(io)
@@ -120,6 +136,7 @@ module AppInfo
       }.call
     end
 
+    # @return [VersionInfo]
     def version_info
       @version_info ||= VersionInfo.new(pe.version_info)
     end
@@ -131,6 +148,7 @@ module AppInfo
       @imports = nil
     end
 
+    # @return [String] binary_file path
     def binary_file
       @binary_file ||= lambda {
         file_io = ::File.open(@file, 'rb')
@@ -154,6 +172,7 @@ module AppInfo
       @image_file_header ||= pe.pe.image_file_header
     end
 
+    # @return [Hash{Symbol => String}]
     def icon_metadata(file, mask_file: nil)
       {
         name: ::File.basename(file),
@@ -163,6 +182,7 @@ module AppInfo
       }
     end
 
+    # @return [File]
     def io
       @io ||= ::File.open(binary_file, 'rb')
     end
@@ -175,30 +195,37 @@ module AppInfo
         @raw = raw
       end
 
+      # @return [String]
       def company_name
         @company_name ||= value_of('CompanyName')
       end
 
+      # @return [String]
       def product_name
         @product_name ||= value_of('ProductName')
       end
 
+      # @return [String]
       def product_version
         @product_version ||= value_of('ProductVersion')
       end
 
+      # @return [String]
       def assembly_version
         @assembly_version ||= value_of('Assembly Version')
       end
 
+      # @return [String]
       def file_version
         @file_version ||= value_of('FileVersion')
       end
 
+      # @return [String]
       def file_description
         @file_description ||= value_of('FileDescription')
       end
 
+      # @return [String]
       def copyright
         @copyright ||= value_of('LegalCopyright')
       end
