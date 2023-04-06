@@ -16,9 +16,9 @@ module AppInfo
       files.each { |file| block.call(file) }
     end
 
-    # @return [Array<DebugInfo>] dsym_files
+    # @return [Array<DebugInfo>] dsym_files files by alphabetical order
     def files
-      @files ||= Dir.children(contents).each_with_object([]) do |file, obj|
+      @files ||= Dir.children(contents).sort.each_with_object([]) do |file, obj|
         obj << DebugInfo.new(::File.join(contents, file))
       end
     end
