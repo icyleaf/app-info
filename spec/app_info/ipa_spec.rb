@@ -5,50 +5,51 @@ describe AppInfo::IPA do
 
     after { subject.clear! }
 
-    context 'parse' do
-      it { expect(subject.file_type).to eq AppInfo::Format::IPA }
-      it { expect(subject.file_type).to eq :ipa }
-      it { expect(subject.platform).to eq 'iOS' }
-      it { expect(subject.platform).to eq AppInfo::Platform::IOS }
-      it { expect(subject).to be_iphone }
-      it { expect(subject).not_to be_ipad }
-      it { expect(subject).not_to be_universal }
-      it { expect(subject.file).to eq file }
-      it { expect(subject.build_version).to eq('5') }
-      it { expect(subject.release_version).to eq('1.2.3') }
-      it { expect(subject.name).to eq('AppInfoDemo') }
-      it { expect(subject.bundle_name).to eq('AppInfoDemo') }
-      it { expect(subject.display_name).to be_nil }
-      it { expect(subject.identifier).to eq('com.icyleaf.AppInfoDemo') }
-      it { expect(subject.bundle_id).to eq('com.icyleaf.AppInfoDemo') }
-      it { expect(subject.device_type).to eq('iPhone') }
-      it { expect(subject.min_sdk_version).to eq('9.3') }
-      it { expect(subject.info['CFBundleVersion']).to eq('5') }
-      it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.2.3') }
-      it { expect(subject.archs).to eq(%i[armv7 arm64]) }
-      it { expect(subject.icons).to be_kind_of Array }
-      it { expect(subject.icons).to be_empty }
+    it { expect(subject.file).to eq file }
+    it { expect(subject.format).to eq AppInfo::Format::IPA }
+    it { expect(subject.format).to eq :ipa }
+    it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
+    it { expect(subject.platform).to eq(:apple) }
+    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::IOS) }
+    it { expect(subject.opera_system).to eq(:ios) }
+    it { expect(subject.device).to eq(AppInfo::Device::IPHONE) }
+    it { expect(subject.device).to eq(:iphone) }
+    it { expect(subject).to be_iphone }
+    it { expect(subject).not_to be_ipad }
+    it { expect(subject).not_to be_universal }
+    it { expect(subject.build_version).to eq('5') }
+    it { expect(subject.release_version).to eq('1.2.3') }
+    it { expect(subject.name).to eq('AppInfoDemo') }
+    it { expect(subject.bundle_name).to eq('AppInfoDemo') }
+    it { expect(subject.display_name).to be_nil }
+    it { expect(subject.identifier).to eq('com.icyleaf.AppInfoDemo') }
+    it { expect(subject.bundle_id).to eq('com.icyleaf.AppInfoDemo') }
+    it { expect(subject.min_sdk_version).to eq('9.3') }
+    it { expect(subject.info['CFBundleVersion']).to eq('5') }
+    it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.2.3') }
+    it { expect(subject.archs).to eq(%i[armv7 arm64]) }
+    it { expect(subject.icons).to be_kind_of Array }
+    it { expect(subject.icons).to be_empty }
 
-      it { expect(subject.release_type).to eq('AdHoc') }
-      it { expect(subject.build_type).to eq('AdHoc') }
-      it { expect(subject.devices).to be_kind_of Array }
-      it { expect(subject.team_name).to eq('QYER Inc') }
-      it { expect(subject.profile_name).to eq('iOS Team Provisioning Profile: *') }
-      it { expect(subject.expired_date).not_to be_nil }
-      it { expect(subject.distribution_name).not_to be_nil }
+    it { expect(subject.release_type).to eq(:adhoc) }
+    it { expect(subject.build_type).to eq(:adhoc) }
+    it { expect(subject.devices).to be_kind_of Array }
+    it { expect(subject.team_name).to eq('QYER Inc') }
+    it { expect(subject.profile_name).to eq('iOS Team Provisioning Profile: *') }
+    it { expect(subject.expired_date).not_to be_nil }
+    it { expect(subject.distribution_name).not_to be_nil }
 
-      it { expect(subject.mobileprovision?).to be true }
-      it { expect(subject.mobileprovision.certificates[0]).to be_kind_of AppInfo::Certificate }
+    it { expect(subject.mobileprovision?).to be true }
+    it { expect(subject.mobileprovision.certificates[0]).to be_kind_of AppInfo::Certificate }
 
-      it { expect(subject.metadata).to be_nil }
-      it { expect(subject.metadata?).to be false }
-      it { expect(subject.stored?).to be false }
-      it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
-      it { expect(subject.mobileprovision).to be_kind_of AppInfo::MobileProvision }
+    it { expect(subject.metadata).to be_nil }
+    it { expect(subject.metadata?).to be false }
+    it { expect(subject.stored?).to be false }
+    it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
+    it { expect(subject.mobileprovision).to be_kind_of AppInfo::MobileProvision }
 
-      it { expect(subject.plugins).to be_empty }
-      it { expect(subject.frameworks).to be_empty }
-    end
+    it { expect(subject.plugins).to be_empty }
+    it { expect(subject.frameworks).to be_empty }
   end
 
   describe '#iPad' do
@@ -57,14 +58,18 @@ describe AppInfo::IPA do
 
     after { subject.clear! }
 
-    it { expect(subject.file_type).to eq AppInfo::Format::IPA }
-    it { expect(subject.file_type).to eq :ipa }
-    it { expect(subject.platform).to eq 'iOS' }
-    it { expect(subject.platform).to eq AppInfo::Platform::IOS }
+    it { expect(subject.file).to eq file }
+    it { expect(subject.format).to eq AppInfo::Format::IPA }
+    it { expect(subject.format).to eq :ipa }
+    it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
+    it { expect(subject.platform).to eq(:apple) }
+    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::IOS) }
+    it { expect(subject.opera_system).to eq(:ios) }
+    it { expect(subject.device).to eq(AppInfo::Device::IPAD) }
+    it { expect(subject.device).to eq(:ipad) }
     it { expect(subject).not_to be_iphone }
     it { expect(subject).to be_ipad }
     it { expect(subject).not_to be_universal }
-    it { expect(subject.file).to eq file }
     it { expect(subject.build_version).to eq('1') }
     it { expect(subject.release_version).to eq('1.0') }
     it { expect(subject.min_sdk_version).to eq('9.3') }
@@ -73,13 +78,12 @@ describe AppInfo::IPA do
     it { expect(subject.display_name).to be_nil }
     it { expect(subject.identifier).to eq('com.icyleaf.bundle') }
     it { expect(subject.bundle_id).to eq('com.icyleaf.bundle') }
-    it { expect(subject.device_type).to eq('iPad') }
     it { expect(subject.archs).to eq(%i[armv7 arm64]) }
     it { expect(subject.icons).to be_kind_of Array }
     it { expect(subject.icons).not_to be_empty }
 
-    it { expect(subject.release_type).to eq('Enterprise') }
-    it { expect(subject.build_type).to eq('Enterprise') }
+    it { expect(subject.release_type).to eq(:enterprise) }
+    it { expect(subject.build_type).to eq(:enterprise) }
     it { expect(subject.devices).to be_nil }
     it { expect(subject.team_name).to eq('QYER Inc') }
     it { expect(subject.profile_name).to eq('XC: *') }
@@ -108,20 +112,24 @@ describe AppInfo::IPA do
     it { expect(subject.frameworks).to be_empty }
   end
 
-  describe '#Embedded' do
+  describe '#Universal' do
     let(:file) { fixture_path('apps/embedded.ipa') }
     subject { AppInfo::IPA.new(file) }
 
     after { subject.clear! }
 
-    it { expect(subject.file_type).to eq AppInfo::Format::IPA }
-    it { expect(subject.file_type).to eq :ipa }
-    it { expect(subject.platform).to eq 'iOS' }
-    it { expect(subject.platform).to eq AppInfo::Platform::IOS }
-    it { expect(subject).not_to be_iphone }
-    it { expect(subject).not_to be_iphone }
-    it { expect(subject).to be_universal }
     it { expect(subject.file).to eq file }
+    it { expect(subject.format).to eq AppInfo::Format::IPA }
+    it { expect(subject.format).to eq :ipa }
+    it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
+    it { expect(subject.platform).to eq(:apple) }
+    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::IOS) }
+    it { expect(subject.opera_system).to eq(:ios) }
+    it { expect(subject.device).to eq(AppInfo::Device::UNIVERSAL) }
+    it { expect(subject.device).to eq(:universal) }
+    it { expect(subject).not_to be_iphone }
+    it { expect(subject).not_to be_ipad }
+    it { expect(subject).to be_universal }
     it { expect(subject.build_version).to eq('1') }
     it { expect(subject.release_version).to eq('1.0') }
     it { expect(subject.min_sdk_version).to eq('14.3') }
@@ -130,11 +138,10 @@ describe AppInfo::IPA do
     it { expect(subject.display_name).to be_nil }
     it { expect(subject.identifier).to eq('com.icyleaf.test.Demo') }
     it { expect(subject.bundle_id).to eq('com.icyleaf.test.Demo') }
-    it { expect(subject.device_type).to eq('Universal') }
     it { expect(subject.archs).to eq(%i[arm64]) }
 
-    it { expect(subject.release_type).to eq('Enterprise') }
-    it { expect(subject.build_type).to eq('Enterprise') }
+    it { expect(subject.release_type).to eq(:enterprise) }
+    it { expect(subject.build_type).to eq(:enterprise) }
     it { expect(subject.devices).to be_nil }
 
     it { expect(subject.mobileprovision?).to be true }

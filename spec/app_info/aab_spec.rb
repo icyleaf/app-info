@@ -6,16 +6,21 @@ describe AppInfo::APK do
     context 'with Android target SDK under 31' do
       let(:file) { fixture_path('apps/android.aab') }
 
+      it { expect(subject.file).to eq file }
       it { expect(subject.size).to eq(3618865) }
       it { expect(subject.size(human_size: true)).to eq('3.45 MB') }
-      it { expect(subject.file_type).to eq :aab }
-      it { expect(subject.file_type).to eq AppInfo::Format::AAB }
-      it { expect(subject.platform).to eq 'Android' }
-      it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
-      it { expect(subject.wear?).to be false }
-      it { expect(subject.tv?).to be false }
-      it { expect(subject.automotive?).to be false }
-      it { expect(subject.file).to eq file }
+      it { expect(subject.format).to eq(AppInfo::Format::AAB) }
+      it { expect(subject.format).to eq(:aab) }
+      it { expect(subject.platform).to eq(AppInfo::Platform::GOOGLE) }
+      it { expect(subject.platform).to eq(:google) }
+      it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::ANDROID) }
+      it { expect(subject.opera_system).to eq(:android) }
+      it { expect(subject.device).to eq(AppInfo::Device::PHONE) }
+      it { expect(subject.device).to eq(:phone) }
+      it { expect(subject).not_to be_tablet }
+      it { expect(subject).not_to be_watch }
+      it { expect(subject).not_to be_television }
+      it { expect(subject).not_to be_automotive }
       it { expect(subject.release_version).to eq('2.1.0') }
       it { expect(subject.build_version).to eq('10') }
       it { expect(subject.name).to eq('AppInfoDemo') }
@@ -45,16 +50,21 @@ describe AppInfo::APK do
     context 'with Android target SDK above 31' do
       let(:file) { fixture_path('apps/android-31.aab') }
 
+      it { expect(subject.file).to eq file }
       it { expect(subject.size).to eq(7448532) }
       it { expect(subject.size(human_size: true)).to eq('7.10 MB') }
-      it { expect(subject.file_type).to eq :aab }
-      it { expect(subject.file_type).to eq AppInfo::Format::AAB }
-      it { expect(subject.platform).to eq 'Android' }
-      it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
-      it { expect(subject.wear?).to be false }
-      it { expect(subject.tv?).to be false }
-      it { expect(subject.automotive?).to be false }
-      it { expect(subject.file).to eq file }
+      it { expect(subject.format).to eq(AppInfo::Format::AAB) }
+      it { expect(subject.format).to eq(:aab) }
+      it { expect(subject.platform).to eq(AppInfo::Platform::GOOGLE) }
+      it { expect(subject.platform).to eq(:google) }
+      it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::ANDROID) }
+      it { expect(subject.opera_system).to eq(:android) }
+      it { expect(subject.device).to eq(AppInfo::Device::PHONE) }
+      it { expect(subject.device).to eq(:phone) }
+      it { expect(subject).not_to be_tablet }
+      it { expect(subject).not_to be_watch }
+      it { expect(subject).not_to be_television }
+      it { expect(subject).not_to be_automotive }
       it { expect(subject.release_version).to eq('1.0') }
       it { expect(subject.build_version).to eq('1') }
       it { expect(subject.name).to eq('My Application') }

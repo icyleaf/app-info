@@ -7,15 +7,15 @@ describe AppInfo::Macos do
       after { subject.clear! }
 
       context 'parse' do
-        it { expect(subject.file_type).to eq AppInfo::Format::MACOS }
-        it { expect(subject.file_type).to eq :macos }
-        it { expect(subject.platform).to eq AppInfo::Platform::MACOS }
-        it { expect(subject.platform).to eq 'macOS' }
-        it { expect(subject).to be_macos }
-        it { expect(subject).not_to be_iphone }
-        it { expect(subject).not_to be_ipad }
-        it { expect(subject).not_to be_universal }
         it { expect(subject.file).to eq file }
+        it { expect(subject.format).to eq AppInfo::Format::MACOS }
+        it { expect(subject.format).to eq :macos }
+        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
+        it { expect(subject.platform).to eq(:apple) }
+        it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::MACOS) }
+        it { expect(subject.opera_system).to eq(:macos) }
+        it { expect(subject.device).to eq(AppInfo::Device::MACOS) }
+        it { expect(subject.device).to eq(:macos) }
         it { expect(subject.build_version).to eq('1') }
         it { expect(subject.release_version).to eq('1.0') }
         it { expect(subject.name).to eq('GuiApp') }
@@ -23,13 +23,12 @@ describe AppInfo::Macos do
         it { expect(subject.display_name).to be_nil }
         it { expect(subject.identifier).to eq('com.icyleaf.macos.GUIApp') }
         it { expect(subject.bundle_id).to eq('com.icyleaf.macos.GUIApp') }
-        it { expect(subject.device_type).to eq(AppInfo::Device::MACOS) }
         it { expect(subject.min_os_version).to eq('11.3') }
         it { expect(subject.min_system_version).to eq('11.3') }
         it { expect(subject.info['CFBundleVersion']).to eq('1') }
         it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.0') }
         it { expect(subject.archs).to eq(%i[x86_64 arm64]) }
-        it { expect(subject.release_type).to eq('Debug') }
+        it { expect(subject.release_type).to eq(:debug) }
         it { expect(subject.mobileprovision?).to be false }
         it { expect(subject.stored?).to be false }
         it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
@@ -52,15 +51,15 @@ describe AppInfo::Macos do
       after { subject.clear! }
 
       context 'parse' do
-        it { expect(subject.file_type).to eq AppInfo::Format::MACOS }
-        it { expect(subject.file_type).to eq :macos }
-        it { expect(subject.platform).to eq AppInfo::Platform::MACOS }
-        it { expect(subject.platform).to eq 'macOS' }
-        it { expect(subject).to be_macos }
-        it { expect(subject).not_to be_iphone }
-        it { expect(subject).not_to be_ipad }
-        it { expect(subject).not_to be_universal }
         it { expect(subject.file).to eq file }
+        it { expect(subject.format).to eq AppInfo::Format::MACOS }
+        it { expect(subject.format).to eq :macos }
+        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
+        it { expect(subject.platform).to eq(:apple) }
+        it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::MACOS) }
+        it { expect(subject.opera_system).to eq(:macos) }
+        it { expect(subject.device).to eq(AppInfo::Device::MACOS) }
+        it { expect(subject.device).to eq(:macos) }
         it { expect(subject.build_version).to eq('1') }
         it { expect(subject.release_version).to eq('1.0') }
         it { expect(subject.name).to eq('GuiApp') }
@@ -68,13 +67,12 @@ describe AppInfo::Macos do
         it { expect(subject.display_name).to be_nil }
         it { expect(subject.identifier).to eq('com.icyleaf.macos.GUIApp') }
         it { expect(subject.bundle_id).to eq('com.icyleaf.macos.GUIApp') }
-        it { expect(subject.device_type).to eq(AppInfo::Device::MACOS) }
         it { expect(subject.min_os_version).to eq('11.3') }
         it { expect(subject.min_system_version).to eq('11.3') }
         it { expect(subject.info['CFBundleVersion']).to eq('1') }
         it { expect(subject.info[:CFBundleShortVersionString]).to eq('1.0') }
         it { expect(subject.archs).to eq(%i[x86_64 arm64]) }
-        it { expect(subject.release_type).to eq('Release') }
+        it { expect(subject.release_type).to eq(:release) }
         it { expect(subject.stored?).to be false }
         it { expect(subject.info).to be_kind_of AppInfo::InfoPlist }
         it { expect(subject.mobileprovision).to be_kind_of AppInfo::MobileProvision }

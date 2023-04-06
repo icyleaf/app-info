@@ -11,18 +11,19 @@ require 'app_info/file'
 require 'app_info/info_plist'
 require 'app_info/mobile_provision'
 
+require 'app_info/apple'
+require 'app_info/macos'
 require 'app_info/ipa'
 require 'app_info/ipa/plugin'
 require 'app_info/ipa/framework'
 
-require 'app_info/android/signature'
+require 'app_info/android'
 require 'app_info/apk'
 require 'app_info/aab'
 
 require 'app_info/proguard'
 require 'app_info/dsym'
 
-require 'app_info/macos'
 require 'app_info/pe'
 
 # fix invaild date format warnings
@@ -45,7 +46,7 @@ module AppInfo
                when Format::MACOS then Macos.new(file)
                when Format::PE then PE.new(file)
                else
-                 raise UnknownFileTypeError, "Do not detect file type: #{file}"
+                 raise UnknownFormatError, "Do not detect file format: #{file}"
                end
 
       return parser unless block_given?

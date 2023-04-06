@@ -31,6 +31,8 @@ Layout/LineLength:
   Max: 100
   Exclude:
     - 'lib/app_info/helper/signatures.rb'
+    - 'lib/app_info/android/signatures/info.rb'
+    - 'lib/app_info/apk.rb'
 
 Lint/AssignmentInCondition:
   Enabled: false

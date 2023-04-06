@@ -7,16 +7,18 @@ module AppInfo
   class DSYM < File
     include Helper::Archive
 
-    def file_type
-      Format::DSYM
+    # @return [Symbol] {Platform}
+    def platform
+      Platform::APPLE
     end
 
     def each_file(&block)
       files.each { |file| block.call(file) }
     end
 
+    # @return [Array<DebugInfo>] dsym_files files by alphabetical order
     def files
-      @files ||= Dir.children(contents).each_with_object([]) do |file, obj|
+      @files ||= Dir.children(contents).sort.each_with_object([]) do |file, obj|
         obj << DebugInfo.new(::File.join(contents, file))
       end
     end
@@ -30,6 +32,7 @@ module AppInfo
       @files = nil
     end
 
+    # @return [String] contents path of dsym
     def contents
       @contents ||= lambda {
         return @file if ::File.directory?(@file)

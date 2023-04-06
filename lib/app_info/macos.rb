@@ -7,66 +7,37 @@ require 'cfpropertylist'
 
 module AppInfo
   # MacOS App parser
-  class Macos < File
-    include Helper::HumanFileSize
-    include Helper::Archive
-    extend Forwardable
+  class Macos < Apple
+    # @!method min_sdk_version
+    #   @see InfoPlist#min_sdk_version
+    def_delegators :info, :min_system_version
 
-    attr_reader :file
-
-    # macOS Export types
-    module ExportType
-      DEBUG = 'Debug'
-      RELEASE = 'Release'
-      APPSTORE = 'AppStore'
-    end
-
-    # return file size
-    # @example Read file size in integer
-    #   aab.size                    # => 3618865
+    # Full icons metadata
+    # @param [Boolean] convert Convert .icons to .png format
+    # @example uncovert .icons
+    #   macos.icons
+    #   # => [
+    #   #   {
+    #   #     name: 'icon.icns',
+    #   #     file: '/path/to/icon.icns',
+    #   #   }
+    #   # ]
     #
-    # @example Read file size in human readabale
-    #   aab.size(human_size: true)  # => '3.45 MB'
-    #
-    # @param [Boolean] human_size Convert integer value to human readable.
-    # @return [Integer, String]
-    def size(human_size: false)
-      file_to_human_size(@file, human_size: human_size)
-    end
-
-    def file_type
-      Format::MACOS
-    end
-
-    def platform
-      Platform::MACOS
-    end
-
-    def_delegators :info, :macos?, :iphone?, :ipad?, :universal?, :build_version, :name,
-                   :release_version, :identifier, :bundle_id, :display_name,
-                   :bundle_name, :min_system_version, :min_os_version, :device_type
-
-    def_delegators :mobileprovision, :team_name, :team_identifier,
-                   :profile_name, :expired_date
-
-    def distribution_name
-      "#{profile_name} - #{team_name}" if profile_name && team_name
-    end
-
-    def release_type
-      if stored?
-        ExportType::APPSTORE
-      elsif mobileprovision?
-        ExportType::RELEASE
-      else
-        ExportType::DEBUG
-      end
-    end
-
-    def stored?
-      ::File.exist?(store_path)
-    end
-
+    # @example coverted .icons
+    #   macos.icons(convert: true)
+    #   # => [
+    #   #   {
+    #   #     name: 'converted_icon_32x32.png',
+    #   #     file: '/path/to/converted_icon_32x32.png',
+    #   #     dimensions: [32, 32]
+    #   #   },
+    #   #   {
+    #   #     name: 'converted_icon_120x120.png',
+    #   #     file: '/path/to/converted_icon_120x120.png',
+    #   #     dimensions: [120, 120]
+    #   #   },
+    #   # ]
+    # @return [Array<Hash{Symbol => String, Array<Integer>}>] icons paths of icons
     def icons(convert: true)
       return unless icon_file
 
@@ -79,43 +50,22 @@ module AppInfo
       data
     end
 
-    def archs
-      return unless ::File.exist?(binary_path)
-
-      file = MachO.open(binary_path)
-      case file
-      when MachO::MachOFile
-        [file.cpusubtype]
-      else
-        file.machos.each_with_object([]) do |arch, obj|
-          obj << arch.cpusubtype
-        end
-      end
-    end
-    alias architectures archs
-
-    def hide_developer_certificates
-      mobileprovision.delete('DeveloperCertificates') if mobileprovision?
+    # @return [Boolean]
+    def stored?
+      ::File.exist?(store_path)
     end
 
-    def mobileprovision
-      return unless mobileprovision?
-
-      @mobileprovision ||= MobileProvision.new(mobileprovision_path)
-    end
-
-    def mobileprovision?
-      ::File.exist?(mobileprovision_path)
-    end
-
+    # @return [String]
     def mobileprovision_path
       @mobileprovision_path ||= ::File.join(app_path, 'Contents', 'embedded.provisionprofile')
     end
 
+    # @return [String]
     def store_path
       @store_path ||= ::File.join(app_path, 'Contents', '_MASReceipt', 'receipt')
     end
 
+    # @return [String]
     def binary_path
       return @binary_path if @binary_path
 
@@ -126,14 +76,12 @@ module AppInfo
       @binary_path ||= Dir.glob(::File.join(base_path, '*')).first
     end
 
-    def info
-      @info ||= InfoPlist.new(info_path)
-    end
-
+    # @return [String]
     def info_path
       @info_path ||= ::File.join(app_path, 'Contents', 'Info.plist')
     end
 
+    # @return [String]
     def app_path
       @app_path ||= Dir.glob(::File.join(contents, '*.app')).first
     end
@@ -149,10 +97,6 @@ module AppInfo
       @info_path = nil
       @info = nil
       @icons = nil
-    end
-
-    def contents
-      @contents ||= unarchive(@file, prefix: 'macos')
     end
 
     private

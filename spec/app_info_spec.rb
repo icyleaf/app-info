@@ -53,7 +53,7 @@ describe AppInfo do
         it 'should throwa an exception when not matched' do
           expect do
             AppInfo.parse(path)
-          end.to raise_error(AppInfo::UnknownFileTypeError)
+          end.to raise_error(AppInfo::UnknownFormatError)
         end
       else
         it 'should parse' do
@@ -91,7 +91,7 @@ describe AppInfo do
 
       expect do
         AppInfo.parse(file.path)
-      end.to raise_error(AppInfo::UnknownFileTypeError)
+      end.to raise_error(AppInfo::UnknownFormatError)
     end
   end
 end

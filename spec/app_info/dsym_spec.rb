@@ -15,8 +15,12 @@ describe AppInfo::DSYM do
       after { subject.clear! }
       context  do
         it { expect(subject.file).to eq fixture_path('dsyms/iOS-single-dSYM-with-single-macho.zip') }
-        it { expect(subject.file_type).to eq AppInfo::Format::DSYM }
-        it { expect(subject.file_type).to eq :dsym }
+        it { expect(subject.format).to eq AppInfo::Format::DSYM }
+        it { expect(subject.format).to eq :dsym }
+        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
+        it { expect(subject.platform).to eq(:apple) }
+        it { expect{ subject.opera_system }.to raise_error NotImplementedError }
+        it { expect{ subject.device }.to raise_error NotImplementedError }
         it { expect(subject.files.size).to eq 1 }
         it { expect(subject.files[0].object).to eq 'iOS' }
         it { expect(subject.files[0].macho_type).to be_a ::MachO::MachOFile }
@@ -61,8 +65,12 @@ describe AppInfo::DSYM do
 
       context '.parse' do
         it { expect(subject.file).to eq fixture_path('dsyms/iOS-single-dSYM-with-multi-macho.zip') }
-        it { expect(subject.file_type).to eq AppInfo::Format::DSYM }
-        it { expect(subject.file_type).to eq :dsym }
+        it { expect(subject.format).to eq AppInfo::Format::DSYM }
+        it { expect(subject.format).to eq :dsym }
+        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
+        it { expect(subject.platform).to eq(:apple) }
+        it { expect{ subject.opera_system }.to raise_error NotImplementedError }
+        it { expect{ subject.device }.to raise_error NotImplementedError }
         it { expect(subject.files.size).to eq 1 }
         it { expect(subject.files[0].object).to eq 'iOS' }
         it { expect(subject.files[0].macho_type).to be_a ::MachO::FatFile }
@@ -118,8 +126,12 @@ describe AppInfo::DSYM do
 
       context  do
         it { expect(subject.file).to eq file }
-        it { expect(subject.file_type).to eq AppInfo::Format::DSYM }
-        it { expect(subject.file_type).to eq :dsym }
+        it { expect(subject.format).to eq AppInfo::Format::DSYM }
+        it { expect(subject.format).to eq :dsym }
+        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
+        it { expect(subject.platform).to eq(:apple) }
+        it { expect{ subject.opera_system }.to raise_error NotImplementedError }
+        it { expect{ subject.device }.to raise_error NotImplementedError }
         it { expect(subject.files.size).to eq 2 }
         it { expect(subject.files[0].object).to eq 'AppInfo' }
         it { expect(subject.files[0].macho_type).to be_a ::MachO::MachOFile }
@@ -181,8 +193,12 @@ describe AppInfo::DSYM do
 
       context  do
         it { expect(subject.file).to eq file }
-        it { expect(subject.file_type).to eq AppInfo::Format::DSYM }
-        it { expect(subject.file_type).to eq :dsym }
+        it { expect(subject.format).to eq AppInfo::Format::DSYM }
+        it { expect(subject.format).to eq :dsym }
+        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
+        it { expect(subject.platform).to eq(:apple) }
+        it { expect{ subject.opera_system }.to raise_error NotImplementedError }
+        it { expect{ subject.device }.to raise_error NotImplementedError }
         it { expect(subject.files.size).to eq 2 }
         it { expect(subject.files[0].object).to eq 'AppInfo' }
         it { expect(subject.files[0].macho_type).to be_a ::MachO::MachOFile }
@@ -217,51 +233,5 @@ describe AppInfo::DSYM do
 
       after { subject.clear! }
     end
-
-    # context 'when dSYM in root path' do
-    #   subject { AppInfo::DSYM.new(fixture_path('iOS-mutli-dSYMs-directly.zip')) }
-    #   data = [
-    #     {
-    #       type: :dsym,
-    #       uuid: '26dfc15d-bdce-351f-b5de-6ee9f5dd6d85',
-    #       cpu_type: :arm,
-    #       cpu_name: :armv7,
-    #       size: 866_526,
-    #       human_size: '846.22 KB'
-    #     },
-    #     {
-    #       type: :dsym,
-    #       uuid: '17f58291-dd25-3fc8-9417-ccbe8163d33e',
-    #       cpu_type: :arm64,
-    #       cpu_name: :arm64,
-    #       size: 866_911,
-    #       human_size: '846.59 KB'
-    #     }
-    #   ]
-
-    #   it { expect(subject.file_type).to eq AppInfo::Format::DSYM }
-    #   it { expect(subject.file_type).to eq :dsym }
-    #   it { expect(subject.object).to eq 'iOS' }
-    #   it { expect(subject.macho_type).to be_a ::MachO::FatFile }
-    #   it { expect(subject.release_version).to eq '1.0' }
-    #   it { expect(subject.build_version).to eq '2' }
-    #   it { expect(subject.identifier).to eq 'com.icyleaf.iOS' }
-    #   it { expect(subject.bundle_id).to eq 'com.icyleaf.iOS' }
-    #   it { expect(subject.machos.size).to eq 2 }
-    #   it { expect(subject.machos[0].type).to eq data[0][:type] }
-    #   it { expect(subject.machos[0].uuid).to eq data[0][:uuid] }
-    #   it { expect(subject.machos[0].cpu_type).to eq data[0][:cpu_type] }
-    #   it { expect(subject.machos[0].cpu_name).to eq data[0][:cpu_name] }
-    #   it { expect(subject.machos[0].size).to eq data[0][:size] }
-    #   it { expect(subject.machos[0].size(human_size: true)).to eq data[0][:human_size] }
-    #   it { expect(subject.machos[0].to_h).to eq data[0] }
-    #   it { expect(subject.machos[1].type).to eq data[1][:type] }
-    #   it { expect(subject.machos[1].uuid).to eq data[1][:uuid] }
-    #   it { expect(subject.machos[1].cpu_type).to eq data[1][:cpu_type] }
-    #   it { expect(subject.machos[1].cpu_name).to eq data[1][:cpu_name] }
-    #   it { expect(subject.machos[1].size).to eq data[1][:size] }
-    #   it { expect(subject.machos[1].size(human_size: true)).to eq data[1][:human_size] }
-    #   it { expect(subject.machos[1].to_h).to eq data[1] }
-    # end
   end
 end

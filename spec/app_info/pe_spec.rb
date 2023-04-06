@@ -1,16 +1,18 @@
 describe AppInfo::PE do
-  context 'when parse a .zip file' do
-    let(:file) { fixture_path('apps/win-TopBar-v0.1.1.zip') }
-    subject { AppInfo::PE.new(file) }
+  describe 'when give a .zip file' do
+    context 'include exe file' do
+      let(:file) { fixture_path('apps/win-TopBar-v0.1.1.zip') }
+      subject { AppInfo::PE.new(file) }
 
-    after { subject.clear! }
+      after { subject.clear! }
 
-    context 'parse' do
-      it { expect(subject.file_type).to eq AppInfo::Format::PE }
-      it { expect(subject.file_type).to eq :pe }
-      it { expect(subject.platform).to eq AppInfo::Platform::WINDOWS }
-      it { expect(subject.platform).to eq 'Windows' }
       it { expect(subject.file).to eq file }
+      it { expect(subject.format).to eq AppInfo::Format::PE }
+      it { expect(subject.format).to eq :pe }
+      it { expect(subject.platform).to eq AppInfo::Platform::WINDOWS }
+      it { expect(subject.platform).to eq :windows }
+      it { expect(subject.device).to eq AppInfo::Device::WINDOWS }
+      it { expect(subject.device).to eq :windows }
       it { expect(subject.binary_file).not_to be_nil }
       it { expect(subject.size).to eq 415127 }
       it { expect(subject.size(human_size: true)).to eq "405.40 KB" }
@@ -44,6 +46,13 @@ describe AppInfo::PE do
         expect(icons[0][:dimensions]).to eq([16, 16])
       end
     end
+
+    context 'exclude exe file' do
+      let(:file) { fixture_path('apps/iphone.ipa') }
+      subject { AppInfo::PE.new(file) }
+
+      it { expect { subject.binary_file }.to raise_error(AppInfo::NotFoundError) }
+    end
   end
 
   context 'when parse an .exe file' do
@@ -53,11 +62,13 @@ describe AppInfo::PE do
     after { subject.clear! }
 
     context 'parse' do
-      it { expect(subject.file_type).to eq AppInfo::Format::PE }
-      it { expect(subject.file_type).to eq :pe }
-      it { expect(subject.platform).to eq AppInfo::Platform::WINDOWS }
-      it { expect(subject.platform).to eq 'Windows' }
       it { expect(subject.file).to eq file }
+      it { expect(subject.format).to eq AppInfo::Format::PE }
+      it { expect(subject.format).to eq :pe }
+      it { expect(subject.platform).to eq AppInfo::Platform::WINDOWS }
+      it { expect(subject.platform).to eq :windows }
+      it { expect(subject.device).to eq AppInfo::Device::WINDOWS }
+      it { expect(subject.device).to eq :windows }
       it { expect(subject.binary_file).not_to be_nil }
       it { expect(subject.size).to eq 293888 }
       it { expect(subject.size(human_size: true)).to eq "287.00 KB" }

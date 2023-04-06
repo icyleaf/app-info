@@ -6,125 +6,47 @@ require 'forwardable'
 require 'cfpropertylist'
 
 module AppInfo
-  # IPA parser
-  class IPA < File
-    include Helper::HumanFileSize
-    include Helper::Archive
-    extend Forwardable
-
-    attr_reader :file
-
-    # iOS Export types
-    module ExportType
-      DEBUG   = 'Debug'
-      ADHOC   = 'AdHoc'
-      ENTERPRISE = 'Enterprise'
-      RELEASE = 'Release'
-      UNKOWN  = nil
-
-      INHOUSE = 'Enterprise' # Rename and Alias to enterprise
-    end
-
-    # return file size
-    # @example Read file size in integer
-    #   aab.size                    # => 3618865
-    #
-    # @example Read file size in human readabale
-    #   aab.size(human_size: true)  # => '3.45 MB'
-    #
-    # @param [Boolean] human_size Convert integer value to human readable.
-    # @return [Integer, String]
-    def size(human_size: false)
-      file_to_human_size(@file, human_size: human_size)
-    end
-
-    def file_type
-      Format::IPA
-    end
-
-    def platform
-      Platform::IOS
-    end
-
-    def_delegators :info, :iphone?, :ipad?, :universal?, :build_version, :name,
-                   :release_version, :identifier, :bundle_id, :display_name,
-                   :bundle_name, :min_sdk_version, :min_os_version, :device_type
-
-    def_delegators :mobileprovision, :devices, :team_name, :team_identifier,
-                   :profile_name, :expired_date
-
-    def distribution_name
-      "#{profile_name} - #{team_name}" if profile_name && team_name
-    end
-
-    def release_type
-      if stored?
-        ExportType::RELEASE
-      else
-        build_type
-      end
-    end
-
-    def build_type
-      if mobileprovision?
-        if devices
-          ExportType::ADHOC
-        else
-          ExportType::ENTERPRISE
-        end
-      else
-        ExportType::DEBUG
-      end
-    end
-
-    def archs
-      return unless ::File.exist?(bundle_path)
-
-      file = MachO.open(bundle_path)
-      case file
-      when MachO::MachOFile
-        [file.cpusubtype]
-      else
-        file.machos.each_with_object([]) do |arch, obj|
-          obj << arch.cpusubtype
-        end
-      end
-    end
-    alias architectures archs
-
+  class IPA < Apple
+    # Full icons metadata
+    # @example
+    #   aab.icons
+    #   # => [
+    #   #   {
+    #   #     name: 'icon.png',
+    #   #     file: '/path/to/icon.png',
+    #   #     uncrushed_file: '/path/to/uncrushed_icon.png',
+    #   #     dimensions: [64, 64]
+    #   #   },
+    #   #   {
+    #   #     name: 'icon1.png',
+    #   #     file: '/path/to/icon1.png',
+    #   #     uncrushed_file: '/path/to/uncrushed_icon1.png',
+    #   #     dimensions: [120, 120]
+    #   #   }
+    #   # ]
+    # @return [Array<Hash{Symbol => String, Array<Integer>}>] icons paths of icons
     def icons(uncrush: true)
       @icons ||= icons_path.each_with_object([]) do |file, obj|
         obj << build_icon_metadata(file, uncrush: uncrush)
       end
     end
 
+    # @return [Boolean]
     def stored?
       !!metadata?
     end
 
+    # @return [Array<Plugin>]
     def plugins
       @plugins ||= Plugin.parse(app_path)
     end
 
+    # @return [Array<Framework>]
     def frameworks
       @frameworks ||= Framework.parse(app_path)
     end
 
-    def hide_developer_certificates
-      mobileprovision.delete('DeveloperCertificates') if mobileprovision?
-    end
-
-    def mobileprovision
-      return unless mobileprovision?
-      return @mobileprovision if @mobileprovision
-
-      @mobileprovision = MobileProvision.new(mobileprovision_path)
-    end
-
-    def mobileprovision?
-      ::File.exist?(mobileprovision_path)
-    end
-
+    # @return [String]
     def mobileprovision_path
       filename = 'embedded.mobileprovision'
       @mobileprovision_path ||= ::File.join(@file, filename)
@@ -135,39 +57,39 @@ module AppInfo
       @mobileprovision_path
     end
 
+    # @return [CFPropertyList]
     def metadata
       return unless metadata?
 
       @metadata ||= CFPropertyList.native_types(CFPropertyList::List.new(file: metadata_path).value)
     end
 
+    # @return [Boolean]
     def metadata?
       ::File.exist?(metadata_path)
     end
 
+    # @return [String]
     def metadata_path
       @metadata_path ||= ::File.join(contents, 'iTunesMetadata.plist')
     end
 
-    def bundle_path
-      @bundle_path ||= ::File.join(app_path, info.bundle_name)
+    # @return [String]
+    def binary_path
+      @binary_path ||= ::File.join(app_path, info.bundle_name)
     end
 
-    def info
-      @info ||= InfoPlist.new(info_path)
-    end
-
+    # @return [String]
     def info_path
       @info_path ||= ::File.join(app_path, 'Info.plist')
     end
 
+    # @return [String]
     def app_path
       @app_path ||= Dir.glob(::File.join(contents, 'Payload', '*.app')).first
     end
 
-    IPHONE_KEY = 'CFBundleIcons'
-    IPAD_KEY = 'CFBundleIcons~ipad'
-
+    # @return [Array<String>]
     def icons_path
       @icons_path ||= lambda {
         icon_keys.each_with_object([]) do |name, icons|
@@ -201,10 +123,6 @@ module AppInfo
       @icons = nil
     end
 
-    def contents
-      @contents ||= unarchive(@file, prefix: 'ios')
-    end
-
     private
 
     def build_icon_metadata(file, uncrush: true)
@@ -225,13 +143,16 @@ module AppInfo
       ::File.exist?(dest_file) ? dest_file : nil
     end
 
+    IPHONE_KEY = 'CFBundleIcons'
+    IPAD_KEY = 'CFBundleIcons~ipad'
+
     def icon_keys
-      @icon_keys ||= case device_type
-                     when 'iPhone'
+      @icon_keys ||= case device
+                     when Device::IPHONE
                        [IPHONE_KEY]
-                     when 'iPad'
+                     when Device::IPAD
                        [IPAD_KEY]
-                     when 'Universal'
+                     when Device::UNIVERSAL
                        [IPHONE_KEY, IPAD_KEY]
                      end
     end

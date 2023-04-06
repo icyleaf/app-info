@@ -1,53 +1,23 @@
 # frozen_string_literal: true
 
 require 'app_info/protobuf/manifest'
-require 'image_size'
-require 'forwardable'
 
 module AppInfo
   # Parse APK file parser
-  class AAB < File
-    include Helper::HumanFileSize
-    extend Forwardable
-
-    attr_reader :file
-
-    # APK Devices
-    module Device
-      PHONE       = 'Phone'
-      TABLET      = 'Tablet'
-      WATCH       = 'Watch'
-      TV          = 'Television'
-      AUTOMOTIVE  = 'Automotive'
-    end
-
+  class AAB < Android
     BASE_PATH = 'base'
     BASE_MANIFEST = "#{BASE_PATH}/manifest/AndroidManifest.xml"
     BASE_RESOURCES = "#{BASE_PATH}/resources.pb"
 
-    # return file size
-    # @example Read file size in integer
-    #   aab.size                    # => 3618865
-    #
-    # @example Read file size in human readabale
-    #   aab.size(human_size: true)  # => '3.45 MB'
-    #
-    # @param [Boolean] human_size Convert integer value to human readable.
-    # @return [Integer, String]
-    def size(human_size: false)
-      file_to_human_size(@file, human_size: human_size)
-    end
-
-    # @return [Symbol] {Format::AAB}
-    def file_type
-      Format::AAB
-    end
-
-    # @return [String] {Platform::ANDROID}
-    def platform
-      Platform::ANDROID
-    end
-
+    # @!method version_name
+    #   @see Protobuf::Manifest#version_name
+    #   @return [String]
+    # @!method deep_links
+    #   @see Protobuf::Manifest#deep_links
+    #   @return [String]
+    # @!method schemes
+    #   @see Protobuf::Manifest#schemes
+    #   @return [String]
     def_delegators :manifest, :version_name, :deep_links, :schemes
 
     alias release_version version_name
@@ -68,43 +38,6 @@ module AppInfo
     # @return [String]
     def name
       manifest.label
-    end
-
-    # @return [String] {Device}
-    def device_type
-      if wear?
-        Device::WATCH
-      elsif tv?
-        Device::TV
-      elsif automotive?
-        Device::AUTOMOTIVE
-      else
-        Device::PHONE
-      end
-    end
-
-    # TODO: find a way to detect
-    # Found answer but not works: https://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet
-    # def tablet?
-    #   resource.first_package
-    #           .entries('bool')
-    #           .select{|e| e.name == 'isTablet' }
-    #           .size >= 1
-    # end
-
-    # @return [Boolean]
-    def wear?
-      !!use_features&.include?('android.hardware.type.watch')
-    end
-
-    # @return [Boolean]
-    def tv?
-      !!use_features&.include?('android.software.leanback')
-    end
-
-    # @return [Boolean]
-    def automotive?
-      !!use_features&.include?('android.hardware.type.automotive')
     end
 
     # @return [String]
@@ -132,37 +65,19 @@ module AppInfo
       @use_permissions ||= manifest&.uses_permission&.map(&:name)
     end
 
+    # @return [Protobuf::Node]
     def activities
       @activities ||= manifest.activities
     end
 
+    # @return [Protobuf::Node]
     def services
       @services ||= manifest.services
     end
 
+    # @return [Protobuf::Node]
     def components
       @components ||= manifest.components.transform_values
-    end
-
-    # Return multi version certifiates of signatures
-    # @return [Array<Hash>] signatures
-    # @see AppInfo::Android::Signature.verify
-    def signatures
-      @signatures ||= Android::Signature.verify(self)
-    end
-
-    # Legacy v1 scheme signatures, it will remove soon.
-    # @deprecated Use {#signatures}
-    # @return [Array<OpenSSL::PKCS7, nil>] signatures
-    def signs
-      @signs ||= v1sign&.signatures || []
-    end
-
-    # Legacy v1 scheme certificates, it will remove soon.
-    # @deprecated Use {#signatures}
-    # @return [Array<OpenSSL::PKCS7, nil>] certificates
-    def certificates
-      @certificates ||= v1sign&.certificates || []
     end
 
     def each_file
@@ -187,6 +102,7 @@ module AppInfo
       entry
     end
 
+    # @return [Protobuf::Manifest]
     def manifest
       io = zip.read(zip.find_entry(BASE_MANIFEST))
       @manifest ||= Protobuf::Manifest.parse(io, resource)
@@ -198,12 +114,22 @@ module AppInfo
       @resource ||= Protobuf::Resources.parse(io)
     end
 
-    # @return [Zip::File]
-    def zip
-      @zip ||= Zip::File.open(@file)
-    end
-
-    # @return [Array<Hash>]
+    # Full icons metadata
+    # @example
+    #   aab.icons
+    #   # => [
+    #   #   {
+    #   #     name: 'icon.png',
+    #   #     file: '/path/to/icon.png',
+    #   #     dimensions: [29, 29]
+    #   #   },
+    #   #   {
+    #   #     name: 'icon1.png',
+    #   #     file: '/path/to/icon1.png',
+    #   #     dimensions: [120, 120]
+    #   #   }
+    #   # ]
+    # @return [Array<Hash{Symbol => String, Array<Integer>}>] icons paths of icons
     def icons
       @icons ||= manifest.icons.each_with_object([]) do |res, obj|
         path = res.value
@@ -235,17 +161,12 @@ module AppInfo
       @info = nil
     end
 
-    def contents
-      @contents ||= ::File.join(Dir.mktmpdir, "AppInfo-android-#{SecureRandom.hex}")
+    # @return [Zip::File]
+    def zip
+      @zip ||= Zip::File.open(@file)
     end
 
     private
-
-    def v1sign
-      @v1sign ||= Android::Signature::V1.verify(self)
-    rescue Android::Signature::NotFoundError
-      nil
-    end
 
     def xml_file?(file)
       ::File.extname(file) == '.xml'

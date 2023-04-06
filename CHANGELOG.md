@@ -16,14 +16,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - New Windows PE format parser. [#47](https://github.com/icyleaf/app_info/pull/47)
 - Android parser add v2, v3 scheme signature support. [#55](https://github.com/icyleaf/app_info/pull/55]
 - dSYM parer accept multi dSYM target in a zip file. [#56](https://github.com/icyleaf/app_info/pull/56)
+- Better document for yardoc.
 
 ### Changed
 
 - Add `AppInfo::File` base class for all parsers.
 - Add `AppInfo::Certifiate` X509 certificate wrapped and apply in Android/MobileProvision.
-- Remove `AppInfo::MobileProvision::DeveloperCertificate` class, use `AppInfo::Certifiate` instead.
+- Re-organize categories `.platform`, `.opera_sytem` and `.device` for all parsers. [#58](https://github.com/icyleaf/app_info/pull/58)
+- Change ExportType values type to symbol both IPA and macOS parsers. [#58](https://github.com/icyleaf/app_info/pull/58)
 - Remove `.sign_version` method in Android parser.
+- Rename `.file_type` to `.format` method in all parers and return a `AppInfo::Format` type.
 - Remove duplice `AppInfo::AndroidDevice` class.
+- Remove `AppInfo::MobileProvision::DeveloperCertificate` class, use `AppInfo::Certifiate` instead.
 - Deprecate `.signs` and `.certifiates` methods in Android parser, use `.signatures` instead.
 - Deprecate `.developer_certs` method in MobileProvision parser, use `.certificates` instead.
 

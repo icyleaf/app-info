@@ -29,8 +29,8 @@ describe AppInfo::Protobuf::Resources do
     it { expect(subject.find('android:color/white').value).to eq('#FFFFFFFF') }
     it { expect(subject.find('android:color/white', locale: 'foobar').value).to eq('#FFFFFFFF') } # default_value
 
-    it { expect(subject.find('unkown')).to be_nil }
-    it { expect(subject.find('unkown/404')).to be_nil }
+    it { expect(subject.find('unknown')).to be_nil }
+    it { expect(subject.find('unknown/404')).to be_nil }
   end
 
   context '.packages' do

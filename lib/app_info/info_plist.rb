@@ -17,63 +17,23 @@ module AppInfo
       Device::MACOS => %w[CFBundleIconFile CFBundleIconName]
     }.freeze
 
-    def file_type
-      Format::INFOPLIST
+    # @return [Symbol] {Platform}
+    def platform
+      Platform::APPLE
     end
 
-    def version
-      release_version || build_version
+    # @return [Symbol] {OperaSystem}
+    def opera_system
+      case device
+      when Device::MACOS
+        OperaSystem::MACOS
+      when Device::IPHONE, Device::IPAD, Device::UNIVERSAL
+        OperaSystem::IOS
+      end
     end
 
-    def build_version
-      info.try(:[], 'CFBundleVersion')
-    end
-
-    def release_version
-      info.try(:[], 'CFBundleShortVersionString')
-    end
-
-    def identifier
-      info.try(:[], 'CFBundleIdentifier')
-    end
-    alias bundle_id identifier
-
-    def name
-      display_name || bundle_name
-    end
-
-    def display_name
-      info.try(:[], 'CFBundleDisplayName')
-    end
-
-    def bundle_name
-      info.try(:[], 'CFBundleName')
-    end
-
-    def min_os_version
-      min_sdk_version || min_system_version
-    end
-
-    #
-    # Extract the Minimum OS Version from the Info.plist (iOS Only)
-    #
-    def min_sdk_version
-      info.try(:[], 'MinimumOSVersion')
-    end
-
-    #
-    # Extract the Minimum OS Version from the Info.plist (macOS Only)
-    #
-    def min_system_version
-      info.try(:[], 'LSMinimumSystemVersion')
-    end
-
-    def icons
-      @icons ||= ICON_KEYS[device_type]
-    end
-
-    def device_type
-      device_family = info.try(:[], 'UIDeviceFamily')
+    # @return [Symbol] {Device}
+    def device
       if device_family == [1]
         Device::IPHONE
       elsif device_family == [2]
@@ -82,29 +42,95 @@ module AppInfo
         Device::UNIVERSAL
       elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTPlatformName').nil?
         Device::MACOS
+      else
+        raise NotImplementedError, "Unkonwn device: #{device_family}"
       end
     end
 
+    # @return [String, nil]
+    def version
+      release_version || build_version
+    end
+
+    # @return [String, nil]
+    def build_version
+      info.try(:[], 'CFBundleVersion')
+    end
+
+    # @return [String, nil]
+    def release_version
+      info.try(:[], 'CFBundleShortVersionString')
+    end
+
+    # @return [String, nil]
+    def identifier
+      info.try(:[], 'CFBundleIdentifier')
+    end
+    alias bundle_id identifier
+
+    # @return [String, nil]
+    def name
+      display_name || bundle_name
+    end
+
+    # @return [String, nil]
+    def display_name
+      info.try(:[], 'CFBundleDisplayName')
+    end
+
+    # @return [String, nil]
+    def bundle_name
+      info.try(:[], 'CFBundleName')
+    end
+
+    # @return [String, nil]
+    def min_os_version
+      min_sdk_version || min_system_version
+    end
+
+    # Extract the Minimum OS Version from the Info.plist (iOS Only)
+    # @return [String, nil]
+    def min_sdk_version
+      info.try(:[], 'MinimumOSVersion')
+    end
+
+    # Extract the Minimum OS Version from the Info.plist (macOS Only)
+    # @return [String, nil]
+    def min_system_version
+      info.try(:[], 'LSMinimumSystemVersion')
+    end
+
+    # @return [Array<String>]
+    def icons
+      @icons ||= ICON_KEYS[device]
+    end
+
+    # @return [Boolean]
     def iphone?
-      device_type == Device::IPHONE
+      device == Device::IPHONE
     end
 
+    # @return [Boolean]
     def ipad?
-      device_type == Device::IPAD
+      device == Device::IPAD
     end
 
+    # @return [Boolean]
     def universal?
-      device_type == Device::UNIVERSAL
+      device == Device::UNIVERSAL
     end
 
+    # @return [Boolean]
     def macos?
-      device_type == Device::MACOS
+      device == Device::MACOS
     end
 
+    # @return [Array<String>]
     def device_family
       info.try(:[], 'UIDeviceFamily') || []
     end
 
+    # @return [String]
     def release_type
       if stored?
         'Store'
@@ -113,10 +139,13 @@ module AppInfo
       end
     end
 
+    # @return [String, nil]
     def [](key)
       info.try(:[], key.to_s)
     end
 
+    # @!method to_h
+    #   @see CFPropertyList#to_h
     def_delegators :info, :to_h
 
     def method_missing(method_name, *args, &block)
@@ -140,7 +169,7 @@ module AppInfo
     end
 
     def app_path
-      @app_path ||= case device_type
+      @app_path ||= case device
                     when Device::MACOS
                       ::File.dirname(@file)
                     else
