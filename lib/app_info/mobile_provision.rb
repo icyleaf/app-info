@@ -117,7 +117,7 @@ module AppInfo
       when OperaSystem::MACOS
         !devices.nil?
       else
-        raise Error, "Not implement with opera_system: #{opera_system}"
+        raise NotImplementedError, "Unknown opera_system: #{opera_system}"
       end
     end
 
@@ -132,7 +132,7 @@ module AppInfo
       when OperaSystem::MACOS
         !development?
       else
-        raise Error, "Not implement with opera_system: #{opera_system}"
+        raise NotImplementedError, "Unknown opera_system: #{opera_system}"
       end
     end
 

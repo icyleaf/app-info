@@ -156,7 +156,7 @@ module AppInfo
 
         zip_file = Zip::File.open(@file)
         zip_entry = zip_file.glob('*.exe').first
-        raise NotFoundWinBinraryError, 'Not found .exe file in archive file' if zip_entry.nil?
+        raise NotFoundError, 'Not found .exe file in archive file' if zip_entry.nil?
 
         exe_file = tempdir(zip_entry.name, prefix: 'pe-exe', system: true)
         zip_entry.extract(exe_file)

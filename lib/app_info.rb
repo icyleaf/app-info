@@ -45,7 +45,7 @@ module AppInfo
                when Format::MACOS then Macos.new(file)
                when Format::PE then PE.new(file)
                else
-                 raise UnknownFileTypeError, "Do not detect file type: #{file}"
+                 raise UnknownFormatError, "Do not detect file format: #{file}"
                end
 
       return parser unless block_given?

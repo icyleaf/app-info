@@ -1,11 +1,11 @@
 describe AppInfo::PE do
-  context 'when parse a .zip file' do
-    let(:file) { fixture_path('apps/win-TopBar-v0.1.1.zip') }
-    subject { AppInfo::PE.new(file) }
+  describe 'when give a .zip file' do
+    context 'include exe file' do
+      let(:file) { fixture_path('apps/win-TopBar-v0.1.1.zip') }
+      subject { AppInfo::PE.new(file) }
 
-    after { subject.clear! }
+      after { subject.clear! }
 
-    context 'parse' do
       it { expect(subject.file).to eq file }
       it { expect(subject.format).to eq AppInfo::Format::PE }
       it { expect(subject.format).to eq :pe }
@@ -45,6 +45,13 @@ describe AppInfo::PE do
         expect(icons[0][:file]).to end_with "win-TopBar-v0.1.1-ICON-1.bmp"
         expect(icons[0][:dimensions]).to eq([16, 16])
       end
+    end
+
+    context 'exclude exe file' do
+      let(:file) { fixture_path('apps/iphone.ipa') }
+      subject { AppInfo::PE.new(file) }
+
+      it { expect { subject.binary_file }.to raise_error(AppInfo::NotFoundError) }
     end
   end
 
