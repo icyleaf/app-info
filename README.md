@@ -1,9 +1,9 @@
-# app_info
+# app-info
 
-[![Language](https://img.shields.io/badge/ruby-2.5+-701516.svg)](.github/workflows/ci.yml)
+[![Language](https://img.shields.io/badge/ruby-2.5+-701516)](.github/workflows/ci.yml)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/icyleaf/app_info/ci.yml)](https://github.com/icyleaf/app_info/actions/workflows/ci.yml)
-[![Gem version](https://img.shields.io/gem/v/app-info.svg?style=flat)](https://rubygems.org/gems/app-info)
-[![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](LICENSE)
+[![Gem version](https://img.shields.io/gem/v/app-info?include_prereleases)](https://rubygems.org/gems/app-info)
+[![License](https://img.shields.io/github/license/icyleaf/app-info)](LICENSE)
 
 Teardown tool for mobile app (ipa, apk and aab file), macOS app, dSYM.zip file and Windows PE file.
 Analysis metedata like version, name, icon etc.
