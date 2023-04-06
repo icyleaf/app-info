@@ -9,7 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
-## [3.0.0.beta1] (2023-04-?)
+## [3.0.0.beta2] (2023-04-04)
+
+### Changed
+
+- Re-organize categories `.platform`, `.opera_sytem` and `.device` for all parsers. [#58](https://github.com/icyleaf/app_info/pull/58)
+- Change ExportType values type to symbol both IPA and macOS parsers. [#58](https://github.com/icyleaf/app_info/pull/58)
+
+## [3.0.0.beta1] (2023-04-04)
 
 ### Added
 
@@ -22,8 +29,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add `AppInfo::File` base class for all parsers.
 - Add `AppInfo::Certifiate` X509 certificate wrapped and apply in Android/MobileProvision.
-- Re-organize categories `.platform`, `.opera_sytem` and `.device` for all parsers. [#58](https://github.com/icyleaf/app_info/pull/58)
-- Change ExportType values type to symbol both IPA and macOS parsers. [#58](https://github.com/icyleaf/app_info/pull/58)
 - Remove `.sign_version` method in Android parser.
 - Rename `.file_type` to `.format` method in all parers and return a `AppInfo::Format` type.
 - Remove duplice `AppInfo::AndroidDevice` class.
@@ -273,7 +278,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v2.8.5..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta2..HEAD
+[3.0.0.beta2]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta1...v3.0.0.beta2
+[3.0.0.beta1]: https://github.com/icyleaf/app-info/compare/v2.8.5...v3.0.0.beta1
 [2.8.5]: https://github.com/icyleaf/app-info/compare/v2.8.4...v2.8.5
 [2.8.4]: https://github.com/icyleaf/app-info/compare/v2.8.3...v2.8.4
 [2.8.3]: https://github.com/icyleaf/app-info/compare/v2.8.2...v2.8.3
