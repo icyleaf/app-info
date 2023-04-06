@@ -6,10 +6,6 @@ require 'cfpropertylist'
 module AppInfo
   # .mobileprovision file parser
   class MobileProvision < File
-    def file_type
-      Format::MOBILEPROVISION
-    end
-
     def name
       mobileprovision.try(:[], 'Name')
     end

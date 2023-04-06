@@ -17,10 +17,6 @@ module AppInfo
       Device::MACOS => %w[CFBundleIconFile CFBundleIconName]
     }.freeze
 
-    def file_type
-      Format::INFOPLIST
-    end
-
     def version
       release_version || build_version
     end

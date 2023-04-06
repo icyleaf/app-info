@@ -24,10 +24,6 @@ module AppInfo
       0x5128 => 'RISC-v 128'
     }.freeze
 
-    def file_type
-      Format::PE
-    end
-
     def platform
       Platform::WINDOWS
     end

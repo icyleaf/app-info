@@ -38,11 +38,6 @@ module AppInfo
       file_to_human_size(@file, human_size: human_size)
     end
 
-    # @return [Symbol] {Format::AAB}
-    def file_type
-      Format::AAB
-    end
-
     # @return [String] {Platform::ANDROID}
     def platform
       Platform::ANDROID

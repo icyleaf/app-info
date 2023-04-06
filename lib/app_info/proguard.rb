@@ -10,8 +10,8 @@ module AppInfo
 
     NAMESPACE = UUIDTools::UUID.sha1_create(UUIDTools::UUID_DNS_NAMESPACE, 'icyleaf.com')
 
-    def file_type
-      Format::PROGUARD
+    def platform
+      Platform::ANDROID
     end
 
     def uuid

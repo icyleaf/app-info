@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add `AppInfo::Certifiate` X509 certificate wrapped and apply in Android/MobileProvision.
 - Remove `AppInfo::MobileProvision::DeveloperCertificate` class, use `AppInfo::Certifiate` instead.
 - Remove `.sign_version` method in Android parser.
+- Rename `.os` to `.platform` method in all parers.
+- Rename `.file_type` to `.format` method in all parers and return a `AppInfo::Format` type.
 - Remove duplice `AppInfo::AndroidDevice` class.
 - Deprecate `.signs` and `.certifiates` methods in Android parser, use `.signatures` instead.
 - Deprecate `.developer_certs` method in MobileProvision parser, use `.certificates` instead.

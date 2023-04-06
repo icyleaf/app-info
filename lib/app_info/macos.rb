@@ -34,10 +34,6 @@ module AppInfo
       file_to_human_size(@file, human_size: human_size)
     end
 
-    def file_type
-      Format::MACOS
-    end
-
     def platform
       Platform::MACOS
     end

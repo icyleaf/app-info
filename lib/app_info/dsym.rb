@@ -7,10 +7,6 @@ module AppInfo
   class DSYM < File
     include Helper::Archive
 
-    def file_type
-      Format::DSYM
-    end
-
     def each_file(&block)
       files.each { |file| block.call(file) }
     end

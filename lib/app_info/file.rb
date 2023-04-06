@@ -10,9 +10,15 @@ module AppInfo
       @logger = logger
     end
 
-    # @abstract Subclass and override {#file_type} to implement
-    def file_type
-      Platform::UNKNOWN
+    def format
+      @format ||= lambda {
+        class_name = self.class
+        if self.class == AppInfo::File
+          raise NotImplementedError, ".#{__method__} method implantation required in #{self.class}"
+        end
+
+        class_name.name.split('::')[-1].downcase.to_sym
+      }.call
     end
 
     # @abstract Subclass and override {#size} to implement

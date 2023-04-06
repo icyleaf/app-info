@@ -38,10 +38,6 @@ module AppInfo
       file_to_human_size(@file, human_size: human_size)
     end
 
-    def file_type
-      Format::IPA
-    end
-
     def platform
       Platform::IOS
     end
