@@ -6,6 +6,7 @@ module AppInfo
   class Certificate
     # Parse Raw data into X509 cerificate wrapper
     # @param [String] certificate raw data
+    # @return [AppInfo::Certificate]
     def self.parse(data)
       cert = OpenSSL::X509::Certificate.new(data)
       new(cert)
@@ -117,18 +118,20 @@ module AppInfo
       end
     end
 
-    # return size of public key
+    # return length of public key
     # @return [Integer]
-    def size
+    # @raise NotImplementedError
+    def length
       case public_key
       when OpenSSL::PKey::RSA
         public_key.n.num_bits
       when OpenSSL::PKey::DSA, OpenSSL::PKey::DH
         public_key.p.num_bits
       when OpenSSL::PKey::EC
-        raise NotImplementedError, "key size for #{public_key.inspect} not implemented"
+        raise NotImplementedError, "key length for #{public_key.inspect} not implemented"
       end
     end
+    alias size length
 
     # return fingerprint of certificate
     # @return [String]
@@ -166,10 +169,8 @@ module AppInfo
       @cert.send(method.to_sym, *args, &block) || super
     end
 
-    def respond_to_missing?(method_name, *args)
-      @cert.key?(method_name.to_sym) ||
-        @cert.respond_to?(method_name) ||
-        super
+    def respond_to_missing?(method, *args)
+      @cert.respond_to?(method.to_sym) || super
     end
   end
 end
