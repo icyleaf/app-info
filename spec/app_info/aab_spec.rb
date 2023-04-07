@@ -11,10 +11,10 @@ describe AppInfo::APK do
       it { expect(subject.size(human_size: true)).to eq('3.45 MB') }
       it { expect(subject.format).to eq(AppInfo::Format::AAB) }
       it { expect(subject.format).to eq(:aab) }
-      it { expect(subject.platform).to eq(AppInfo::Platform::GOOGLE) }
-      it { expect(subject.platform).to eq(:google) }
-      it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::ANDROID) }
-      it { expect(subject.opera_system).to eq(:android) }
+      it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::GOOGLE) }
+      it { expect(subject.manufacturer).to eq(:google) }
+      it { expect(subject.platform).to eq(AppInfo::Platform::ANDROID) }
+      it { expect(subject.platform).to eq(:android) }
       it { expect(subject.device).to eq(AppInfo::Device::PHONE) }
       it { expect(subject.device).to eq(:phone) }
       it { expect(subject).not_to be_tablet }
@@ -55,10 +55,10 @@ describe AppInfo::APK do
       it { expect(subject.size(human_size: true)).to eq('7.10 MB') }
       it { expect(subject.format).to eq(AppInfo::Format::AAB) }
       it { expect(subject.format).to eq(:aab) }
-      it { expect(subject.platform).to eq(AppInfo::Platform::GOOGLE) }
-      it { expect(subject.platform).to eq(:google) }
-      it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::ANDROID) }
-      it { expect(subject.opera_system).to eq(:android) }
+      it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::GOOGLE) }
+      it { expect(subject.manufacturer).to eq(:google) }
+      it { expect(subject.platform).to eq(AppInfo::Platform::ANDROID) }
+      it { expect(subject.platform).to eq(:android) }
       it { expect(subject.device).to eq(AppInfo::Device::PHONE) }
       it { expect(subject.device).to eq(:phone) }
       it { expect(subject).not_to be_tablet }

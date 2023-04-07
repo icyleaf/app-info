@@ -10,14 +10,14 @@ module AppInfo
 
     NAMESPACE = UUIDTools::UUID.sha1_create(UUIDTools::UUID_DNS_NAMESPACE, 'icyleaf.com')
 
-    # @return [Symbol] {Platform}
-    def platform
-      Platform::GOOGLE
+    # @return [Symbol] {Manufacturer}
+    def manufacturer
+      Manufacturer::GOOGLE
     end
 
-    # @return [Symbol] {OperaSystem}
-    def opera_system
-      OperaSystem::ANDROID
+    # @return [Symbol] {Platform}
+    def platform
+      Platform::ANDROID
     end
 
     # @return [String]

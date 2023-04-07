@@ -12,18 +12,18 @@ describe AppInfo::APK do
       it { expect(subject.size(human_size: true)).to eq('3.82 MB') }
       # it { expect(subject.file_type).to eq :apk }
       # it { expect(subject.file_type).to eq AppInfo::Format::APK }
-      # it { expect(subject.platform).to eq 'Android' }
-      # it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
+      # it { expect(subject.manufacturer).to eq 'Android' }
+      # it { expect(subject.manufacturer).to eq AppInfo::Manufacturer::ANDROID }
       # it { expect(subject.wear?).to be false }
       # it { expect(subject.tv?).to be false }
       # it { expect(subject.automotive?).to be false }
       # it { expect(subject.device_type).to eq AppInfo::APK::Device::PHONE }
       it { expect(subject.format).to eq(AppInfo::Format::APK) }
       it { expect(subject.format).to eq(:apk) }
-      it { expect(subject.platform).to eq(AppInfo::Platform::GOOGLE) }
-      it { expect(subject.platform).to eq(:google) }
-      it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::ANDROID) }
-      it { expect(subject.opera_system).to eq(:android) }
+      it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::GOOGLE) }
+      it { expect(subject.manufacturer).to eq(:google) }
+      it { expect(subject.platform).to eq(AppInfo::Platform::ANDROID) }
+      it { expect(subject.platform).to eq(:android) }
       it { expect(subject.device).to eq(AppInfo::Device::PHONE) }
       it { expect(subject.device).to eq(:phone) }
       it { expect(subject).not_to be_tablet }
@@ -68,10 +68,10 @@ describe AppInfo::APK do
     it { expect(subject.apk).to be_a Android::Apk }
     it { expect(subject.format).to eq(AppInfo::Format::APK) }
     it { expect(subject.format).to eq(:apk) }
-    it { expect(subject.platform).to eq(AppInfo::Platform::GOOGLE) }
-    it { expect(subject.platform).to eq(:google) }
-    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::ANDROID) }
-    it { expect(subject.opera_system).to eq(:android) }
+    it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::GOOGLE) }
+    it { expect(subject.manufacturer).to eq(:google) }
+    it { expect(subject.platform).to eq(AppInfo::Platform::ANDROID) }
+    it { expect(subject.platform).to eq(:android) }
     it { expect(subject.device).to eq(AppInfo::Device::WATCH) }
     it { expect(subject.device).to eq(:watch) }
     it { expect(subject).not_to be_tablet }
@@ -98,10 +98,10 @@ describe AppInfo::APK do
     it { expect(subject.apk).to be_a Android::Apk }
     it { expect(subject.format).to eq(AppInfo::Format::APK) }
     it { expect(subject.format).to eq(:apk) }
-    it { expect(subject.platform).to eq(AppInfo::Platform::GOOGLE) }
-    it { expect(subject.platform).to eq(:google) }
-    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::ANDROID) }
-    it { expect(subject.opera_system).to eq(:android) }
+    it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::GOOGLE) }
+    it { expect(subject.manufacturer).to eq(:google) }
+    it { expect(subject.platform).to eq(AppInfo::Platform::ANDROID) }
+    it { expect(subject.platform).to eq(:android) }
     it { expect(subject.device).to eq(AppInfo::Device::TELEVISION) }
     it { expect(subject.device).to eq(:television) }
     it { expect(subject).not_to be_tablet }
@@ -128,10 +128,10 @@ describe AppInfo::APK do
     it { expect(subject.apk).to be_a Android::Apk }
     it { expect(subject.format).to eq(AppInfo::Format::APK) }
     it { expect(subject.format).to eq(:apk) }
-    it { expect(subject.platform).to eq(AppInfo::Platform::GOOGLE) }
-    it { expect(subject.platform).to eq(:google) }
-    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::ANDROID) }
-    it { expect(subject.opera_system).to eq(:android) }
+    it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::GOOGLE) }
+    it { expect(subject.manufacturer).to eq(:google) }
+    it { expect(subject.platform).to eq(AppInfo::Platform::ANDROID) }
+    it { expect(subject.platform).to eq(:android) }
     it { expect(subject.device).to eq(AppInfo::Device::AUTOMOTIVE) }
     it { expect(subject.device).to eq(:automotive) }
     it { expect(subject).not_to be_tablet }

@@ -10,10 +10,10 @@ describe AppInfo::Macos do
         it { expect(subject.file).to eq file }
         it { expect(subject.format).to eq AppInfo::Format::MACOS }
         it { expect(subject.format).to eq :macos }
-        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
-        it { expect(subject.platform).to eq(:apple) }
-        it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::MACOS) }
-        it { expect(subject.opera_system).to eq(:macos) }
+        it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::APPLE) }
+        it { expect(subject.manufacturer).to eq(:apple) }
+        it { expect(subject.platform).to eq(AppInfo::Platform::MACOS) }
+        it { expect(subject.platform).to eq(:macos) }
         it { expect(subject.device).to eq(AppInfo::Device::MACOS) }
         it { expect(subject.device).to eq(:macos) }
         it { expect(subject.build_version).to eq('1') }
@@ -54,10 +54,10 @@ describe AppInfo::Macos do
         it { expect(subject.file).to eq file }
         it { expect(subject.format).to eq AppInfo::Format::MACOS }
         it { expect(subject.format).to eq :macos }
-        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
-        it { expect(subject.platform).to eq(:apple) }
-        it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::MACOS) }
-        it { expect(subject.opera_system).to eq(:macos) }
+        it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::APPLE) }
+        it { expect(subject.manufacturer).to eq(:apple) }
+        it { expect(subject.platform).to eq(AppInfo::Platform::MACOS) }
+        it { expect(subject.platform).to eq(:macos) }
         it { expect(subject.device).to eq(AppInfo::Device::MACOS) }
         it { expect(subject.device).to eq(:macos) }
         it { expect(subject.build_version).to eq('1') }

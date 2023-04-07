@@ -30,14 +30,15 @@ module AppInfo
     UNKNOWN = :unknown
   end
 
-  # Platform
-  module Platform
+  # Manufacturer
+  module Manufacturer
     APPLE = :apple
     GOOGLE = :google
-    WINDOWS = :windows
+    MICROSOFT = :microsoft
   end
 
-  module OperaSystem
+  # Platform
+  module Platform
     MACOS = :macos
     IOS = :ios
     ANDROID = :android

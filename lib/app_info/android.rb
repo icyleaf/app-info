@@ -23,14 +23,14 @@ module AppInfo
       file_to_human_size(@file, human_size: human_size)
     end
 
-    # @return [Symbol] {Platform}
-    def platform
-      Platform::GOOGLE
+    # @return [Symbol] {Manufacturer}
+    def manufacturer
+      Manufacturer::GOOGLE
     end
 
-    # @return [Symbol] {OperaSystem}
-    def opera_system
-      OperaSystem::ANDROID
+    # @return [Symbol] {Platform}
+    def platform
+      Platform::ANDROID
     end
 
     # @return [Symbol] {Device}

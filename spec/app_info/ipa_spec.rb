@@ -8,10 +8,10 @@ describe AppInfo::IPA do
     it { expect(subject.file).to eq file }
     it { expect(subject.format).to eq AppInfo::Format::IPA }
     it { expect(subject.format).to eq :ipa }
-    it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
-    it { expect(subject.platform).to eq(:apple) }
-    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::IOS) }
-    it { expect(subject.opera_system).to eq(:ios) }
+    it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::APPLE) }
+    it { expect(subject.manufacturer).to eq(:apple) }
+    it { expect(subject.platform).to eq(AppInfo::Platform::IOS) }
+    it { expect(subject.platform).to eq(:ios) }
     it { expect(subject.device).to eq(AppInfo::Device::IPHONE) }
     it { expect(subject.device).to eq(:iphone) }
     it { expect(subject).to be_iphone }
@@ -61,10 +61,10 @@ describe AppInfo::IPA do
     it { expect(subject.file).to eq file }
     it { expect(subject.format).to eq AppInfo::Format::IPA }
     it { expect(subject.format).to eq :ipa }
-    it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
-    it { expect(subject.platform).to eq(:apple) }
-    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::IOS) }
-    it { expect(subject.opera_system).to eq(:ios) }
+    it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::APPLE) }
+    it { expect(subject.manufacturer).to eq(:apple) }
+    it { expect(subject.platform).to eq(AppInfo::Platform::IOS) }
+    it { expect(subject.platform).to eq(:ios) }
     it { expect(subject.device).to eq(AppInfo::Device::IPAD) }
     it { expect(subject.device).to eq(:ipad) }
     it { expect(subject).not_to be_iphone }
@@ -121,10 +121,10 @@ describe AppInfo::IPA do
     it { expect(subject.file).to eq file }
     it { expect(subject.format).to eq AppInfo::Format::IPA }
     it { expect(subject.format).to eq :ipa }
-    it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
-    it { expect(subject.platform).to eq(:apple) }
-    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::IOS) }
-    it { expect(subject.opera_system).to eq(:ios) }
+    it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::APPLE) }
+    it { expect(subject.manufacturer).to eq(:apple) }
+    it { expect(subject.platform).to eq(AppInfo::Platform::IOS) }
+    it { expect(subject.platform).to eq(:ios) }
     it { expect(subject.device).to eq(AppInfo::Device::UNIVERSAL) }
     it { expect(subject.device).to eq(:universal) }
     it { expect(subject).not_to be_iphone }

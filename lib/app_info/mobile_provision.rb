@@ -7,20 +7,20 @@ module AppInfo
   # Apple code signing: provisioning profile parser
   # @see https://developer.apple.com/documentation/technotes/tn3125-inside-code-signing-provisioning-profiles
   class MobileProvision < File
-    # @return [Symbol] {Platform}
-    def platform
-      Platform::APPLE
+    # @return [Symbol] {Manufacturer}
+    def manufacturer
+      Manufacturer::APPLE
     end
 
-    # @return [Symbol] {OperaSystem}
-    def opera_system
-      case opera_systems[0]
+    # @return [Symbol] {Platform}
+    def platform
+      case platforms[0]
       when :macos
-        OperaSystem::MACOS
+        Platform::MACOS
       when :ios
-        OperaSystem::IOS
+        Platform::IOS
       else
-        raise NotImplementedError, "Unkonwn opera_system: #{opera_systems[0]}"
+        raise NotImplementedError, "Unkonwn platform: #{platforms[0]}"
       end
     end
 
@@ -43,7 +43,7 @@ module AppInfo
     end
 
     # @return [Array<Symbol>]
-    def opera_systems
+    def platforms
       return unless platforms = mobileprovision.try(:[], 'Platform')
 
       platforms.map do |v|
@@ -111,13 +111,13 @@ module AppInfo
     # @see https://stackoverflow.com/questions/1003066/what-does-get-task-allow-do-in-xcode
     # @return [Boolea]
     def development?
-      case opera_system
-      when OperaSystem::IOS
+      case platform
+      when Platform::IOS
         entitlements['get-task-allow'] == true
-      when OperaSystem::MACOS
+      when Platform::MACOS
         !devices.nil?
       else
-        raise NotImplementedError, "Unknown opera_system: #{opera_system}"
+        raise NotImplementedError, "Unknown platform: #{platform}"
       end
     end
 
@@ -126,26 +126,26 @@ module AppInfo
     # @see https://developer.apple.com/library/archive/qa/qa1830/_index.html
     # @return [Boolea]
     def appstore?
-      case opera_system
-      when OperaSystem::IOS
+      case platform
+      when Platform::IOS
         !development? && entitlements.key?('beta-reports-active')
-      when OperaSystem::MACOS
+      when Platform::MACOS
         !development?
       else
-        raise NotImplementedError, "Unknown opera_system: #{opera_system}"
+        raise NotImplementedError, "Unknown platform: #{platform}"
       end
     end
 
     # @return [Boolea]
     def adhoc?
-      return false if opera_system == OperaSystem::MACOS # macOS no need adhoc
+      return false if platform == Platform::MACOS # macOS no need adhoc
 
       !development? && !devices.nil?
     end
 
     # @return [Boolea]
     def enterprise?
-      return false if opera_system == OperaSystem::MACOS # macOS no need adhoc
+      return false if platform == Platform::MACOS # macOS no need adhoc
 
       !development? && !adhoc? && !appstore?
     end

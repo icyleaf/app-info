@@ -9,10 +9,10 @@ describe AppInfo::Proguard do
     context 'parse' do
       it { expect(subject.format).to eq AppInfo::Format::PROGUARD }
       it { expect(subject.format).to eq :proguard }
-      it { expect(subject.platform).to eq AppInfo::Platform::GOOGLE }
-      it { expect(subject.platform).to eq :google }
-      it { expect(subject.opera_system).to eq AppInfo::OperaSystem::ANDROID }
-      it { expect(subject.opera_system).to eq :android }
+      it { expect(subject.manufacturer).to eq AppInfo::Manufacturer::GOOGLE }
+      it { expect(subject.manufacturer).to eq :google }
+      it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
+      it { expect(subject.platform).to eq :android }
       it { expect{ subject.device }.to raise_error NotImplementedError }
       it { expect(subject.uuid).to eq '81384aeb-4837-5f73-a771-417b4399a483' }
       it { expect(subject.mapping?).to be true }
@@ -35,10 +35,10 @@ describe AppInfo::Proguard do
     context 'parse' do
       it { expect(subject.format).to eq AppInfo::Format::PROGUARD }
       it { expect(subject.format).to eq :proguard }
-      it { expect(subject.platform).to eq AppInfo::Platform::GOOGLE }
-      it { expect(subject.platform).to eq :google }
-      it { expect(subject.opera_system).to eq AppInfo::OperaSystem::ANDROID }
-      it { expect(subject.opera_system).to eq :android }
+      it { expect(subject.manufacturer).to eq AppInfo::Manufacturer::GOOGLE }
+      it { expect(subject.manufacturer).to eq :google }
+      it { expect(subject.platform).to eq AppInfo::Platform::ANDROID }
+      it { expect(subject.platform).to eq :android }
       it { expect{ subject.device }.to raise_error NotImplementedError }
       it { expect(subject.uuid).to eq '81384aeb-4837-5f73-a771-417b4399a483' }
       it { expect(subject.mapping?).to be true }
