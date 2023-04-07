@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [3.0.0.beta3] (2023-04-05)
+
+### Changed
+
+- Rename `.platform` to `.manufacturer`, rename `.opera_sytem` to `.platform` for all parsers.
+
+### Fixed
+
+- Minor fixes.
+
 ## [3.0.0.beta2] (2023-04-04)
 
 ### Changed

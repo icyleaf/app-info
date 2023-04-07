@@ -24,14 +24,14 @@ module AppInfo
       0x5128 => 'RISC-v 128'
     }.freeze
 
+    # @return [Symbol] {Manufacturer}
+    def manufacturer
+      Manufacturer::MICROSOFT
+    end
+
     # @return [Symbol] {Platform}
     def platform
       Platform::WINDOWS
-    end
-
-    # @return [Symbol] {OperaSystem}
-    def opera_system
-      OperaSystem::WINDOWS
     end
 
     # @return [Symbol] {Device}

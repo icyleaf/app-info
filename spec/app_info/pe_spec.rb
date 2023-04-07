@@ -9,10 +9,10 @@ describe AppInfo::PE do
       it { expect(subject.file).to eq file }
       it { expect(subject.format).to eq AppInfo::Format::PE }
       it { expect(subject.format).to eq :pe }
-      it { expect(subject.platform).to eq AppInfo::Platform::WINDOWS }
-      it { expect(subject.platform).to eq :windows }
+      it { expect(subject.manufacturer).to eq AppInfo::Manufacturer::MICROSOFT }
+      it { expect(subject.manufacturer).to eq :microsoft }
       it { expect(subject.device).to eq AppInfo::Device::WINDOWS }
-      it { expect(subject.device).to eq :windows }
+      it { expect(subject.device).to eq :microsoft }
       it { expect(subject.binary_file).not_to be_nil }
       it { expect(subject.size).to eq 415127 }
       it { expect(subject.size(human_size: true)).to eq "405.40 KB" }
@@ -65,10 +65,10 @@ describe AppInfo::PE do
       it { expect(subject.file).to eq file }
       it { expect(subject.format).to eq AppInfo::Format::PE }
       it { expect(subject.format).to eq :pe }
-      it { expect(subject.platform).to eq AppInfo::Platform::WINDOWS }
-      it { expect(subject.platform).to eq :windows }
+      it { expect(subject.manufacturer).to eq AppInfo::Manufacturer::MICROSOFT }
+      it { expect(subject.manufacturer).to eq :microsoft }
       it { expect(subject.device).to eq AppInfo::Device::WINDOWS }
-      it { expect(subject.device).to eq :windows }
+      it { expect(subject.device).to eq :microsoft }
       it { expect(subject.binary_file).not_to be_nil }
       it { expect(subject.size).to eq 293888 }
       it { expect(subject.size(human_size: true)).to eq "287.00 KB" }

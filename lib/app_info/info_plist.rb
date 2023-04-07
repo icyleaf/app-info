@@ -17,18 +17,18 @@ module AppInfo
       Device::MACOS => %w[CFBundleIconFile CFBundleIconName]
     }.freeze
 
-    # @return [Symbol] {Platform}
-    def platform
-      Platform::APPLE
+    # @return [Symbol] {Manufacturer}
+    def manufacturer
+      Manufacturer::APPLE
     end
 
-    # @return [Symbol] {OperaSystem}
-    def opera_system
+    # @return [Symbol] {Platform}
+    def platform
       case device
       when Device::MACOS
-        OperaSystem::MACOS
+        Platform::MACOS
       when Device::IPHONE, Device::IPAD, Device::UNIVERSAL
-        OperaSystem::IOS
+        Platform::IOS
       end
     end
 
@@ -40,7 +40,7 @@ module AppInfo
         Device::IPAD
       elsif device_family == [1, 2]
         Device::UNIVERSAL
-      elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTPlatformName').nil?
+      elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTManufacturerName').nil?
         Device::MACOS
       else
         raise NotImplementedError, "Unkonwn device: #{device_family}"

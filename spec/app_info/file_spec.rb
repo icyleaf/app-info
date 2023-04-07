@@ -5,8 +5,8 @@ describe AppInfo::File do
 
     context 'parse' do
       it { expect{ subject.format }.to raise_error NotImplementedError }
+      it { expect{ subject.manufacturer }.to raise_error NotImplementedError }
       it { expect{ subject.platform }.to raise_error NotImplementedError }
-      it { expect{ subject.opera_system }.to raise_error NotImplementedError }
       it { expect{ subject.device }.to raise_error NotImplementedError }
       it { expect{ subject.size }.to raise_error NotImplementedError }
     end

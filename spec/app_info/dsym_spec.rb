@@ -17,9 +17,9 @@ describe AppInfo::DSYM do
         it { expect(subject.file).to eq fixture_path('dsyms/iOS-single-dSYM-with-single-macho.zip') }
         it { expect(subject.format).to eq AppInfo::Format::DSYM }
         it { expect(subject.format).to eq :dsym }
-        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
-        it { expect(subject.platform).to eq(:apple) }
-        it { expect{ subject.opera_system }.to raise_error NotImplementedError }
+        it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::APPLE) }
+        it { expect(subject.manufacturer).to eq(:apple) }
+        it { expect{ subject.platform }.to raise_error NotImplementedError }
         it { expect{ subject.device }.to raise_error NotImplementedError }
         it { expect(subject.files.size).to eq 1 }
         it { expect(subject.files[0].object).to eq 'iOS' }
@@ -67,9 +67,9 @@ describe AppInfo::DSYM do
         it { expect(subject.file).to eq fixture_path('dsyms/iOS-single-dSYM-with-multi-macho.zip') }
         it { expect(subject.format).to eq AppInfo::Format::DSYM }
         it { expect(subject.format).to eq :dsym }
-        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
-        it { expect(subject.platform).to eq(:apple) }
-        it { expect{ subject.opera_system }.to raise_error NotImplementedError }
+        it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::APPLE) }
+        it { expect(subject.manufacturer).to eq(:apple) }
+        it { expect{ subject.platform }.to raise_error NotImplementedError }
         it { expect{ subject.device }.to raise_error NotImplementedError }
         it { expect(subject.files.size).to eq 1 }
         it { expect(subject.files[0].object).to eq 'iOS' }
@@ -128,9 +128,9 @@ describe AppInfo::DSYM do
         it { expect(subject.file).to eq file }
         it { expect(subject.format).to eq AppInfo::Format::DSYM }
         it { expect(subject.format).to eq :dsym }
-        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
-        it { expect(subject.platform).to eq(:apple) }
-        it { expect{ subject.opera_system }.to raise_error NotImplementedError }
+        it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::APPLE) }
+        it { expect(subject.manufacturer).to eq(:apple) }
+        it { expect{ subject.platform }.to raise_error NotImplementedError }
         it { expect{ subject.device }.to raise_error NotImplementedError }
         it { expect(subject.files.size).to eq 2 }
         it { expect(subject.files[0].object).to eq 'AppInfo' }
@@ -195,9 +195,9 @@ describe AppInfo::DSYM do
         it { expect(subject.file).to eq file }
         it { expect(subject.format).to eq AppInfo::Format::DSYM }
         it { expect(subject.format).to eq :dsym }
-        it { expect(subject.platform).to eq(AppInfo::Platform::APPLE) }
-        it { expect(subject.platform).to eq(:apple) }
-        it { expect{ subject.opera_system }.to raise_error NotImplementedError }
+        it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::APPLE) }
+        it { expect(subject.manufacturer).to eq(:apple) }
+        it { expect{ subject.platform }.to raise_error NotImplementedError }
         it { expect{ subject.device }.to raise_error NotImplementedError }
         it { expect(subject.files.size).to eq 2 }
         it { expect(subject.files[0].object).to eq 'AppInfo' }

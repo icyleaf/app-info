@@ -1,14 +1,14 @@
-describe AppInfo::Platform do
-  it { expect(AppInfo::Platform::APPLE).to eq :apple }
-  it { expect(AppInfo::Platform::GOOGLE).to eq :google }
-  it { expect(AppInfo::Platform::WINDOWS).to eq :windows }
+describe AppInfo::Manufacturer do
+  it { expect(AppInfo::Manufacturer::APPLE).to eq :apple }
+  it { expect(AppInfo::Manufacturer::GOOGLE).to eq :google }
+  it { expect(AppInfo::Manufacturer::MICROSOFT).to eq :microsoft }
 end
 
-describe AppInfo::OperaSystem do
-  it { expect(AppInfo::OperaSystem::MACOS).to eq :macos }
-  it { expect(AppInfo::OperaSystem::IOS).to eq :ios }
-  it { expect(AppInfo::OperaSystem::ANDROID).to eq :android }
-  it { expect(AppInfo::OperaSystem::WINDOWS).to eq :windows }
+describe AppInfo::Platform do
+  it { expect(AppInfo::Platform::MACOS).to eq :macos }
+  it { expect(AppInfo::Platform::IOS).to eq :ios }
+  it { expect(AppInfo::Platform::ANDROID).to eq :android }
+  it { expect(AppInfo::Platform::WINDOWS).to eq :windows }
 end
 
 describe AppInfo::Device do

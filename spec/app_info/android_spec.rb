@@ -6,10 +6,10 @@ describe AppInfo::Android do
     it { expect(subject.file).to eq file }
     it { expect(subject.size).to eq(3618865) }
     it { expect(subject.size(human_size: true)).to eq('3.45 MB') }
-    it { expect(subject.platform).to eq(AppInfo::Platform::GOOGLE) }
-    it { expect(subject.platform).to eq(:google) }
-    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::ANDROID) }
-    it { expect(subject.opera_system).to eq(:android) }
+    it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::GOOGLE) }
+    it { expect(subject.manufacturer).to eq(:google) }
+    it { expect(subject.platform).to eq(AppInfo::Platform::ANDROID) }
+    it { expect(subject.platform).to eq(:android) }
     it { expect { subject.format }.to raise_error NotImplementedError }
     it { expect { subject.name }.to raise_error NotImplementedError }
     it { expect { subject.use_features }.to raise_error NotImplementedError }
@@ -31,10 +31,10 @@ describe AppInfo::Android do
     it { expect(subject.file).to eq file }
     it { expect(subject.size).to eq(4000563) }
     it { expect(subject.size(human_size: true)).to eq('3.82 MB') }
-    it { expect(subject.platform).to eq(AppInfo::Platform::GOOGLE) }
-    it { expect(subject.platform).to eq(:google) }
-    it { expect(subject.opera_system).to eq(AppInfo::OperaSystem::ANDROID) }
-    it { expect(subject.opera_system).to eq(:android) }
+    it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::GOOGLE) }
+    it { expect(subject.manufacturer).to eq(:google) }
+    it { expect(subject.platform).to eq(AppInfo::Platform::ANDROID) }
+    it { expect(subject.platform).to eq(:android) }
     it { expect { subject.format }.to raise_error NotImplementedError }
     it { expect { subject.name }.to raise_error NotImplementedError }
     it { expect { subject.use_features }.to raise_error NotImplementedError }

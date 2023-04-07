@@ -7,9 +7,9 @@ module AppInfo
   class DSYM < File
     include Helper::Archive
 
-    # @return [Symbol] {Platform}
-    def platform
-      Platform::APPLE
+    # @return [Symbol] {Manufacturer}
+    def manufacturer
+      Manufacturer::APPLE
     end
 
     def each_file(&block)

@@ -22,13 +22,13 @@ module AppInfo
       }.call
     end
 
-    # @abstract Subclass and override {#opera_system} to implement.
-    def opera_system
+    # @abstract Subclass and override {#platform} to implement.
+    def platform
       not_implemented_error!(__method__)
     end
 
-    # @abstract Subclass and override {#platform} to implement.
-    def platform
+    # @abstract Subclass and override {#manufacturer} to implement.
+    def manufacturer
       not_implemented_error!(__method__)
     end
 

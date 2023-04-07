@@ -26,9 +26,9 @@ module AppInfo
       APPSTORE = :appstore
     end
 
-    # @return [Symbol] {Platform}
-    def platform
-      Platform::APPLE
+    # @return [Symbol] {Manufacturer}
+    def manufacturer
+      Manufacturer::APPLE
     end
 
     # return file size
@@ -46,8 +46,8 @@ module AppInfo
 
     # @!method device
     #   @see InfoPlist#device
-    # @!method opera_system
-    #   @see InfoPlist#opera_system
+    # @!method platform
+    #   @see InfoPlist#platform
     # @!method iphone?
     #   @see InfoPlist#iphone?
     # @!method ipad?
@@ -72,7 +72,7 @@ module AppInfo
     #   @see InfoPlist#min_sdk_version
     # @!method min_os_version
     #   @see InfoPlist#min_os_version
-    def_delegators :info, :device, :opera_system, :iphone?, :ipad?, :universal?, :macos?,
+    def_delegators :info, :device, :platform, :iphone?, :ipad?, :universal?, :macos?,
                    :build_version, :name, :release_version, :identifier, :bundle_id,
                    :display_name, :bundle_name, :min_sdk_version, :min_os_version
 
