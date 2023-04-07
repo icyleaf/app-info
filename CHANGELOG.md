@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [3.0.0.beta3] (2023-04-05)
 
+### Added
+
+- Android parser `.icons` method add exclude param to filter icons.
+
 ### Changed
 
 - Rename `.platform` to `.manufacturer`, rename `.opera_sytem` to `.platform` for all parsers.
@@ -288,7 +292,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta2..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta3..HEAD
+[3.0.0.beta3]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta2...v3.0.0.beta3
 [3.0.0.beta2]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta1...v3.0.0.beta2
 [3.0.0.beta1]: https://github.com/icyleaf/app-info/compare/v2.8.5...v3.0.0.beta1
 [2.8.5]: https://github.com/icyleaf/app-info/compare/v2.8.4...v2.8.5
