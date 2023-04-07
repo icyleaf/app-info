@@ -69,7 +69,6 @@ describe AppInfo::APK do
       it { expect(subject.build_version).to eq('1') }
       it { expect(subject.name).to eq('My Application') }
       it { expect(subject.bundle_id).to eq('com.example.myapplication') }
-      it { expect(subject.icons.length).not_to be_nil }
       it { expect(subject.min_sdk_version).to eq 24 }
       it { expect(subject.target_sdk_version).to eq 33 }
       it { expect(subject.deep_links).to eq([]) }
@@ -83,9 +82,32 @@ describe AppInfo::APK do
       it { expect(subject.manifest.label).to eq('My Application') }
       it { expect(subject.manifest.label(locale: 'en')).to eq('My Application') }
       it { expect(subject.manifest.label(locale: 'zh-CN')).to eq('My Application') }
-
       it { expect(subject.certificates).to be_empty }
       it { expect(subject.signs).to be_empty }
+
+      it { expect(subject.icons.size).to eq(7) }
+      it 'should return non xml(symbol) icons' do
+        icons = subject.icons(exclude: :xml)
+        expect(icons.size).to eq(5)
+
+        icons.each do |icon|
+          expect(File.extname(icon[:name])).not_to eq('.xml')
+        end
+      end
+
+      it 'should return non webp(string) icons' do
+        icons = subject.icons(exclude: 'webp')
+        expect(icons.size).to eq(2)
+
+        icons.each do |icon|
+          expect(File.extname(icon[:name])).not_to eq('.webp')
+        end
+      end
+
+      it 'should return empty(array<string, symbol>) icons' do
+        icons = subject.icons(exclude: [:xml, 'webp'])
+        expect(icons.size).to eq(0)
+      end
     end
   end
 end

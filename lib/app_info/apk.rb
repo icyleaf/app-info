@@ -70,22 +70,42 @@ module AppInfo
     end
 
     # Full icons metadata
-    # @example
+    # @example full icons
     #   apk.icons
     #   # => [
     #   #   {
-    #   #     name: 'icon.png',
-    #   #     file: '/path/to/icon.png',
+    #   #     name: 'ic_launcher.png',
+    #   #     file: '/path/to/ic_launcher.png',
     #   #     dimensions: [29, 29]
     #   #   },
     #   #   {
-    #   #     name: 'icon1.png',
-    #   #     file: '/path/to/icon1.png',
+    #   #     name: 'ic_launcher.png',
+    #   #     file: '/path/to/ic_launcher.png',
+    #   #     dimensions: [120, 120]
+    #   #   },
+    #   #   {
+    #   #     name: 'ic_launcher.xml',
+    #   #     file: '/path/to/ic_launcher.xml',
+    #   #     dimensions: [nil, nil]
+    #   #   },
+    #   # ]
+    # @example exclude xml icons
+    #   apk.icons(exclude: :xml)
+    #   # => [
+    #   #   {
+    #   #     name: 'ic_launcher.png',
+    #   #     file: '/path/to/ic_launcher.png',
+    #   #     dimensions: [29, 29]
+    #   #   },
+    #   #   {
+    #   #     name: 'ic_launcher.png',
+    #   #     file: '/path/to/ic_launcher.png',
     #   #     dimensions: [120, 120]
     #   #   }
     #   # ]
+    # @param [Boolean] xml return xml icons
     # @return [Array<Hash{Symbol => String, Array<Integer>}>] icons paths of icons
-    def icons
+    def icons(exclude: nil)
       @icons ||= apk.icon.each_with_object([]) do |(path, data), obj|
         icon_name = ::File.basename(path)
         icon_path = ::File.join(contents, ::File.dirname(path))
@@ -99,6 +119,8 @@ module AppInfo
           dimensions: ImageSize.path(icon_file).size
         }
       end
+
+      extract_icon(@icons, exclude: exclude)
     end
 
     def clear!

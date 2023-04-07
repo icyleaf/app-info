@@ -10,14 +10,6 @@ describe AppInfo::APK do
       it { expect(subject.file).to eq file }
       it { expect(subject.size).to eq(4000563) }
       it { expect(subject.size(human_size: true)).to eq('3.82 MB') }
-      # it { expect(subject.file_type).to eq :apk }
-      # it { expect(subject.file_type).to eq AppInfo::Format::APK }
-      # it { expect(subject.manufacturer).to eq 'Android' }
-      # it { expect(subject.manufacturer).to eq AppInfo::Manufacturer::ANDROID }
-      # it { expect(subject.wear?).to be false }
-      # it { expect(subject.tv?).to be false }
-      # it { expect(subject.automotive?).to be false }
-      # it { expect(subject.device_type).to eq AppInfo::APK::Device::PHONE }
       it { expect(subject.format).to eq(AppInfo::Format::APK) }
       it { expect(subject.format).to eq(:apk) }
       it { expect(subject.manufacturer).to eq(AppInfo::Manufacturer::GOOGLE) }
@@ -36,7 +28,6 @@ describe AppInfo::APK do
       it { expect(subject.name).to eq('AppInfoDemo') }
       it { expect(subject.bundle_id).to eq('com.icyleaf.appinfodemo') }
       it { expect(subject.identifier).to eq('com.icyleaf.appinfodemo') }
-      it { expect(subject.icons.length).not_to be_nil }
       it { expect(subject.min_sdk_version).to eq 14 }
       it { expect(subject.target_sdk_version).to eq 31 }
       it { expect(subject.activities.size).to eq(2) }
@@ -55,6 +46,30 @@ describe AppInfo::APK do
       it { expect(subject.signs).to be_kind_of(Hash) }
       it { expect(subject.signs).to have_key('META-INF/CERT.RSA') }
       it { expect(subject.signs['META-INF/CERT.RSA']).to be_kind_of(OpenSSL::PKCS7) }
+
+      it { expect(subject.icons.size).to eq(6) }
+      it 'should return non xml(symbol) icons' do
+        icons = subject.icons(exclude: :xml)
+        expect(icons.size).to eq(5)
+
+        icons.each do |icon|
+          expect(File.extname(icon[:name])).not_to eq('.xml')
+        end
+      end
+
+      it 'should return non webp(string) icons' do
+        icons = subject.icons(exclude: 'webp')
+        expect(icons.size).to eq(1)
+
+        icons.each do |icon|
+          expect(File.extname(icon[:name])).not_to eq('.webp')
+        end
+      end
+
+      it 'should return empty(array<string, symbol>) icons' do
+        icons = subject.icons(exclude: [:xml, 'webp'])
+        expect(icons.size).to eq(0)
+      end
     end
   end
 

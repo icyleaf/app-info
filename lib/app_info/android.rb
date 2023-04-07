@@ -153,6 +153,25 @@ module AppInfo
 
     protected
 
+    def extract_icon(icons, exclude: nil)
+      excludes = exclude_icon_exts(exclude: exclude)
+      icons.reject { |icon| icon_ext_match?(icon[:name], excludes) }
+    end
+
+    def exclude_icon_exts(exclude:)
+      case exclude
+      when String then [exclude]
+      when Array then exclude.map(&:to_s)
+      when Symbol then [exclude.to_s]
+      end
+    end
+
+    def icon_ext_match?(file, excludes)
+      return false if file.nil? || excludes.nil?
+
+      excludes.include?(::File.extname(file)[1..-1])
+    end
+
     def v1sign
       @v1sign ||= Android::Signature::V1.verify(self)
     rescue Android::Signature::NotFoundError

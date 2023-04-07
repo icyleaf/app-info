@@ -115,28 +115,48 @@ module AppInfo
     end
 
     # Full icons metadata
-    # @example
+    # @example full icons
     #   aab.icons
     #   # => [
     #   #   {
-    #   #     name: 'icon.png',
-    #   #     file: '/path/to/icon.png',
+    #   #     name: 'ic_launcher.png',
+    #   #     file: '/path/to/ic_launcher.webp',
     #   #     dimensions: [29, 29]
     #   #   },
     #   #   {
-    #   #     name: 'icon1.png',
-    #   #     file: '/path/to/icon1.png',
+    #   #     name: 'ic_launcher.png',
+    #   #     file: '/path/to/ic_launcher.png',
+    #   #     dimensions: [120, 120]
+    #   #   },
+    #   #   {
+    #   #     name: 'ic_launcher.xml',
+    #   #     file: '/path/to/ic_launcher.xml',
+    #   #     dimensions: [nil, nil]
+    #   #   },
+    #   # ]
+    # @example exclude xml icons
+    #   aab.icons(filter: :xml)
+    #   # => [
+    #   #   {
+    #   #     name: 'ic_launcher.png',
+    #   #     file: '/path/to/ic_launcher.webp',
+    #   #     dimensions: [29, 29]
+    #   #   },
+    #   #   {
+    #   #     name: 'ic_launcher.png',
+    #   #     file: '/path/to/ic_launcher.png',
     #   #     dimensions: [120, 120]
     #   #   }
     #   # ]
+    # @param [String, Symbol, Array<Symbol, Array>] filter filter file extension name
     # @return [Array<Hash{Symbol => String, Array<Integer>}>] icons paths of icons
-    def icons
+    def icons(exclude: nil)
       @icons ||= manifest.icons.each_with_object([]) do |res, obj|
         path = res.value
         filename = ::File.basename(path)
         filepath = ::File.join(contents, ::File.dirname(path))
         file = ::File.join(filepath, filename)
-        FileUtils.mkdir_p filepath
+        FileUtils.mkdir_p(filepath)
 
         binary_data = read_file(path)
         ::File.write(file, binary_data, encoding: Encoding::BINARY)
@@ -147,6 +167,8 @@ module AppInfo
           dimensions: ImageSize.path(file).size
         }
       end
+
+      extract_icon(@icons, exclude: exclude)
     end
 
     def clear!
