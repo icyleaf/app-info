@@ -12,19 +12,25 @@ describe AppInfo::PE do
       it { expect(subject.manufacturer).to eq AppInfo::Manufacturer::MICROSOFT }
       it { expect(subject.manufacturer).to eq :microsoft }
       it { expect(subject.device).to eq AppInfo::Device::WINDOWS }
-      it { expect(subject.device).to eq :microsoft }
+      it { expect(subject.device).to eq :windows }
       it { expect(subject.binary_file).not_to be_nil }
       it { expect(subject.size).to eq 415127 }
       it { expect(subject.size(human_size: true)).to eq "405.40 KB" }
       it { expect(subject.binary_size).to eq 443392 }
       it { expect(subject.binary_size(human_size: true)).to eq "433.00 KB" }
+      it { expect(subject.name).to eq('TopBar') }
+      it { expect(subject.company_name).to eq('Dejan Stojanovic') }
+      it { expect(subject.archs).to eq('x64') }
       it { expect(subject.product_version).to eq('1.0.0') }
       it { expect(subject.release_version).to eq('1.0.0') }
       it { expect(subject.assembly_version).to eq('1.0.0.0') }
       it { expect(subject.build_version).to eq('1.0.0.0') }
-      it { expect(subject.name).to eq('TopBar') }
-      it { expect(subject.company_name).to eq('Dejan Stojanovic') }
-      it { expect(subject.archs).to eq('x64') }
+      it { expect(subject.special_build).to be_nil }
+      it { expect(subject.private_build).to be_nil }
+      it { expect(subject.original_filename).to eq('TopBar.dll') }
+      it { expect(subject.file_description).to eq('TopBar') }
+      it { expect(subject.internal_name).to eq('TopBar.dll') }
+      it { expect(subject.legal_trademarks).to be_nil }
       it { expect(subject.version_info).to be_kind_of(AppInfo::PE::VersionInfo) }
       it { expect(subject.pe).to be_kind_of(PEdump) }
 
@@ -68,19 +74,25 @@ describe AppInfo::PE do
       it { expect(subject.manufacturer).to eq AppInfo::Manufacturer::MICROSOFT }
       it { expect(subject.manufacturer).to eq :microsoft }
       it { expect(subject.device).to eq AppInfo::Device::WINDOWS }
-      it { expect(subject.device).to eq :microsoft }
+      it { expect(subject.device).to eq :windows }
       it { expect(subject.binary_file).not_to be_nil }
       it { expect(subject.size).to eq 293888 }
       it { expect(subject.size(human_size: true)).to eq "287.00 KB" }
       it { expect(subject.binary_size).to eq 293888 }
       it { expect(subject.binary_size(human_size: true)).to eq "287.00 KB" }
+      it { expect(subject.name).to eq('UPX') }
+      it { expect(subject.company_name).to eq('The UPX Team http://upx.sf.net') }
+      it { expect(subject.archs).to eq('x86') }
       it { expect(subject.product_version).to eq('3.08 (2011-12-12)') }
       it { expect(subject.release_version).to eq('3.08 (2011-12-12)') }
       it { expect(subject.assembly_version).to be_nil }
       it { expect(subject.build_version).to be_nil }
-      it { expect(subject.name).to eq('UPX') }
-      it { expect(subject.company_name).to eq('The UPX Team http://upx.sf.net') }
-      it { expect(subject.archs).to eq('x86') }
+      it { expect(subject.special_build).to be_nil }
+      it { expect(subject.private_build).to be_nil }
+      it { expect(subject.original_filename).to eq('upx.exe') }
+      it { expect(subject.file_description).to eq('UPX executable packer') }
+      it { expect(subject.internal_name).to eq('upx.exe') }
+      it { expect(subject.legal_trademarks).to be_nil }
       it { expect(subject.version_info).to be_kind_of(AppInfo::PE::VersionInfo) }
       it { expect(subject.pe).to be_kind_of(PEdump) }
 

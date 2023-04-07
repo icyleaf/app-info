@@ -68,11 +68,48 @@ module AppInfo
     # @!method assembly_version
     #   @see VersionInfo#assembly_version
     #   @return [String]
-    def_delegators :version_info, :product_name, :product_version, :company_name, :assembly_version
+    # @!method file_version
+    #   @see VersionInfo#file_version
+    #   @return [String]
+    # @!method file_description
+    #   @see VersionInfo#file_description
+    #   @return [String]
+    # @!method copyright
+    #   @see VersionInfo#copyright
+    #   @return [String]
+    #   @return [String]
+    # @!method special_build
+    #   @see VersionInfo#special_build
+    #   @return [String]
+    # @!method private_build
+    #   @see VersionInfo#private_build
+    #   @return [String]
+    # @!method original_filename
+    #   @see VersionInfo#original_filename
+    #   @return [String]
+    # @!method internal_name
+    #   @see VersionInfo#internal_name
+    #   @return [String]
+    # @!method legal_trademarks
+    #   @see VersionInfo#legal_trademarks
+    #   @return [String]
+    def_delegators :version_info, :product_name, :product_version, :company_name, :assembly_version,
+                   :file_version, :file_description, :copyright, :special_build, :private_build,
+                   :original_filename, :internal_name, :legal_trademarks
 
     alias name product_name
-    alias release_version product_version
-    alias build_version assembly_version
+
+    # Find {#product_version} then fallback to {#file_version}
+    # @return [String, nil]
+    def release_version
+      product_version || file_version
+    end
+
+    # Find {#special_build}, {#private_build} then fallback to {#assembly_version}
+    # @return [String, nil]
+    def build_version
+      special_build || private_build || assembly_version
+    end
 
     # @return [String]
     def archs
@@ -189,7 +226,7 @@ module AppInfo
 
     # VersionInfo class
     #
-    # Ref: https://learn.microsoft.com/zh-cn/windows/win32/menurc/versioninfo-resource
+    # @see https://learn.microsoft.com/zh-cn/windows/win32/menurc/versioninfo-resource
     class VersionInfo
       def initialize(raw)
         @raw = raw
@@ -220,9 +257,34 @@ module AppInfo
         @file_version ||= value_of('FileVersion')
       end
 
-      # @return [String]
+      # @return [String, nil]
       def file_description
         @file_description ||= value_of('FileDescription')
+      end
+
+      # @return [String, nil]
+      def special_build
+        @special_build ||= value_of('SpecialBuild')
+      end
+
+      # @return [String, nil]
+      def private_build
+        @private_build ||= value_of('PrivateBuild')
+      end
+
+      # @return [String]
+      def original_filename
+        @original_filename ||= value_of('OriginalFilename')
+      end
+
+      # @return [String]
+      def internal_name
+        @internal_name ||= value_of('InternalName')
+      end
+
+      # @return [String]
+      def legal_trademarks
+        @legal_trademarks ||= value_of('LegalTrademarks')
       end
 
       # @return [String]
