@@ -51,13 +51,6 @@ module AppInfo
     end
 
     # @return [String, nil]
-    def releasd_version
-      return unless manifest?
-
-      manifest.root.attributes['package']
-    end
-
-    # @return [String, nil]
     def version_name
       return unless manifest?
 

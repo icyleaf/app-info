@@ -22,6 +22,7 @@ module AppInfo
         obj << DebugInfo.new(::File.join(contents, file))
       end
     end
+    alias objects files
 
     def clear!
       return unless @contents
@@ -52,6 +53,7 @@ module AppInfo
             end
 
             dest_path = ::File.join(base_path, file_path)
+            FileUtils.mkdir_p(::File.dirname(dest_path))
             entry.extract(dest_path) unless ::File.exist?(dest_path)
           end
         end
