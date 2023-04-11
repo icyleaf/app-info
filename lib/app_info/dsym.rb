@@ -12,9 +12,11 @@ module AppInfo
       Manufacturer::APPLE
     end
 
+    # @return [nil]
     def each_file(&block)
       files.each { |file| block.call(file) }
     end
+    alias each_objects each_file
 
     # @return [Array<DebugInfo>] dsym_files files by alphabetical order
     def files

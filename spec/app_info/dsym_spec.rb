@@ -36,6 +36,7 @@ describe AppInfo::DSYM do
         it { expect(subject.files[0].machos[0].size).to eq data[:size] }
         it { expect(subject.files[0].machos[0].size(human_size: true)).to eq data[:human_size] }
         it { expect(subject.files[0].machos[0].to_h).to eq data }
+        it { expect(subject.objects).to eq subject.files }
       end
     end
 

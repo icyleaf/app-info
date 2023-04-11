@@ -66,6 +66,17 @@ module AppInfo
     end
     alias build_version version_code
 
+    def files
+      Dir.children(contents).each_with_object([]) do |filename, obj|
+        path = ::File.join(contents, filename)
+        obj << {
+          name: filename,
+          path: path,
+          size: ::File.size(path)
+        }
+      end
+    end
+
     # @return [REXML::Document]
     def manifest
       return unless manifest?

@@ -12,14 +12,17 @@ module AppInfo
         @path = path
       end
 
+      # @return [String]
       def object
         @object ||= ::File.basename(bin_path)
       end
 
+      # @return [::MachO::MachOFile, ::MachO::FatFile]
       def macho_type
         @macho_type ||= ::MachO.open(bin_path)
       end
 
+      # @return [Array<AppInfo::DSYM::MachO>]
       def machos
         @machos ||= case macho_type
                     when ::MachO::MachOFile
@@ -37,29 +40,35 @@ module AppInfo
                     end
       end
 
+      # @return [String, nil]
       def release_version
         info.try(:[], 'CFBundleShortVersionString')
       end
 
+      # @return [String, nil]
       def build_version
         info.try(:[], 'CFBundleVersion')
       end
 
+      # @return [String, nil]
       def identifier
         info.try(:[], 'CFBundleIdentifier').sub('com.apple.xcode.dsym.', '')
       end
       alias bundle_id identifier
 
+      # @return [CFPropertyList]
       def info
         return nil unless ::File.exist?(info_path)
 
         @info ||= CFPropertyList.native_types(CFPropertyList::List.new(file: info_path).value)
       end
 
+      # @return [String]
       def info_path
         @info_path ||= ::File.join(path, 'Contents', 'Info.plist')
       end
 
+      # @return [String]
       def bin_path
         @bin_path ||= lambda {
           dwarf_path = ::File.join(path, 'Contents', 'Resources', 'DWARF')

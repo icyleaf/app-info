@@ -51,6 +51,10 @@ describe AppInfo::Proguard do
       it { expect(subject.version_code).to eq '1' }
       it { expect(subject.release_version).to eq '1.0' }
       it { expect(subject.build_version).to eq '1' }
+
+      it { expect(subject.files[0]).to have_key :name }
+      it { expect(subject.files[0]).to have_key :path }
+      it { expect(subject.files[0]).to have_key :size }
     end
   end
 
