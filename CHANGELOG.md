@@ -9,6 +9,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [3.0.0] (2023-04-18)
+
+### Added
+
+- New Windows PE format parser. [#47](https://github.com/icyleaf/app_info/pull/47)
+- Android parser add v2, v3 scheme signature support. [#55](https://github.com/icyleaf/app_info/pull/55]
+- dSYM parer accept multi dSYM target in a zip file. [#56](https://github.com/icyleaf/app_info/pull/56)
+- Better document for yardoc.
+- Android parser `.icons` method add exclude param to filter icons.
+- Add `.files` method to proguard parser.
+
+### Changed
+
+- Add `AppInfo::File` base class for all parsers.
+- Add `AppInfo::Certifiate` X509 certificate wrapped and apply in Android/MobileProvision.
+- Re-organize categories `.platform`  to `.manufacturer`, `.platform` and `.device` for all parsers.
+- Remove `.sign_version` method in Android parser.
+- Rename `.file_type` to `.format` method in all parers and return a `AppInfo::Format` type.
+- Remove duplice `AppInfo::AndroidDevice` class.
+- Remove `AppInfo::MobileProvision::DeveloperCertificate` class, use `AppInfo::Certifiate` instead.
+- Deprecate `.signs` and `.certifiates` methods in Android parser, use `.signatures` instead.
+- Deprecate `.developer_certs` method in MobileProvision parser, use `.certificates` instead.
+- Change ExportType values type to symbol both IPA and macOS parsers. [#58](https://github.com/icyleaf/app_info/pull/58)
+
 ## [3.0.0.beta4] (2023-04-11)
 
 ### Added
@@ -302,7 +326,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta4..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.0.0..HEAD
+[3.0.0]: https://github.com/icyleaf/app-info/compare/v2.8.5...v3.0.0
 [3.0.0.beta4]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta3...v3.0.0.beta4
 [3.0.0.beta3]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta2...v3.0.0.beta3
 [3.0.0.beta2]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta1...v3.0.0.beta2
