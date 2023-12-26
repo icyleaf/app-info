@@ -39,7 +39,8 @@ module AppInfo
       return :development if development?
       return :adhoc if adhoc?
       return :appstore if appstore?
-      return :enterprise if enterprise?
+
+      :enterprise if enterprise?
     end
 
     # @return [Array<Symbol>]
@@ -159,7 +160,7 @@ module AppInfo
       capabilities = []
       capabilities << 'In-App Purchase' << 'GameKit' if adhoc? || appstore?
 
-      entitlements.each do |key, _|
+      entitlements.each_key do |key|
         case key
         when 'aps-environment'
           capabilities << 'Push Notifications'

@@ -199,7 +199,7 @@ module AppInfo
         zip_entry.extract(exe_file)
         zip_file.close
 
-        return exe_file
+        exe_file
       }.call
     end
 

@@ -124,7 +124,7 @@ module AppInfo
       data[:sets] ||= []
       file = data[:file]
       reader = Icns::Reader.new(file)
-      Icns::SIZE_TO_TYPE.each do |size, _|
+      Icns::SIZE_TO_TYPE.each_key do |size|
         dest_filename = "#{::File.basename(file, '.icns')}_#{size}x#{size}.png"
         dest_file = tempdir(::File.join(::File.dirname(file), dest_filename), prefix: 'converted')
         next unless icon_data = reader.image(size: size)

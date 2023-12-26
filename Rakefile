@@ -9,7 +9,7 @@ require 'rubocop/rake_task'
 
 RSpec::Core::RakeTask.new(:spec)
 
-task default: :spec
+task default: %w[spec rubocop]
 
 task :doc do
   YARD::Rake::YardocTask.new do |t|
@@ -19,4 +19,6 @@ task :doc do
   end
 end
 
-
+task :rubocop do
+  RuboCop::RakeTask.new
+end

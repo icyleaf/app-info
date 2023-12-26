@@ -22,7 +22,7 @@ module AppInfo
 
       def find(reference, locale: '')
         type, name = reference_segments(reference)
-        packages.each do |_, package|
+        packages.each_value do |package|
           next unless value = package.find(name, type: type, locale: locale)
 
           return value

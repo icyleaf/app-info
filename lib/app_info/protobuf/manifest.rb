@@ -166,7 +166,7 @@ module AppInfo
             obj << intent_filters
           else
             intent_filters.each do |filter|
-              exist_method = "#{search}?".to_sym
+              exist_method = :"#{search}?"
               next if filter.respond_to?(exist_method) && !filter.send(exist_method)
 
               obj << filter.send(search)
@@ -188,7 +188,7 @@ module AppInfo
         CATEGORY_BROWSABLE = 'android.intent.category.BROWSABLE'
 
         def deep_links?
-          return unless respond_to?(:data)
+          return false unless respond_to?(:data)
 
           browsable? && data.any? { |d| DEEP_LINK_SCHEMES.include?(d.scheme) }
         end
@@ -202,7 +202,7 @@ module AppInfo
         end
 
         def schemes?
-          return unless respond_to?(:data)
+          return false unless respond_to?(:data)
 
           browsable? && data.any? { |d| !DEEP_LINK_SCHEMES.include?(d.scheme) }
         end
