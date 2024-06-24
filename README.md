@@ -119,6 +119,7 @@ ipa.devices
 ipa.ipad?
 ipa.iphone?
 ipa.universal?
+ipa.appletv?
 
 # detect app release type
 ipa.release_type
@@ -135,6 +136,18 @@ ipa.frameworks
 # get built-in plugins
 ipa.plugins
 # => [<AppInfo::Plugin:1680 @name=NotificationService>]
+
+# get url schemes
+ipa.url_schemes
+# => [{:name=>"Web", :role=>"Editor", :schemes=>["app-info", "app_info"]}]
+
+# get query schemes
+ipa.url_schemes
+# => ["twitter", "instagram", "www-x-callback"]
+
+# get background modes
+ipa.background_modes
+# => ["audio", "fetch", "remote-notification"]
 
 # get more propety in Info.plist
 ipa.info[:CFBundleDisplayName]
