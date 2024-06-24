@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [3.1.0] (2024-06-24)
+
+Dropped Ruby 2.5 ~ 3.0 support (no changes required.).
+
+### Added
+
+- Add Apple TV parser support.
+- Add `.url_schemes`, `.query_schemes` and `.background_modes` to ipa and info_plist parser.
+- Upgrade Android AAPT2 to 2.19.
+
 ## [3.0.0] (2023-04-18)
 
 ### Added
@@ -326,7 +336,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.0.0..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.1.0..HEAD
+[3.1.0]: https://github.com/icyleaf/app-info/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/icyleaf/app-info/compare/v2.8.5...v3.0.0
 [3.0.0.beta4]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta3...v3.0.0.beta4
 [3.0.0.beta3]: https://github.com/icyleaf/app-info/compare/v3.0.0.beta2...v3.0.0.beta3
