@@ -150,6 +150,37 @@ module AppInfo
       end
     end
 
+    # A list of URL schemes (http, ftp, and so on) supported by the app.
+    #
+    # @return [Array<String>]
+    def url_schemes
+      url_types = info.try(:[], 'CFBundleURLTypes')
+      return [] unless url_types
+
+      url_types.each_with_object([]) do |url_type, obj|
+        data = {
+          role: url_type['CFBundleTypeRole'],
+          name: url_type['CFBundleURLName'],
+          schemes: url_type['CFBundleURLSchemes']
+        }
+        obj << data
+      end
+    end
+
+    # Specifies the URL schemes you want the app to be able to use
+    #
+    # @return [Array<String>]
+    def query_schemes
+      info.try(:[], 'LSApplicationQueriesSchemes') || []
+    end
+
+    # Services provided by an app that require it to run in the background
+    #
+    # @return [Array<String>]
+    def background_modes
+      info.try(:[], 'UIBackgroundModes') || []
+    end
+
     # @return [String, nil]
     def [](key)
       info.try(:[], key.to_s)
