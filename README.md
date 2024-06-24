@@ -1,6 +1,6 @@
 # app-info
 
-[![Language](https://img.shields.io/badge/ruby-2.5+-701516)](.github/workflows/ci.yml)
+[![Language](https://img.shields.io/badge/ruby-3.1+-701516)](.github/workflows/ci.yml)
 [![Gem version](https://img.shields.io/gem/v/app-info?include_prereleases)](https://rubygems.org/gems/app-info)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/icyleaf/app_info/ci.yml)](https://github.com/icyleaf/app_info/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/icyleaf/app-info)](LICENSE)
