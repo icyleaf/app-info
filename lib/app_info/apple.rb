@@ -72,9 +72,9 @@ module AppInfo
     #   @see InfoPlist#min_sdk_version
     # @!method min_os_version
     #   @see InfoPlist#min_os_version
-    def_delegators :info, :device, :platform, :iphone?, :ipad?, :universal?, :macos?,
-                   :build_version, :name, :release_version, :identifier, :bundle_id,
-                   :display_name, :bundle_name, :min_sdk_version, :min_os_version
+    def_delegators :info, :device, :platform, :iphone?, :ipad?, :universal?, :macos?, :appletv?,
+                   :build_version, :name, :release_version, :identifier, :bundle_id, :display_name, :bundle_name,
+                   :min_sdk_version, :min_os_version
 
     # @!method devices
     #   @see MobileProvision#devices

@@ -42,6 +42,7 @@ module AppInfo
     MACOS = :macos
     IOS = :ios
     ANDROID = :android
+    APPLETV = :appletv
     WINDOWS = :windows
   end
 
@@ -54,14 +55,16 @@ module AppInfo
     IPHONE = :iphone
     # Apple iPad
     IPAD = :ipad
-    # Apple Watch
-    IWATCH = :iwatch # not implemented yet
     # Apple Universal (iPhone and iPad)
     UNIVERSAL = :universal
+    # Apple TV
+    APPLETV = :appletv
+    # Apple Watch (TODO: not implemented yet)
+    IWATCH = :iwatch
 
     # Android Phone
     PHONE = :phone
-    # Android Tablet (not implemented yet)
+    # Android Tablet (TODO: not implemented yet)
     TABLET = :tablet
     # Android Watch
     WATCH = :watch

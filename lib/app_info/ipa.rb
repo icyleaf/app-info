@@ -9,7 +9,7 @@ module AppInfo
   class IPA < Apple
     # Full icons metadata
     # @example
-    #   aab.icons
+    #   ipa.icons
     #   # => [
     #   #   {
     #   #     name: 'icon.png',
@@ -46,12 +46,13 @@ module AppInfo
       @frameworks ||= Framework.parse(app_path)
     end
 
+    DEFAULT_MOBILEPROVISION_FILE = 'embedded.mobileprovision'
+
     # @return [String]
     def mobileprovision_path
-      filename = 'embedded.mobileprovision'
-      @mobileprovision_path ||= ::File.join(@file, filename)
+      @mobileprovision_path ||= ::File.join(@file, DEFAULT_MOBILEPROVISION_FILE)
       unless ::File.exist?(@mobileprovision_path)
-        @mobileprovision_path = ::File.join(app_path, filename)
+        @mobileprovision_path = ::File.join(app_path, DEFAULT_MOBILEPROVISION_FILE)
       end
 
       @mobileprovision_path
@@ -148,7 +149,7 @@ module AppInfo
 
     def icon_keys
       @icon_keys ||= case device
-                     when Device::IPHONE
+                     when Device::IPHONE, Device::APPLETV
                        [IPHONE_KEY]
                      when Device::IPAD
                        [IPAD_KEY]
