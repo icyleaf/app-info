@@ -29,6 +29,8 @@ module AppInfo
         Platform::MACOS
       when Device::IPHONE, Device::IPAD, Device::UNIVERSAL
         Platform::IOS
+      when Device::APPLETV
+        Platform::APPLETV
       end
     end
 
@@ -40,6 +42,10 @@ module AppInfo
         Device::IPAD
       elsif device_family == [1, 2]
         Device::UNIVERSAL
+      elsif device_family == [3]
+        Device::APPLETV
+      elsif device_family == [6]
+        Device::APPMACOSLETV
       elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTManufacturerName').nil?
         Device::MACOS
       else
@@ -123,6 +129,11 @@ module AppInfo
     # @return [Boolean]
     def macos?
       device == Device::MACOS
+    end
+
+    # @return [Boolean]
+    def appletv?
+      device == Device::APPLETV
     end
 
     # @return [Array<String>]

@@ -16,6 +16,7 @@ MATCH_FILE_TYPES = {
   'ipad.ipa' => :ipa,
   'iphone.ipa' => :ipa,
   'embedded.ipa' => :ipa,
+  'apple-tv.ipa' => :ipa,
   'iOS-single-dSYM-with-single-macho.zip' => :dsym,
   'iOS-single-dSYM-with-multi-macho.zip' => :dsym,
   'iOS-mutli-dSYMs-wrapped-by-folder.zip' => :dsym,

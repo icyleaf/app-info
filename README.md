@@ -13,7 +13,7 @@ Analysis metedata like version, name, icon etc.
 - Android file
   - `.apk`
   - `.aab` (Androld App Bundle)
-- iOS file
+- iOS, Apple TV file
   - `.ipa`
   - `Info.plist` file
   - `.mobileprovision`/`.provisionprofile` file
@@ -64,6 +64,7 @@ require 'app-info'
 # Automatic detect file extsion and parse
 parser = AppInfo.parse('iphone.ipa')
 parser = AppInfo.parse('ipad.ipa')
+parser = AppInfo.parse('apple-tv.ipa')
 parser = AppInfo.parse('android.apk')
 parser = AppInfo.parse('android.aab')
 parser = AppInfo.parse('u-u-i-d.mobileprovision')
@@ -73,7 +74,7 @@ parser = AppInfo.parse('win.exe')
 parser = AppInfo.parse('win.zip')
 
 # If detect file type failed, you can parse in other way
-parser = AppInfo::IPA.new('iphone.ipa')
+parser = AppInfo::IPA.new('iphone-ipad-unversal-appletv.ipa')
 parser = AppInfo::APK.new('android.apk')
 parser = AppInfo::AAB.new('android.aab')
 parser = AppInfo::InfoPlist.new('Info.plist')
@@ -85,10 +86,10 @@ parser = AppInfo::PE.new('win.exe')
 
 ### iOS
 
-Teardown suport iPhone/iPad/Universal.
+Teardown suport iPhone, iPad, Universal and Apple TV file.
 
 ```ruby
-ipa = AppInfo.parse('iphone.ipa')
+ipa = AppInfo.parse('iphone-ipad-unversal-appletv.ipa')
 
 # get app file size
 ipa.size
