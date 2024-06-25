@@ -19,6 +19,8 @@ module AppInfo
         Platform::MACOS
       when :ios
         Platform::IOS
+      when :tvos
+        Platform::APPLETV
       else
         raise NotImplementedError, "Unkonwn platform: #{platforms[0]}"
       end
