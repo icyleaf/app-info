@@ -115,7 +115,7 @@ module AppInfo
     # @return [Boolea]
     def development?
       case platform
-      when Platform::IOS
+      when Platform::IOS, Platform::APPLETV
         entitlements['get-task-allow'] == true
       when Platform::MACOS
         !devices.nil?
@@ -130,7 +130,7 @@ module AppInfo
     # @return [Boolea]
     def appstore?
       case platform
-      when Platform::IOS
+      when Platform::IOS, Platform::APPLETV
         !development? && entitlements.key?('beta-reports-active')
       when Platform::MACOS
         !development?
@@ -218,6 +218,8 @@ module AppInfo
           capabilities << 'Low Latency HLS'
         when 'com.apple.developer.associated-domains.mdm-managed'
           capabilities << 'MDM Managed Associated Domains'
+        when 'keychain-access-groups'
+          capabilities << 'Keychain Sharing'
         # macOS Only
         when 'com.apple.developer.maps'
           capabilities << 'Maps'
