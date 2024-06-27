@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ruby_apk'
+require 'android_parser'
 
 module AppInfo
   # Parse APK file parser, wrapper for {https://github.com/icyleaf/android_parser android_parser}.

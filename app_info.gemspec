@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '>= 10.0'
 
   spec.post_install_message = <<~ENDBANNER
-    AppInfo 3.0 is coming!
+    AppInfo 3.0 was out!
     **********************
     The public API of some AppInfo classes has been changed.
 

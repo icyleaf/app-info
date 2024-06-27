@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [3.1.3] (2024-06-27)
+
+### Added
+
+- Android(apk): Add fetch locales support.
+- Android(apk): Add architectures support.
+- Android(apk): Add detect universal apk.
+
+### Fixed
+
+- Android(apk): Fix Unknown chunk type 0x0203
+- Android(apk): Fix 3bits of lang and country in locales.
+
 ## [3.1.2] (2024-06-25)
 
 ### Fixed
