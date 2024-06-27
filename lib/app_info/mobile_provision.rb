@@ -185,7 +185,9 @@ module AppInfo
           capabilities << 'HealthKit' unless capabilities.include?('HealthKit')
         when 'com.apple.developer.icloud-services',
             'com.apple.developer.icloud-container-identifiers'
-          capabilities << 'iCloud' unless capabilities.include?('iCloud')
+          capabilities << 'iCloud: CloudKit' unless capabilities.include?('iCloud: CloudKit')
+        when 'com.apple.developer.ubiquity-kvstore-identifier'
+          capabilities << 'iCloud: iCloud key-value storage'
         when 'com.apple.developer.in-app-payments'
           capabilities << 'Apple Pay'
         when 'com.apple.developer.homekit'
@@ -220,6 +222,10 @@ module AppInfo
           capabilities << 'MDM Managed Associated Domains'
         when 'keychain-access-groups'
           capabilities << 'Keychain Sharing'
+        when 'com.apple.developer.usernotifications.time-sensitive'
+          capabilities << 'Time Sensitive Notifications'
+        when 'com.apple.developer.game-center'
+          capabilities << 'Game Center'
         # macOS Only
         when 'com.apple.developer.maps'
           capabilities << 'Maps'
