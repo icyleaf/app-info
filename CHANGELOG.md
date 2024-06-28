@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
-## [3.1.3] (2024-06-27)
+## [3.1.4] (2024-06-27)
 
 ### Added
 
@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Android(apk): Fix Unknown chunk type 0x0203
+- Android(apk): Fix Unknown chunk type 0x0203. #[icyleaf/android_parser#6](https://github.com/icyleaf/android_parser/issues/6)
 - Android(apk): Fix 3bits of lang and country in locales.
 
 ## [3.1.2] (2024-06-25)
@@ -355,7 +355,8 @@ Dropped Ruby 2.5 ~ 3.0 support (no changes required.).
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.1.2..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.1.4..HEAD
+[3.1.4]: https://github.com/icyleaf/app-info/compare/v3.1.2...v3.1.4
 [3.1.2]: https://github.com/icyleaf/app-info/compare/v3.1.0...v3.1.2
 [3.1.0]: https://github.com/icyleaf/app-info/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/icyleaf/app-info/compare/v2.8.5...v3.0.0
