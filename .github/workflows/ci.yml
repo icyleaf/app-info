@@ -8,15 +8,35 @@ on:
   pull_request:
 
 jobs:
+  linting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Ruby 3.x
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3
+          bundler-cache: true
+
+      - name: Rubocop
+        run: bundle exec rubocop --format progress
+
   test:
+    needs: [ linting ]
+    name: test ${{ matrix.ruby }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         ruby: [ ruby-3.1, ruby-3.2, ruby-3.3 ]
-        os: [ ubuntu-latest ]
-
-    runs-on: ${{ matrix.os }}
-
+        experimental: [false]
+        include:
+          - ruby: head
+            experimental: true
+          - ruby: truffleruby-head
+            experimental: true
     steps:
       - uses: actions/checkout@v4
 
@@ -25,5 +45,6 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - name: bundle exec rake
-        run: bundle exec rake
+      - name: RSpec
+        continue-on-error: ${{ matrix.experimental }}
+        run: bundle exec rubocop
