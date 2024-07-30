@@ -36,7 +36,7 @@ module AppInfo
 
     # @return [Symbol] {Device}
     def device
-      Device::WINDOWS
+      Device::Microsoft::WINDOWS
     end
 
     # return file size

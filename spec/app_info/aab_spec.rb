@@ -15,7 +15,7 @@ describe AppInfo::APK do
       it { expect(subject.manufacturer).to eq(:google) }
       it { expect(subject.platform).to eq(AppInfo::Platform::ANDROID) }
       it { expect(subject.platform).to eq(:android) }
-      it { expect(subject.device).to eq(AppInfo::Device::PHONE) }
+      it { expect(subject.device).to eq(AppInfo::Device::Google::PHONE) }
       it { expect(subject.device).to eq(:phone) }
       it { expect(subject).not_to be_tablet }
       it { expect(subject).not_to be_watch }
@@ -59,7 +59,7 @@ describe AppInfo::APK do
       it { expect(subject.manufacturer).to eq(:google) }
       it { expect(subject.platform).to eq(AppInfo::Platform::ANDROID) }
       it { expect(subject.platform).to eq(:android) }
-      it { expect(subject.device).to eq(AppInfo::Device::PHONE) }
+      it { expect(subject.device).to eq(AppInfo::Device::Google::PHONE) }
       it { expect(subject.device).to eq(:phone) }
       it { expect(subject).not_to be_tablet }
       it { expect(subject).not_to be_watch }

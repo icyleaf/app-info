@@ -149,11 +149,11 @@ module AppInfo
 
     def icon_keys
       @icon_keys ||= case device
-                     when Device::IPHONE, Device::APPLETV
+                     when Device::Apple::IPHONE, Device::Apple::APPLETV
                        [IPHONE_KEY]
-                     when Device::IPAD
+                     when Device::Apple::IPAD
                        [IPAD_KEY]
-                     when Device::UNIVERSAL
+                     when Device::Apple::UNIVERSAL
                        [IPHONE_KEY, IPAD_KEY]
                      end
     end

@@ -14,7 +14,7 @@ describe AppInfo::Macos do
         it { expect(subject.manufacturer).to eq(:apple) }
         it { expect(subject.platform).to eq(AppInfo::Platform::MACOS) }
         it { expect(subject.platform).to eq(:macos) }
-        it { expect(subject.device).to eq(AppInfo::Device::MACOS) }
+        it { expect(subject.device).to eq(AppInfo::Device::Apple::MACOS) }
         it { expect(subject.device).to eq(:macos) }
         it { expect(subject.build_version).to eq('1') }
         it { expect(subject.release_version).to eq('1.0') }
@@ -58,7 +58,7 @@ describe AppInfo::Macos do
         it { expect(subject.manufacturer).to eq(:apple) }
         it { expect(subject.platform).to eq(AppInfo::Platform::MACOS) }
         it { expect(subject.platform).to eq(:macos) }
-        it { expect(subject.device).to eq(AppInfo::Device::MACOS) }
+        it { expect(subject.device).to eq(AppInfo::Device::Apple::MACOS) }
         it { expect(subject.device).to eq(:macos) }
         it { expect(subject.build_version).to eq('1') }
         it { expect(subject.release_version).to eq('1.0') }

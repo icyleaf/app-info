@@ -46,34 +46,40 @@ module AppInfo
     WINDOWS = :windows
   end
 
-  # Apple Device Type
+  # Device Type
   module Device
-    # macOS
-    MACOS = :macos
+    module Apple
+      # macOS
+      MACOS = :macos
 
-    # Apple iPhone
-    IPHONE = :iphone
-    # Apple iPad
-    IPAD = :ipad
-    # Apple Universal (iPhone and iPad)
-    UNIVERSAL = :universal
-    # Apple TV
-    APPLETV = :appletv
-    # Apple Watch (TODO: not implemented yet)
-    IWATCH = :iwatch
+      # Apple iPhone
+      IPHONE = :iphone
+      # Apple iPad
+      IPAD = :ipad
+      # Apple Universal (iPhone and iPad)
+      UNIVERSAL = :universal
+      # Apple TV
+      APPLETV = :appletv
+      # Apple Watch (TODO: not implemented yet)
+      IWATCH = :iwatch
+    end
 
-    # Android Phone
-    PHONE = :phone
-    # Android Tablet (TODO: not implemented yet)
-    TABLET = :tablet
-    # Android Watch
-    WATCH = :watch
-    # Android TV
-    TELEVISION = :television
-    # Android Car Automotive
-    AUTOMOTIVE = :automotive
+    module Google
+      # Android Phone
+      PHONE = :phone
+      # Android Tablet (TODO: not implemented yet)
+      TABLET = :tablet
+      # Android Watch
+      WATCH = :watch
+      # Android TV
+      TELEVISION = :television
+      # Android Car Automotive
+      AUTOMOTIVE = :automotive
+    end
 
-    # Windows
-    WINDOWS = :windows
+    module Microsoft
+      # Windows
+      WINDOWS = :windows
+    end
   end
 end

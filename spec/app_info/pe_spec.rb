@@ -11,7 +11,7 @@ describe AppInfo::PE do
       it { expect(subject.format).to eq :pe }
       it { expect(subject.manufacturer).to eq AppInfo::Manufacturer::MICROSOFT }
       it { expect(subject.manufacturer).to eq :microsoft }
-      it { expect(subject.device).to eq AppInfo::Device::WINDOWS }
+      it { expect(subject.device).to eq AppInfo::Device::Microsoft::WINDOWS }
       it { expect(subject.device).to eq :windows }
       it { expect(subject.binary_file).not_to be_nil }
       it { expect(subject.size).to eq 415127 }
@@ -73,7 +73,7 @@ describe AppInfo::PE do
       it { expect(subject.format).to eq :pe }
       it { expect(subject.manufacturer).to eq AppInfo::Manufacturer::MICROSOFT }
       it { expect(subject.manufacturer).to eq :microsoft }
-      it { expect(subject.device).to eq AppInfo::Device::WINDOWS }
+      it { expect(subject.device).to eq AppInfo::Device::Microsoft::WINDOWS }
       it { expect(subject.device).to eq :windows }
       it { expect(subject.binary_file).not_to be_nil }
       it { expect(subject.size).to eq 293888 }
