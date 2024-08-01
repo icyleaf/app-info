@@ -10,6 +10,7 @@ require 'app_info/error'
 require 'app_info/file'
 require 'app_info/info_plist'
 require 'app_info/mobile_provision'
+require 'app_info/pack_info'
 
 require 'app_info/apple'
 require 'app_info/macos'
@@ -20,6 +21,10 @@ require 'app_info/ipa/framework'
 require 'app_info/android'
 require 'app_info/apk'
 require 'app_info/aab'
+
+require 'app_info/harmonyos'
+require 'app_info/happ'
+require 'app_info/hap'
 
 require 'app_info/proguard'
 require 'app_info/dsym'
@@ -40,6 +45,8 @@ module AppInfo
                when Format::IPA then IPA.new(file)
                when Format::APK then APK.new(file)
                when Format::AAB then AAB.new(file)
+               when Format::HAP then HAP.new(file)
+               when Format::HAPP then HAPP.new(file)
                when Format::MOBILEPROVISION then MobileProvision.new(file)
                when Format::DSYM then DSYM.new(file)
                when Format::PROGUARD then Proguard.new(file)
@@ -96,6 +103,8 @@ module AppInfo
       return Format::AAB if aab_clues?(zip_file)
       return Format::MACOS if macos_clues?(zip_file)
       return Format::PE if pe_clues?(zip_file)
+      return Format::HAP if hap_clues?(zip_file)
+      return Format::HAPP if happ_clues?(zip_file)
       return Format::UNKNOWN unless clue = other_clues?(zip_file)
 
       clue
@@ -129,6 +138,31 @@ module AppInfo
     # :nodoc:
     def pe_clues?(zip_file)
       !zip_file.glob('*.exe').empty?
+    end
+
+    # :nodoc:
+    def hap_clues?(zip_file)
+      !zip_file.find_entry('pack.info').nil? && !zip_file.find_entry('module.json').nil?
+    end
+
+    # :nodoc:
+    def happ_clues?(zip_file)
+      pack_info_count = 0
+      hap_count = 0
+
+      zip_file.each do |f|
+        path = f.name
+
+        if path == 'pack.info'
+          pack_info_count += 1
+        elsif path.end_with?('.hap')
+          hap_count += 1
+        else
+          return false
+        end
+      end
+
+      pack_info_count == 1 && hap_count >= 1
     end
 
     # :nodoc:

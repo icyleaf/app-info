@@ -23,6 +23,11 @@ module AppInfo
     AAB = :aab
     PROGUARD = :proguard
 
+    # HarmonyOS
+
+    HAP = :hap
+    HAPP = :app
+
     # Windows
 
     PE = :pe
@@ -35,6 +40,7 @@ module AppInfo
     APPLE = :apple
     GOOGLE = :google
     MICROSOFT = :microsoft
+    HUAWEI = :huawei
   end
 
   # Platform
@@ -44,6 +50,7 @@ module AppInfo
     ANDROID = :android
     APPLETV = :appletv
     WINDOWS = :windows
+    HARMONYOS = :harmonyos
   end
 
   # Device Type
@@ -75,6 +82,23 @@ module AppInfo
       TELEVISION = :television
       # Android Car Automotive
       AUTOMOTIVE = :automotive
+    end
+
+    module Huawei
+      # HarmonyOS Default
+      DEFAULT = :default
+      # HarmonyOS Phone
+      PHONE = :phone
+      # HarmonyOS Tablet
+      TABLET = :tablet
+      # HarmonyOS TV
+      TV = :tv
+      # HarmonyOS wearable
+      WEARABLE = :wearable
+      # HarmonyOS Car
+      CAR = :car
+      # HarmonyOS 2-in-1 tablet and laptop
+      TWO_IN_ONE = :two_in_one
     end
 
     module Microsoft
