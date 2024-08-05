@@ -5,7 +5,6 @@ require 'json'
 module AppInfo
   # HarmonyOS pack.info parser
   class PackInfo < File
-
     # @return [String]
     def version_code
       app['version']['code']
