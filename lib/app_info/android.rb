@@ -36,15 +36,15 @@ module AppInfo
     # @return [Symbol] {Device}
     def device
       if watch?
-        Device::WATCH
+        Device::Google::WATCH
       elsif television?
-        Device::TELEVISION
+        Device::Google::TELEVISION
       elsif automotive?
-        Device::AUTOMOTIVE
+        Device::Google::AUTOMOTIVE
       elsif tablet?
-        Device::TABLET
+        Device::Google::TABLET
       else
-        Device::PHONE
+        Device::Google::PHONE
       end
     end
 

@@ -12,7 +12,7 @@ describe AppInfo::IPA do
     it { expect(subject.manufacturer).to eq(:apple) }
     it { expect(subject.platform).to eq(AppInfo::Platform::IOS) }
     it { expect(subject.platform).to eq(:ios) }
-    it { expect(subject.device).to eq(AppInfo::Device::IPHONE) }
+    it { expect(subject.device).to eq(AppInfo::Device::Apple::IPHONE) }
     it { expect(subject.device).to eq(:iphone) }
     it { expect(subject).to be_iphone }
     it { expect(subject).not_to be_ipad }
@@ -69,7 +69,7 @@ describe AppInfo::IPA do
     it { expect(subject.manufacturer).to eq(:apple) }
     it { expect(subject.platform).to eq(AppInfo::Platform::IOS) }
     it { expect(subject.platform).to eq(:ios) }
-    it { expect(subject.device).to eq(AppInfo::Device::IPAD) }
+    it { expect(subject.device).to eq(AppInfo::Device::Apple::IPAD) }
     it { expect(subject.device).to eq(:ipad) }
     it { expect(subject).not_to be_iphone }
     it { expect(subject).to be_ipad }
@@ -133,7 +133,7 @@ describe AppInfo::IPA do
     it { expect(subject.manufacturer).to eq(:apple) }
     it { expect(subject.platform).to eq(AppInfo::Platform::IOS) }
     it { expect(subject.platform).to eq(:ios) }
-    it { expect(subject.device).to eq(AppInfo::Device::UNIVERSAL) }
+    it { expect(subject.device).to eq(AppInfo::Device::Apple::UNIVERSAL) }
     it { expect(subject.device).to eq(:universal) }
     it { expect(subject).not_to be_iphone }
     it { expect(subject).not_to be_ipad }
@@ -202,7 +202,7 @@ describe AppInfo::IPA do
     it { expect(subject.manufacturer).to eq(:apple) }
     it { expect(subject.platform).to eq(AppInfo::Platform::APPLETV) }
     it { expect(subject.platform).to eq(:appletv) }
-    it { expect(subject.device).to eq(AppInfo::Device::APPLETV) }
+    it { expect(subject.device).to eq(AppInfo::Device::Apple::APPLETV) }
     it { expect(subject.device).to eq(:appletv) }
     it { expect(subject).to be_appletv }
     it { expect(subject).not_to be_iphone }

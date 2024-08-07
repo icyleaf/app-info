@@ -11,10 +11,10 @@ module AppInfo
 
     # Icon Key
     ICON_KEYS = {
-      Device::IPHONE => ['CFBundleIcons'],
-      Device::IPAD => ['CFBundleIcons~ipad'],
-      Device::UNIVERSAL => ['CFBundleIcons', 'CFBundleIcons~ipad'],
-      Device::MACOS => %w[CFBundleIconFile CFBundleIconName]
+      Device::Apple::IPHONE => ['CFBundleIcons'],
+      Device::Apple::IPAD => ['CFBundleIcons~ipad'],
+      Device::Apple::UNIVERSAL => ['CFBundleIcons', 'CFBundleIcons~ipad'],
+      Device::Apple::MACOS => %w[CFBundleIconFile CFBundleIconName]
     }.freeze
 
     # @return [Symbol] {Manufacturer}
@@ -25,11 +25,11 @@ module AppInfo
     # @return [Symbol] {Platform}
     def platform
       case device
-      when Device::MACOS
+      when Device::Apple::MACOS
         Platform::MACOS
-      when Device::IPHONE, Device::IPAD, Device::UNIVERSAL
+      when Device::Apple::IPHONE, Device::Apple::IPAD, Device::Apple::UNIVERSAL
         Platform::IOS
-      when Device::APPLETV
+      when Device::Apple::APPLETV
         Platform::APPLETV
       end
     end
@@ -37,17 +37,17 @@ module AppInfo
     # @return [Symbol] {Device}
     def device
       if device_family == [1]
-        Device::IPHONE
+        Device::Apple::IPHONE
       elsif device_family == [2]
-        Device::IPAD
+        Device::Apple::IPAD
       elsif device_family == [1, 2]
-        Device::UNIVERSAL
+        Device::Apple::UNIVERSAL
       elsif device_family == [3]
-        Device::APPLETV
+        Device::Apple::APPLETV
       elsif device_family == [6]
-        Device::APPMACOSLETV
+        Device::Apple::APPMACOSLETV
       elsif !info.try(:[], 'DTSDKName').nil? || !info.try(:[], 'DTManufacturerName').nil?
-        Device::MACOS
+        Device::Apple::MACOS
       else
         raise NotImplementedError, "Unkonwn device: #{device_family}"
       end
@@ -113,27 +113,27 @@ module AppInfo
 
     # @return [Boolean]
     def iphone?
-      device == Device::IPHONE
+      device == Device::Apple::IPHONE
     end
 
     # @return [Boolean]
     def ipad?
-      device == Device::IPAD
+      device == Device::Apple::IPAD
     end
 
     # @return [Boolean]
     def universal?
-      device == Device::UNIVERSAL
+      device == Device::Apple::UNIVERSAL
     end
 
     # @return [Boolean]
     def macos?
-      device == Device::MACOS
+      device == Device::Apple::MACOS
     end
 
     # @return [Boolean]
     def appletv?
-      device == Device::APPLETV
+      device == Device::Apple::APPLETV
     end
 
     # @return [Array<String>]
@@ -212,7 +212,7 @@ module AppInfo
 
     def app_path
       @app_path ||= case device
-                    when Device::MACOS
+                    when Device::Apple::MACOS
                       ::File.dirname(@file)
                     else
                       ::File.expand_path('../', @file)
