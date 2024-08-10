@@ -47,4 +47,4 @@ jobs:
 
       - name: RSpec
         continue-on-error: ${{ matrix.experimental }}
-        run: bundle exec rubocop
+        run: bundle exec rspec
