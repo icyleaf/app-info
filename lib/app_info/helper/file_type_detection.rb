@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AppInfo
+module AppInfo::Helper
   module FileTypeDetection
     # Detect file type by reading file header
     #
@@ -11,11 +11,11 @@ module AppInfo
       when ZIP_RETGEX
         detect_zip_file(file)
       when PE_REGEX
-        Format::PE
+        AppInfo::Format::PE
       when PLIST_REGEX, BPLIST_REGEX
-        Format::MOBILEPROVISION
+        AppInfo::Format::MOBILEPROVISION
       else
-        Format::UNKNOWN
+        AppInfo::Format::UNKNOWN
       end
     end
 
@@ -26,14 +26,14 @@ module AppInfo
       Zip.warn_invalid_date = false
       zip_file = Zip::File.open(file)
 
-      return Format::PROGUARD if proguard_clues?(zip_file)
-      return Format::APK if apk_clues?(zip_file)
-      return Format::AAB if aab_clues?(zip_file)
-      return Format::MACOS if macos_clues?(zip_file)
-      return Format::PE if pe_clues?(zip_file)
-      return Format::HAP if hap_clues?(zip_file)
-      return Format::HAPP if happ_clues?(zip_file)
-      return Format::UNKNOWN unless clue = other_clues?(zip_file)
+      return AppInfo::Format::PROGUARD if proguard_clues?(zip_file)
+      return AppInfo::Format::APK if apk_clues?(zip_file)
+      return AppInfo::Format::AAB if aab_clues?(zip_file)
+      return AppInfo::Format::MACOS if macos_clues?(zip_file)
+      return AppInfo::Format::PE if pe_clues?(zip_file)
+      return AppInfo::Format::HAP if hap_clues?(zip_file)
+      return AppInfo::Format::HAPP if happ_clues?(zip_file)
+      return AppInfo::Format::UNKNOWN unless clue = other_clues?(zip_file)
 
       clue
     ensure
@@ -98,8 +98,8 @@ module AppInfo
       zip_file.each do |f|
         path = f.name
 
-        return Format::IPA if path.include?('Payload/') && path.end_with?('Info.plist')
-        return Format::DSYM if path.include?('Contents/Resources/DWARF/')
+        return AppInfo::Format::IPA if path.include?('Payload/') && path.end_with?('Info.plist')
+        return AppInfo::Format::DSYM if path.include?('Contents/Resources/DWARF/')
       end
     end
 

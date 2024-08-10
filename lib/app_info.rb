@@ -30,14 +30,13 @@ require 'app_info/proguard'
 require 'app_info/dsym'
 
 require 'app_info/pe'
-require 'app_info/file_type_detection'
 
 # fix invalid date format warnings
 Zip.warn_invalid_date = false
 
 # AppInfo Module
 module AppInfo
-  extend FileTypeDetection
+  extend Helper::FileTypeDetection
 
   class << self
     # Get a new parser for automatic

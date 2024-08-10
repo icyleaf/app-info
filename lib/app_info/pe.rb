@@ -189,7 +189,7 @@ module AppInfo
     def binary_file
       @binary_file ||= lambda {
         file_io = ::File.open(@file, 'rb')
-        return @file unless file_io.read(100) =~ AppInfo::ZIP_RETGEX
+        return @file unless file_io.read(100) =~ Helper::FileTypeDetection::ZIP_RETGEX
 
         zip_file = Zip::File.open(@file)
         zip_entry = zip_file.glob('*.exe').first

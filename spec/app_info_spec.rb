@@ -38,7 +38,9 @@ MATCH_FILE_TYPES = {
   'macos.zip' => :macos,
   'macos-signed.zip' => :macos,
   'win-TopBar-v0.1.1.zip' => :pe,
-  'win-upx.exe' => :pe
+  'win-upx.exe' => :pe,
+  'harmony.hap' => :hap,
+  'harmony.app' => :app,
 }
 
 describe AppInfo do
