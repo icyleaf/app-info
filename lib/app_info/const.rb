@@ -105,5 +105,55 @@ module AppInfo
       # Windows
       WINDOWS = :windows
     end
+
+    # legacy consts
+
+    # macOS
+    # @deprecated Use {Device::Apple#MACOS} instead, this method will remove in 3.3.0.
+    MACOS = :macos
+
+    # Apple iPhone
+    # @deprecated Use {Device::Apple#IPHONE} instead, this method will remove in 3.3.0.
+    IPHONE = :iphone
+
+    # Apple iPad
+    # @deprecated Use {Device::Apple#IPAD} instead, this method will remove in 3.3.0.
+    IPAD = :ipad
+
+    # Apple Universal (iPhone and iPad)
+    # @deprecated Use {Device::Apple#UNIVERSAL} instead, this method will remove in 3.3.0.
+    UNIVERSAL = :universal
+
+    # Apple TV
+    # @deprecated Use {Device::Apple#APPLETV} instead, this method will remove in 3.3.0.
+    APPLETV = :appletv
+
+    # Apple Watch (TODO: not implemented yet)
+    # @deprecated Use {Device::Apple#IWATCH} instead, this method will remove in 3.3.0.
+    IWATCH = :iwatch
+
+    # Android Phone
+    # @deprecated Use {Device::Google#PHONE} instead, this method will remove in 3.3.0.
+    PHONE = :phone
+
+    # Android Tablet (TODO: not implemented yet)
+    # @deprecated Use {Device::Google#TABLET} instead, this method will remove in 3.3.0.
+    TABLET = :tablet
+
+    # Android Watch
+    # @deprecated Use {Device::Google#WATCH} instead, this method will remove in 3.3.0.
+    WATCH = :watch
+
+    # Android TV
+    # @deprecated Use {Device::Google#TELEVISION} instead, this method will remove in 3.3.0.
+    TELEVISION = :television
+
+    # Android Car Automotive
+    # @deprecated Use {Device::Google#AUTOMOTIVE} instead, this method will remove in 3.3.0.
+    AUTOMOTIVE = :automotive
+
+    # Windows
+    # @deprecated Use {Device::Microsoft#WINDOWS} instead, this method will remove in 3.3.0.
+    WINDOWS = :windows
   end
 end
