@@ -5,7 +5,8 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/icyleaf/app_info/ci.yml)](https://github.com/icyleaf/app_info/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/icyleaf/app-info)](LICENSE)
 
-Teardown tool for mobile app (ipa, apk and aab file), macOS app, dSYM.zip file and Windows PE file.
+Teardown tool for mobile app (iOS: ipa, Android: apk/aab, HarmonyOS: .hap/.app file), macOS app, dSYM.zip file and Windows PE file.
+
 Analysis metedata like version, name, icon etc.
 
 ## Support
@@ -17,6 +18,9 @@ Analysis metedata like version, name, icon etc.
   - `.ipa`
   - `Info.plist` file
   - `.mobileprovision`/`.provisionprofile` file
+- HarmonyOS file (basic)
+  - `.hap`
+  - `.app`
 - macOS App file (archived by starnd pkzip format)
   - `.app.zip`
 - dSYMs file (archived by starnd pkzip format)
@@ -244,6 +248,30 @@ android.schemes
 # get v1-v3 scheme singature information (included unverified certificate and more)
 android.signatures
 # => [...]
+```
+
+### HarmonyOS
+
+Accept `.hap` and `.app` HarmonyOS file. Only metabase, except resources mapping.
+
+```ruby
+hap = AppInfo.parse('app.hap')
+
+# get app file size
+android.size
+# => 2013213
+
+# get app file size in human reable.
+android.size(human_size: true)
+# => 21 MB
+
+# get app release version
+android.release_version
+# => 1.0
+
+# get app package name
+android.bundle_id
+# => com.icyleaf.AppInfoDemo
 ```
 
 ### macOS

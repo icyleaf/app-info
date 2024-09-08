@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['icyleaf']
   spec.email         = ['icyleaf.cn@gmail.com']
 
-  spec.summary       = 'Teardown tool for mobile app(ipa/apk) and dSYM file, analysis metedata like version, name, icon'
-  spec.description   = 'Teardown tool for ipa/apk files and dSYM file, even support for info.plist and .mobileprovision files'
+  spec.summary       = 'Teardown tool for all most app, analysis metedata like version, name, icon'
+  spec.description   = 'Teardown tool for ipa, apk, aab, hap mobile files and Windows, macOS and dSYM file, even support for info.plist and .mobileprovision files'
   spec.homepage      = 'http://github.com/icyleaf/app-info'
   spec.license       = 'MIT'
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
@@ -34,14 +34,4 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '>= 1.12'
   spec.add_development_dependency 'rake', '>= 10.0'
-
-  spec.post_install_message = <<~ENDBANNER
-    AppInfo 3.0 was out!
-    **********************
-    The public API of some AppInfo classes has been changed.
-
-    Please ensure that your Gemfiles and .gemspecs are suitably restrictive
-    to avoid an unexpected breakage when 3.0 is released (e.g. ~> 2.8.5).
-    See https://github.com/icyleaf/app_info for details.
-  ENDBANNER
 end
