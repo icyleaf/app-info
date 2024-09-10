@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [3.2.0] (2024-09-09)
+
+### Added
+
+- Add HarmonyOS app support (basic). #[76](https://github.com/icyleaf/app-info/pull/76) Many thanks to @[InjoyDeng](https://github.com/InjoyDeng)
+
 ## [3.1.4] (2024-06-27)
 
 ### Added
@@ -355,7 +361,8 @@ Dropped Ruby 2.5 ~ 3.0 support (no changes required.).
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.1.4..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.2.0..HEAD
+[3.2.0]: https://github.com/icyleaf/app-info/compare/v3.1.4...v3.2.0
 [3.1.4]: https://github.com/icyleaf/app-info/compare/v3.1.2...v3.1.4
 [3.1.2]: https://github.com/icyleaf/app-info/compare/v3.1.0...v3.1.2
 [3.1.0]: https://github.com/icyleaf/app-info/compare/v3.0.0...v3.1.0
