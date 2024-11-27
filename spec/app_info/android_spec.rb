@@ -44,6 +44,7 @@ describe AppInfo::Android do
     it { expect { subject.services }.to raise_error NotImplementedError }
     it { expect { subject.components }.to raise_error NotImplementedError }
     it { expect { subject.manifest }.to raise_error NotImplementedError }
+    it { expect { subject.native_codes }.to raise_error NotImplementedError }
     it { expect { subject.resource }.to raise_error NotImplementedError }
     it { expect { subject.zip }.to raise_error NotImplementedError }
     it { expect { subject.clear! }.to raise_error NotImplementedError }

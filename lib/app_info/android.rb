@@ -136,6 +136,11 @@ module AppInfo
       not_implemented_error!(__method__)
     end
 
+    # @abstract Subclass and override {#native_codes} to implement.
+    def native_codes
+      not_implemented_error!(__method__)
+    end
+
     # @abstract Subclass and override {#zip} to implement.
     def zip
       not_implemented_error!(__method__)

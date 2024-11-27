@@ -39,6 +39,7 @@ describe AppInfo::APK do
       it { expect(subject.manifest.label).to eq('AppInfoDemo') }
       it { expect(subject.manifest.label(locale: 'en')).to eq('AppInfoDemo') }
       it { expect(subject.manifest.label(locale: 'zh-CN')).to eq('AppInfo演示') }
+      it { expect(subject.native_codes).to be_empty }
 
       it { expect(subject.signs).to be_kind_of(Hash) }
       it { expect(subject.signs).to have_key('META-INF/KEY0.RSA') }
@@ -82,6 +83,7 @@ describe AppInfo::APK do
       it { expect(subject.manifest.label).to eq('My Application') }
       it { expect(subject.manifest.label(locale: 'en')).to eq('My Application') }
       it { expect(subject.manifest.label(locale: 'zh-CN')).to eq('My Application') }
+      it { expect(subject.native_codes).to be_empty }
       it { expect(subject.certificates).to be_empty }
       it { expect(subject.signs).to be_empty }
 
@@ -108,6 +110,13 @@ describe AppInfo::APK do
         icons = subject.icons(exclude: [:xml, 'webp'])
         expect(icons.size).to eq(0)
       end
+    end
+
+    context 'with Native codes' do
+      let(:file) { fixture_path('apps/android-native-code.aab') }
+
+      it { expect(subject.native_codes.size).to eq(7) }
+      it { expect(subject.native_codes).to contain_exactly('arm64-v8a', 'armeabi', 'armeabi-v7a', 'mips', 'mips64', 'x86', 'x86_64') }
     end
   end
 end
