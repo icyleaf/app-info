@@ -59,6 +59,14 @@ module AppInfo
       components.select { |c| c.type == 'activity' }
     end
 
+    # @return [Array<String>]
+    def native_codes
+      @native_codes ||= zip.glob('lib/**/*').each_with_object([]) do |entry, obj|
+        lib = entry.name.split('/')[1]
+        obj << lib unless obj.include?(lib)
+      end
+    end
+
     # @return [::Android::Apk]
     def apk
       @apk ||= ::Android::Apk.new(@file)

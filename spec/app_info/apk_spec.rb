@@ -39,6 +39,7 @@ describe AppInfo::APK do
       it { expect(subject.manifest.use_permissions).to eq(subject.use_permissions) }
       it { expect(subject.deep_links).to eq(['icyleaf.com']) }
       it { expect(subject.schemes).to eq(['appinfo']) }
+      it { expect(subject.native_codes).to be_empty }
 
       # TODO: it will remove soon.
       it { expect(subject.certificates).to be_kind_of(Array) }
@@ -71,6 +72,13 @@ describe AppInfo::APK do
         expect(icons.size).to eq(0)
       end
     end
+
+    context 'with Native codes' do
+      let(:file) { fixture_path('apps/android-native-code.apk') }
+
+      it { expect(subject.native_codes.size).to eq(7) }
+      it { expect(subject.native_codes).to contain_exactly('arm64-v8a', 'armeabi', 'armeabi-v7a', 'mips', 'mips64', 'x86', 'x86_64') }
+    end
   end
 
   describe '#Wear' do
@@ -101,6 +109,7 @@ describe AppInfo::APK do
     it { expect(subject.icons.length).not_to be_nil }
     it { expect(subject.min_sdk_version).to eq 21 }
     it { expect(subject.target_sdk_version).to eq 23 }
+    it { expect(subject.native_codes).to be_empty }
   end
 
   describe '#TV' do
@@ -131,6 +140,7 @@ describe AppInfo::APK do
     it { expect(subject.icons.length).not_to be_nil }
     it { expect(subject.min_sdk_version).to eq 23 }
     it { expect(subject.target_sdk_version).to eq 23 }
+    it { expect(subject.native_codes).to be_empty }
   end
 
   describe '#Automotive' do
@@ -161,5 +171,6 @@ describe AppInfo::APK do
     it { expect(subject.icons.length).not_to be_nil }
     it { expect(subject.min_sdk_version).to eq 29 }
     it { expect(subject.target_sdk_version).to eq 31 }
+    it { expect(subject.native_codes).to be_empty }
   end
 end
