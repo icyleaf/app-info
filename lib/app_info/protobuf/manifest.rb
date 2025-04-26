@@ -124,7 +124,7 @@ module AppInfo
       end
 
       def label(locale: '')
-        @resources.find(application.label, locale: locale).value || application.label
+        @resources.find(application.label, locale: locale)&.value || application.label
       end
 
       def components
