@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [3.3.1] (2025-04-27)
+
+### Fixed
+
+- Fix aab fetch label error.
+
 ## [3.3.0] (2024-11-27)
 
 ### Added

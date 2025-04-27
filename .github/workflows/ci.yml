@@ -30,6 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # https://endoflife.date/ruby
         ruby: [ ruby-3.1, ruby-3.2, ruby-3.3 ]
         experimental: [ false ]
         include:
