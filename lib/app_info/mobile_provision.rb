@@ -255,6 +255,8 @@ module AppInfo
 
       data = ::File.read(@file)
       data = strip_plist_wrapper(data) unless bplist?(data)
+      return @mobileprovision = nil unless data
+
       list = CFPropertyList::List.new(data: data).value
       @mobileprovision = CFPropertyList.native_types(list)
     rescue CFFormatError
@@ -275,14 +277,23 @@ module AppInfo
 
     private
 
+    PLIST_START_TAG = '<?xml version='
+    PLIST_END_TAG = '</plist>'
+    BPLIST = 'bplist'
+
     def bplist?(raw)
-      raw[0..5] == 'bplist'
+      raw[0..5] == BPLIST
     end
 
+
     def strip_plist_wrapper(raw)
-      end_tag = '</plist>'
-      start_point = raw.index('<?xml version=')
-      end_point = raw.index(end_tag) + end_tag.size - 1
+      return if raw.to_s.empty?
+
+      start_point = raw.index(PLIST_START_TAG)
+      end_point = raw.index(PLIST_END_TAG)
+      return unless start_point && end_point
+
+      end_point += PLIST_END_TAG.size - 1
       raw[start_point..end_point]
     end
   end

@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ ruby-3.1, ruby-3.2, ruby-3.3 ]
+        ruby: [ ruby-3.1, ruby-3.2, ruby-3.3, ruby-3.4 ]
         experimental: [false]
         include:
           - ruby: head
