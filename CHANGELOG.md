@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [3.3.1] (2025-04-27)
+
+### Fixed
+
+- Fix aab fetch label error.
+
+## [3.3.0] (2024-11-27)
+
+### Added
+
+- Add `.native_codes` method for Android. #[79](https://github.com/icyleaf/app-info/pull/79)
+
 ## [3.2.0] (2024-09-09)
 
 ### Added
@@ -361,7 +373,8 @@ Dropped Ruby 2.5 ~ 3.0 support (no changes required.).
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.2.0..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.3.0..HEAD
+[3.3.0]: https://github.com/icyleaf/app-info/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/icyleaf/app-info/compare/v3.1.4...v3.2.0
 [3.1.4]: https://github.com/icyleaf/app-info/compare/v3.1.2...v3.1.4
 [3.1.2]: https://github.com/icyleaf/app-info/compare/v3.1.0...v3.1.2

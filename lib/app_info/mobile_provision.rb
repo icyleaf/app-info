@@ -285,7 +285,6 @@ module AppInfo
       raw[0..5] == BPLIST
     end
 
-
     def strip_plist_wrapper(raw)
       return if raw.to_s.empty?
 

@@ -80,23 +80,33 @@ module AppInfo
       @components ||= manifest.components.transform_values
     end
 
+    # @param [String] base_path
+    # @return [Array<String>]
+    def native_codes(base_path: BASE_PATH)
+      @native_codes ||= zip.glob(::File.join(base_path, 'lib/**/*'))
+                           .each_with_object([]) do |entry, obj|
+                             lib = entry.name.split('/')[2]
+                             obj << lib unless obj.include?(lib)
+                           end
+    end
+
     def each_file
       zip.each do |entry|
         next unless entry.file?
 
-        yield entry.name, @zip.read(entry)
+        yield entry.name, zip.read(entry)
       end
     end
 
     def read_file(name, base_path: BASE_PATH)
-      content = @zip.read(entry(name, base_path: base_path))
+      content = zip.read(entry(name, base_path: base_path))
       return parse_binary_xml(content) if xml_file?(name)
 
       content
     end
 
     def entry(name, base_path: BASE_PATH)
-      entry = @zip.find_entry(::File.join(base_path, name))
+      entry = zip.find_entry(::File.join(base_path, name))
       raise NotFoundError, "'#{name}'" if entry.nil?
 
       entry
