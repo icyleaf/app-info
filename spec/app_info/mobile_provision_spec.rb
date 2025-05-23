@@ -158,4 +158,21 @@ describe AppInfo::MobileProvision do
       it { expect(subject.enabled_capabilities).not_to be_empty }
     end
   end
+
+  describe 'Invalid' do
+    context 'Empty content' do
+      subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/invalid_empty.provisionprofile')) }
+      it { expect(subject.empty?).to be_truthy }
+    end
+
+    context 'Missing plist block' do
+      subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/invalid_missing_plist_block.provisionprofile')) }
+      it { expect(subject.empty?).to be_truthy }
+    end
+
+    context 'Missing plist end tag' do
+      subject { AppInfo::MobileProvision.new(fixture_path('mobileprovisions/invalid_missing_plist_end_tag.provisionprofile')) }
+      it { expect(subject.empty?).to be_truthy }
+    end
+  end
 end
