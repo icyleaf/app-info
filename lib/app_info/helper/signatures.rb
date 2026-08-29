@@ -104,6 +104,20 @@ module AppInfo::Helper
       content_digests
     end
 
+    def verify_content_digest(content_digests, digest_name)
+      expected = content_digests[digest_name]&.fetch(:content)
+      unless expected
+          raise AppInfo::Android::Signature::SecurityError,
+              'Signature algorithms don\'t match between digests and signatures records'
+      end
+
+      actual = AppInfo::Android::Signature.compute_content_digest(@parser, digest_name)
+      return if expected.string == actual
+
+      raise AppInfo::Android::Signature::SecurityError,
+        "#{digest_name} content digest did not verify"
+    end
+
     # FIXME: this code not work, need fix.
     def verify_additional_attrs(attrs, _certs)
       loop_length_prefix_io(
@@ -168,10 +182,7 @@ module AppInfo::Helper
     SIG_STRIPPING_PROTECTION_ATTR_ID = [0x0d, 0xf0, 0xef, 0xbe].freeze       # 0xbeeff00d
 
     def best_algorithem(algorithems)
-      methods = algorithems.map { |algorithem| algorithem[:method] }
-      best_method = methods.max { |a, b| algorithem_priority(a) <=> algorithem_priority(b) }
-      best_method_index = methods.index(best_method)
-      algorithems[best_method_index]
+      algorithems.max_by { |algorithem| algorithem_priority(algorithem[:id]) || -1 }
     end
 
     def compare_algorithem(source, target)

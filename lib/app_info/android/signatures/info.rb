@@ -29,7 +29,7 @@ module AppInfo
           0x6b, 0x20, 0x34, 0x32
         ].freeze
 
-        attr_reader :total_size, :pairs, :magic, :logger
+        attr_reader :total_size, :pairs, :magic, :logger, :cdir_offset
 
         def initialize(version, parser, logger)
           @version = version
@@ -88,6 +88,27 @@ module AppInfo
 
         def zip64?
           zip_io.zip64_file?(start_buffer)
+        end
+
+        def signing_block_offset
+          cdir_offset - signature_block.size - SIG_SIZE_OF_BLOCK_SIZE
+        end
+
+        def file_size
+          ::File.size(@parser.file)
+        end
+
+        def eocd_offset
+          tail_size = [file_size, 65_557].min
+          ::File.open(@parser.file, 'rb') do |file|
+            file.seek(file_size - tail_size)
+            tail = file.read(tail_size)
+            signature = "PK\x05\x06".b
+            index = tail.rindex(signature)
+            raise NotFoundError, 'End of central directory not found' unless index
+
+            file_size - tail_size + index
+          end
         end
 
         def pares_signatures_pairs

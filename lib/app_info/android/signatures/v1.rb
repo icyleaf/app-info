@@ -19,7 +19,7 @@ module AppInfo
           DESCRIPTION
         end
 
-        def verify
+        def verify(**_options)
           @signatures = fetch_signatures
           @certificates = fetch_certificates
 

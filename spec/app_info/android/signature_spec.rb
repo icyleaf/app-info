@@ -74,7 +74,8 @@ describe AppInfo::Android::Signature do
       it { expect(subject[0]).not_to have_key(:verified) }
       it { expect(subject[0]).not_to have_key(:certificates) }
       it { expect(subject[1][:version]).to eq(2) }
-      it { expect(subject[1][:verified]).to be_falsey }
+      it { expect(subject[1][:verified]).to be true }
+      it { expect(subject[1][:verification_errors]).to eq([]) }
       it { expect(subject[1][:certificates]).not_to be_empty }
       it { expect(subject[2]).to have_key(:version) }
       it { expect(subject[2]).not_to have_key(:verified) }
@@ -93,7 +94,8 @@ describe AppInfo::Android::Signature do
       it { expect(subject[0][:verified]).to be_falsey }
       it { expect(subject[0][:certificates]).not_to be_empty }
       it { expect(subject[1][:version]).to eq(2) }
-      it { expect(subject[1][:verified]).to be_falsey }
+      it { expect(subject[1][:verified]).to be true }
+      it { expect(subject[1][:verification_errors]).to eq([]) }
       it { expect(subject[1][:certificates]).not_to be_empty }
       it { expect(subject[2]).to have_key(:version) }
       it { expect(subject[2]).not_to have_key(:verified) }
@@ -112,10 +114,12 @@ describe AppInfo::Android::Signature do
       it { expect(subject[0][:verified]).to be_falsey }
       it { expect(subject[0][:certificates]).not_to be_empty }
       it { expect(subject[1][:version]).to eq(2) }
-      it { expect(subject[1][:verified]).to be_falsey }
+      it { expect(subject[1][:verified]).to be true }
+      it { expect(subject[1][:verification_errors]).to eq([]) }
       it { expect(subject[1][:certificates]).not_to be_empty }
       it { expect(subject[2][:version]).to eq(3) }
-      it { expect(subject[2][:verified]).to be_falsey }
+      it { expect(subject[2][:verified]).to be true }
+      it { expect(subject[2][:verification_errors]).to eq([]) }
       it { expect(subject[2][:certificates]).not_to be_empty }
     end
   end

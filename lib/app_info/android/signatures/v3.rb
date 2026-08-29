@@ -30,25 +30,37 @@ module AppInfo
         # V3.1 Signature ID 0x1b93ad61
         V3_1_BLOCK_ID = [0x61, 0xad, 0x93, 0x1b].freeze
 
-        attr_reader :certificates, :digests
+        attr_reader :certificates, :digests, :certificate_lineage
 
         def version
           Version::V3
         end
 
-        def verify
+        def verify(sdk: nil, **_options)
           begin
             signers_block = singers_block(V3_1_BLOCK_ID)
           rescue NotFoundError
             signers_block = singers_block(V3_BLOCK_ID)
           end
 
-          @certificates, @digests = verified_certs(signers_block)
+          @certificates, @digests = verified_certs(signers_block, sdk: sdk)
+          @verified = true
+        rescue SecurityError => error
+          @certificates ||= []
+          @digests ||= {}
+          code = if error.message.include?('content digest')
+                   :content_digest_mismatch
+                 elsif error.message.start_with?('SDK range')
+                   :sdk_range_mismatch
+                 else
+                   :signature_invalid
+                 end
+          add_verification_error(code, error.message)
         end
 
         private
 
-        def verified_certs(signers_block)
+        def verified_certs(signers_block, sdk: nil)
           unless (signers = length_prefix_block(signers_block))
             raise SecurityError, 'Not found signers'
           end
@@ -56,7 +68,7 @@ module AppInfo
           certificates = []
           content_digests = {}
           loop_length_prefix_io(signers, name: 'Singer', logger: logger) do |signer|
-            signer_certs, signer_digests = extract_signer_data(signer)
+            signer_certs, signer_digests = extract_signer_data(signer, sdk: sdk)
             certificates.concat(signer_certs)
             content_digests.merge!(signer_digests)
           end
@@ -65,13 +77,15 @@ module AppInfo
           [certificates, content_digests]
         end
 
-        def extract_signer_data(signer)
+        def extract_signer_data(signer, sdk: nil)
           # raw data
           signed_data = length_prefix_block(signer)
 
-          # TODO: verify min_sdk and max_sdk
-          min_sdk = signer.read(UINT32_SIZE)
-          max_sdk = signer.read(UINT32_SIZE)
+          min_sdk = signer.read(UINT32_SIZE).unpack1('V')
+          max_sdk = signer.read(UINT32_SIZE).unpack1('V')
+          if min_sdk > max_sdk || (sdk && !sdk.between?(min_sdk, max_sdk))
+            raise SecurityError, "SDK range #{min_sdk}..#{max_sdk} does not include #{sdk}"
+          end
 
           signatures = length_prefix_block(signer)
           public_key = length_prefix_block(signer, raw: true)
@@ -102,12 +116,8 @@ module AppInfo
                   'Signature algorithms don\'t match between digests and signatures records'
           end
 
-          previous_digest = content_digests.fetch(algorithems_digest)
+          verify_content_digest(content_digests, algorithems_digest)
           content_digests[algorithems_digest] = content_digest
-          if previous_digest && previous_digest[:content] != content_digest
-            raise SecurityError,
-                  'Signature algorithms don\'t match between digests and signatures records'
-          end
 
           certificates = length_prefix_block(signed_data)
           certs = signed_data_certs(certificates)
