@@ -43,8 +43,8 @@ module AppInfo
       end
 
       def define_packages(doc)
-        @packages = doc.package.each_with_object({}) do |package, obj|
-          obj[package.package_name] = Resources::Package.new(package)
+        @packages = doc.package.to_h do |package|
+          [package.package_name, Resources::Package.new(package)]
         end
       end
 
@@ -158,7 +158,7 @@ module AppInfo
         include Helper::Protobuf
         extend Forwardable
 
-        attr_reader :locale, :config, :original_value, :value, :type
+        attr_reader :config, :original_value, :value, :type
 
         def initialize(doc, package)
           @package = package

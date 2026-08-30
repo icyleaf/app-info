@@ -37,11 +37,15 @@ module AppInfo
           signers_block = singers_block(BLOCK_ID)
           @certificates, @digests = verified_certs(signers_block, verify: true)
           @verified = true
-        rescue SecurityError => error
+        rescue SecurityError => e
           @certificates ||= []
           @digests ||= {}
-          code = error.message.include?('content digest') ? :content_digest_mismatch : :signature_invalid
-          add_verification_error(code, error.message)
+          code = if e.message.include?('content digest')
+                   :content_digest_mismatch
+                 else
+                   :signature_invalid
+                 end
+          add_verification_error(code, e.message)
         end
 
         private

@@ -29,7 +29,7 @@ module AppInfo
           0x6b, 0x20, 0x34, 0x32
         ].freeze
 
-        attr_reader :total_size, :pairs, :magic, :logger, :cdir_offset
+        attr_reader :total_size, :pairs, :magic, :logger
 
         def initialize(version, parser, logger)
           @version = version

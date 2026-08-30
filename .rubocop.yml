@@ -84,6 +84,15 @@ Style/Documentation:
 Style/ClassAndModuleChildren:
   Enabled: false
 
+Style/OneClassPerFile:
+  Exclude:
+    - 'lib/app_info/core_ext/object/try.rb'
+    - 'lib/app_info/core_ext/string/inflector.rb'
+
+Naming/PredicateMethod:
+  Exclude:
+    - 'lib/app_info/png_uncrush.rb'
+
 Style/PerlBackrefs:
   Exclude:
     - 'lib/app_info/core_ext/string/inflector.rb'

@@ -119,8 +119,8 @@ module AppInfo
 
     # @return [Hash{String => String}] imports imports of libraries
     def imports
-      @imports ||= pe.imports.each_with_object({}) do |import, obj|
-        obj[import.module_name] = import.first_thunk.map(&:name).compact
+      @imports ||= pe.imports.to_h do |import|
+        [import.module_name, import.first_thunk.map(&:name).compact]
       end
     end
 
@@ -188,8 +188,10 @@ module AppInfo
     # @return [String] binary_file path
     def binary_file
       @binary_file ||= lambda {
-        file_io = ::File.open(@file, 'rb')
-        return @file unless file_io.read(100) =~ Helper::FileTypeDetection::ZIP_RETGEX
+        zip_file = ::File.open(@file, 'rb') do |file|
+          file.read(100) =~ Helper::FileTypeDetection::ZIP_RETGEX
+        end
+        return @file unless zip_file
 
         zip_file = Zip::File.open(@file)
         zip_entry = zip_file.glob('*.exe').first
@@ -308,7 +310,7 @@ module AppInfo
         @raw.each do |item|
           next unless item.is_a?(PEdump::VS_VERSIONINFO)
 
-          versions = item[:Children].select { |v| v.is_a?(PEdump::StringFileInfo) }
+          versions = item[:Children].grep(PEdump::StringFileInfo)
           next if versions.empty?
 
           @info = versions[0][:Children][0][:Children]

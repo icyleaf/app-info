@@ -107,7 +107,7 @@ module AppInfo::Helper
     def verify_content_digest(content_digests, digest_name)
       expected = content_digests[digest_name]&.fetch(:content)
       unless expected
-          raise AppInfo::Android::Signature::SecurityError,
+        raise AppInfo::Android::Signature::SecurityError,
               'Signature algorithms don\'t match between digests and signatures records'
       end
 
@@ -115,7 +115,7 @@ module AppInfo::Helper
       return if expected.string == actual
 
       raise AppInfo::Android::Signature::SecurityError,
-        "#{digest_name} content digest did not verify"
+            "#{digest_name} content digest did not verify"
     end
 
     # FIXME: this code not work, need fix.
@@ -180,7 +180,7 @@ module AppInfo::Helper
     SIG_VERITY_DSA_WITH_SHA256 = [0x25, 0x04, 0x00, 0x00].freeze             # 0x0425
 
     SIG_STRIPPING_PROTECTION_ATTR_ID = [0x0d, 0xf0, 0xef, 0xbe].freeze       # 0xbeeff00d
-    SIG_PROOF_OF_ROTATION_ATTR_ID = [0x8c, 0x6f, 0xa0, 0x3b].freeze           # 0x3ba06f8c
+    SIG_PROOF_OF_ROTATION_ATTR_ID = [0x8c, 0x6f, 0xa0, 0x3b].freeze # 0x3ba06f8c
 
     def best_algorithem(algorithems)
       algorithems.max_by { |algorithem| algorithem_priority(algorithem[:id]) || -1 }
