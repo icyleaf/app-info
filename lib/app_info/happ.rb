@@ -3,7 +3,20 @@
 module AppInfo
   # parser for HarmonyOS .APP file
   class HAPP < HarmonyOS
-    def_delegators :default_entry, :icons
+    def_delegators :default_entry, :icons, :module_info, :metadata, :app_info, :module_metadata,
+                   :main_element, :min_api_version, :target_api_version, :compile_sdk_version,
+                   :api_release_type, :profiles, :permissions, :use_permissions,
+                   :features, :use_features, :device_types, :components, :activities,
+                   :services, :schemes, :deep_links, :architectures, :native_codes
+
+    # @return [Array<HAP>]
+    def modules
+      @modules ||= pack_info.packages.filter_map do |package|
+        path = ::File.join(contents, "#{package['name']}.hap")
+        HAP.new(path) if ::File.file?(path)
+      end
+    end
+
     # @return [HAP]
     def default_entry
       hap_path = ::File.join(contents, "#{default_entry_name}.hap")
@@ -39,8 +52,10 @@ module AppInfo
 
       @default_entry_name = nil
       @default_entry&.clear!
+      @modules&.each(&:clear!)
 
       @default_entry = nil
+      @modules = nil
     end
   end
 end
