@@ -163,9 +163,9 @@ module AppInfo
             newdata[pos] = data[pos, 1]
             pos += 1
             (0...width).each do |_|
-              newdata[pos + 0] = data[pos + 2, 1]
+              newdata[pos] = data[pos + 2, 1]
               newdata[pos + 1] = data[pos + 1, 1]
-              newdata[pos + 2] = data[pos + 0, 1]
+              newdata[pos + 2] = data[pos, 1]
               newdata[pos + 3] = data[pos + 3, 1]
               pos += 4
             end

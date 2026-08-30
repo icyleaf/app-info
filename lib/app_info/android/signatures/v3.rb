@@ -30,25 +30,39 @@ module AppInfo
         # V3.1 Signature ID 0x1b93ad61
         V3_1_BLOCK_ID = [0x61, 0xad, 0x93, 0x1b].freeze
 
-        attr_reader :certificates, :digests
+        attr_reader :certificates, :digests, :certificate_lineage
 
         def version
           Version::V3
         end
 
-        def verify
+        def verify(sdk: nil, **_options)
           begin
             signers_block = singers_block(V3_1_BLOCK_ID)
           rescue NotFoundError
             signers_block = singers_block(V3_BLOCK_ID)
           end
 
-          @certificates, @digests = verified_certs(signers_block)
+          @certificates, @digests = verified_certs(signers_block, sdk: sdk)
+          @verified = true
+        rescue SecurityError => e
+          @certificates ||= []
+          @digests ||= {}
+          code = if e.message.include?('content digest')
+                   :content_digest_mismatch
+                 elsif e.message.start_with?('SDK range')
+                   :sdk_range_mismatch
+                 elsif e.message.start_with?('Certificate lineage')
+                   :certificate_lineage_invalid
+                 else
+                   :signature_invalid
+                 end
+          add_verification_error(code, e.message)
         end
 
         private
 
-        def verified_certs(signers_block)
+        def verified_certs(signers_block, sdk: nil)
           unless (signers = length_prefix_block(signers_block))
             raise SecurityError, 'Not found signers'
           end
@@ -56,7 +70,7 @@ module AppInfo
           certificates = []
           content_digests = {}
           loop_length_prefix_io(signers, name: 'Singer', logger: logger) do |signer|
-            signer_certs, signer_digests = extract_signer_data(signer)
+            signer_certs, signer_digests = extract_signer_data(signer, sdk: sdk)
             certificates.concat(signer_certs)
             content_digests.merge!(signer_digests)
           end
@@ -65,13 +79,15 @@ module AppInfo
           [certificates, content_digests]
         end
 
-        def extract_signer_data(signer)
+        def extract_signer_data(signer, sdk: nil)
           # raw data
           signed_data = length_prefix_block(signer)
 
-          # TODO: verify min_sdk and max_sdk
-          min_sdk = signer.read(UINT32_SIZE)
-          max_sdk = signer.read(UINT32_SIZE)
+          min_sdk = signer.read(UINT32_SIZE).unpack1('V')
+          max_sdk = signer.read(UINT32_SIZE).unpack1('V')
+          if min_sdk > max_sdk || (sdk && !sdk.between?(min_sdk, max_sdk))
+            raise SecurityError, "SDK range #{min_sdk}..#{max_sdk} does not include #{sdk}"
+          end
 
           signatures = length_prefix_block(signer)
           public_key = length_prefix_block(signer, raw: true)
@@ -102,12 +118,8 @@ module AppInfo
                   'Signature algorithms don\'t match between digests and signatures records'
           end
 
-          previous_digest = content_digests.fetch(algorithems_digest)
+          verify_content_digest(content_digests, algorithems_digest)
           content_digests[algorithems_digest] = content_digest
-          if previous_digest && previous_digest[:content] != content_digest
-            raise SecurityError,
-                  'Signature algorithms don\'t match between digests and signatures records'
-          end
 
           certificates = length_prefix_block(signed_data)
           certs = signed_data_certs(certificates)
@@ -119,9 +131,138 @@ module AppInfo
           end
 
           additional_attrs = length_prefix_block(signed_data)
-          verify_additional_attrs(additional_attrs, certs)
+          @certificate_lineage = verify_v3_additional_attrs(additional_attrs, certs, pkey)
 
           [certs, content_digests]
+        end
+
+        def verify_v3_additional_attrs(attrs, certs, public_key)
+          lineage = nil
+          loop_length_prefix_io(
+            attrs, name: 'Additional Attributes', raw: true, ignore_left_size_precheck: true
+          ) do |raw_attr|
+            if raw_attr.bytesize < UINT32_SIZE
+              raise SecurityError,
+                    'Certificate lineage attribute is malformed'
+            end
+
+            attr = StringIO.new(raw_attr)
+            id = attr.read(UINT32_SIZE).unpack1('V')
+            if id == SIG_STRIPPING_PROTECTION_ATTR_ID.pack('C*').unpack1('V')
+              raise SecurityError,
+                    'V2 signature indicates APK is signed using APK Signature Scheme v3, ' \
+                    'but none was found. Signature stripped?'
+            elsif id == SIG_PROOF_OF_ROTATION_ATTR_ID.pack('C*').unpack1('V')
+              raise SecurityError, 'Certificate lineage attribute is duplicated' if lineage
+
+              lineage = parse_certificate_lineage(attr.read, certs, public_key)
+            end
+          end
+          lineage
+        end
+
+        def parse_certificate_lineage(bytes, certs, public_key)
+          input = StringIO.new(bytes)
+          version = input.read(UINT32_SIZE)&.unpack1('V')
+          raise SecurityError, 'Certificate lineage has an invalid version' unless version == 1
+
+          nodes = []
+          previous_certificate = nil
+          previous_algorithm = nil
+          seen = {}
+          until input.eof?
+            node = parse_lineage_node(input)
+            verify_lineage_node(node, previous_certificate, previous_algorithm, seen)
+            nodes << node
+            previous_certificate = node[:certificate]
+            previous_algorithm = node[:signature_algorithm_id]
+          end
+
+          if nodes.empty? || nodes.last[:certificate].public_key.to_der != public_key.to_der
+            raise SecurityError, 'Certificate lineage does not end at the APK signer'
+          end
+          unless nodes.last[:certificate].to_der == certs.first.to_der
+            raise SecurityError, 'Certificate lineage does not match the APK certificate'
+          end
+
+          nodes
+        rescue AppInfo::Android::Signature::SecurityError
+          raise
+        rescue StandardError => e
+          raise SecurityError, "Certificate lineage is malformed: #{e.message}"
+        end
+
+        def parse_lineage_node(input)
+          node_io = StringIO.new(length_prefix_block(input, raw: true))
+          signed_data = length_prefix_block(node_io, raw: true)
+          flags = node_io.read(UINT32_SIZE)&.unpack1('V')
+          signature_algorithm_id = node_io.read(UINT32_SIZE)&.unpack1('V')
+          signature = length_prefix_block(node_io, raw: true)
+          unless flags && signature_algorithm_id && node_io.eof?
+            raise SecurityError,
+                  'Certificate lineage node is malformed'
+          end
+
+          signed_io = StringIO.new(signed_data)
+          certificate_der = length_prefix_block(signed_io, raw: true)
+          parent_algorithm_id = signed_io.read(UINT32_SIZE)&.unpack1('V')
+          unless parent_algorithm_id && signed_io.eof?
+            raise SecurityError,
+                  'Certificate lineage signed data is malformed'
+          end
+
+          {
+            certificate: AppInfo::Certificate.parse(certificate_der),
+            certificate_der: certificate_der,
+            flags: flags,
+            signature_algorithm_id: signature_algorithm_id,
+            parent_signature_algorithm_id: parent_algorithm_id,
+            signature: signature,
+            signed_data: signed_data
+          }
+        end
+
+        def verify_lineage_node(node, previous_certificate, previous_algorithm, seen)
+          if seen[node[:certificate_der]]
+            raise SecurityError, 'Certificate lineage contains duplicate certificates'
+          end
+
+          parent_algorithm = node[:parent_signature_algorithm_id]
+          if previous_certificate
+            unless parent_algorithm == previous_algorithm
+              raise SecurityError,
+                    'Certificate lineage algorithm chain is invalid'
+            end
+
+            verify_lineage_signature(previous_certificate, parent_algorithm, node[:signature],
+                                     node[:signed_data])
+          elsif parent_algorithm != 0 || !node[:signature].empty?
+            raise SecurityError, 'Certificate lineage first node is invalid'
+          end
+          seen[node[:certificate_der]] = true
+        end
+
+        def verify_lineage_signature(certificate, algorithm_id, signature, signed_data)
+          algorithm = [algorithm_id].pack('V').unpack('C*')
+          digest_name = algorithm_match(algorithm)
+          unless digest_name && algorithm_method(algorithm)
+            raise SecurityError,
+                  "Certificate lineage uses unsupported signature algorithm #{algorithm_id}"
+          end
+
+          options = if algorithm_method(algorithm) == :rsa &&
+                       [SIG_RSA_PSS_WITH_SHA256, SIG_RSA_PSS_WITH_SHA512].include?(algorithm)
+                      { rsa_padding_mode: :pss, rsa_pss_saltlen: OpenSSL::Digest.new(digest_name).digest_length }
+                    else
+                      {}
+                    end
+          verified = certificate.public_key.verify(
+            OpenSSL::Digest.new(digest_name), signature, signed_data, **options
+          )
+          raise SecurityError, 'Certificate lineage signature did not verify' unless verified
+        rescue OpenSSL::PKey::PKeyError => e
+          raise SecurityError,
+                "Certificate lineage signature could not be verified: #{e.message}"
         end
       end
 

@@ -33,10 +33,19 @@ module AppInfo
 
         # Verify
         # @todo verified signatures
-        def verify
+        def verify(**_options)
           signers_block = singers_block(BLOCK_ID)
           @certificates, @digests = verified_certs(signers_block, verify: true)
-          # @verified = true
+          @verified = true
+        rescue SecurityError => e
+          @certificates ||= []
+          @digests ||= {}
+          code = if e.message.include?('content digest')
+                   :content_digest_mismatch
+                 else
+                   :signature_invalid
+                 end
+          add_verification_error(code, e.message)
         end
 
         private
@@ -92,12 +101,8 @@ module AppInfo
                   'Signature algorithms don\'t match between digests and signatures records'
           end
 
-          previous_digest = content_digests.fetch(algorithems_digest)
+          verify_content_digest(content_digests, algorithems_digest)
           content_digests[algorithems_digest] = content_digest
-          if previous_digest && previous_digest[:content] != content_digest
-            raise SecurityError,
-                  'Signature algorithms don\'t match between digests and signatures records'
-          end
 
           certificates = length_prefix_block(signed_data)
           certs = signed_data_certs(certificates)

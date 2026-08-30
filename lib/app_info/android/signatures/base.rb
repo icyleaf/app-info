@@ -6,19 +6,26 @@ module AppInfo
   class Android < File
     module Signature
       class Base
-        def self.verify(parser)
+        def self.verify(parser, **options)
           instance = new(parser)
-          instance.verify
+          instance.verify(**options)
           instance
         end
 
         DESCRIPTION = 'APK Signature Scheme'
 
-        attr_reader :verified
+        attr_reader :verified, :verification_errors
 
         def initialize(parser)
           @parser = parser
           @verified = false
+          @verification_errors = []
+        end
+
+        def add_verification_error(code, message, signer: nil)
+          error = { code: code, message: message }
+          error[:signer] = signer unless signer.nil?
+          @verification_errors << error
         end
 
         # @abstract Subclass and override {#verify} to implement
