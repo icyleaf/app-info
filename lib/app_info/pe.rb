@@ -198,7 +198,10 @@ module AppInfo
         raise NotFoundError, 'Not found .exe file in archive file' if zip_entry.nil?
 
         exe_file = tempdir(zip_entry.name, prefix: 'pe-exe', system: true)
-        zip_entry.extract(exe_file)
+        zip_entry.extract(
+          ::File.basename(exe_file),
+          destination_directory: ::File.dirname(exe_file)
+        )
         zip_file.close
 
         exe_file

@@ -19,7 +19,9 @@ module AppInfo::Helper
           zip_file.each do |f|
             f_path = ::File.join(base_path, f.name)
             FileUtils.mkdir_p(::File.dirname(f_path))
-            zip_file.extract(f, f_path) unless ::File.exist?(f_path)
+            next if ::File.exist?(f_path)
+
+            zip_file.extract(f, f.name, destination_directory: base_path)
           end
         end
       end
