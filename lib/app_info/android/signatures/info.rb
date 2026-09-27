@@ -29,6 +29,18 @@ module AppInfo
           0x6b, 0x20, 0x34, 0x32
         ].freeze
 
+        # End of central directory record signature: PK\x05\x06
+        EOCD_SIGNATURE = "PK\x05\x06".b.freeze
+        # Zip64 end of central directory record and locator signatures.
+        ZIP64_END_OF_CD_SIGNATURE = "PK\x06\x06".b.freeze
+        ZIP64_EOCD_LOCATOR_SIGNATURE = "PK\x06\x07".b.freeze
+        # Static size of the end of central directory record.
+        STATIC_EOCD_SIZE = 22
+        # Maximum size of the end of central directory search window.
+        MAX_END_OF_CD_SIZE = 65_557
+        # Offset of the central directory offset field within the EOCD record.
+        EOCD_CDIR_OFFSET_FIELD = 16
+
         attr_reader :total_size, :pairs, :magic, :logger
 
         def initialize(version, parser, logger)
@@ -87,7 +99,16 @@ module AppInfo
         end
 
         def zip64?
-          zip_io.zip64_file?(start_buffer)
+          return @zip64 unless @zip64.nil?
+
+          tail = ::File.open(@parser.file, 'rb') do |file|
+            size = file_size
+            file.seek(size - [size, MAX_END_OF_CD_SIZE].min)
+            file.read
+          end
+
+          @zip64 = tail.include?(ZIP64_END_OF_CD_SIGNATURE) &&
+                   tail.include?(ZIP64_EOCD_LOCATOR_SIGNATURE)
         end
 
         def signing_block_offset
@@ -99,12 +120,11 @@ module AppInfo
         end
 
         def eocd_offset
-          tail_size = [file_size, 65_557].min
+          tail_size = [file_size, MAX_END_OF_CD_SIZE].min
           ::File.open(@parser.file, 'rb') do |file|
             file.seek(file_size - tail_size)
             tail = file.read(tail_size)
-            signature = "PK\x05\x06".b
-            index = tail.rindex(signature)
+            index = tail.rindex(EOCD_SIGNATURE)
             raise NotFoundError, 'End of central directory not found' unless index
 
             file_size - tail_size + index
@@ -156,18 +176,11 @@ module AppInfo
         end
 
         def cdir_offset
-          @cdir_offset ||= lambda {
-            eocd_buffer = zip_io.get_e_o_c_d(start_buffer)
-            eocd_buffer[12..16].unpack1('V')
-          }.call
-        end
-
-        def start_buffer
-          @start_buffer ||= zip_io.start_buf(file_io)
-        end
-
-        def zip_io
-          @zip_io ||= @parser.zip
+          @cdir_offset ||= ::File.open(@parser.file, 'rb') do |file|
+            file.seek(eocd_offset)
+            eocd = file.read(STATIC_EOCD_SIZE)
+            eocd[EOCD_CDIR_OFFSET_FIELD, UINT32_SIZE].unpack1('V')
+          end
         end
 
         def file_io
