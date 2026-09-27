@@ -184,9 +184,5 @@ module AppInfo
     def permission_value(permission)
       permission.is_a?(Hash) ? permission['name'] : permission
     end
-
-    def metadata
-      module_info
-    end
   end
 end

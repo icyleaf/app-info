@@ -3,7 +3,7 @@
 module AppInfo
   # parser for HarmonyOS .APP file
   class HAPP < HarmonyOS
-    def_delegators :default_entry, :icons, :module_info, :metadata, :app_info, :module_metadata,
+    def_delegators :default_entry, :icons, :module_info, :app_info, :module_metadata,
                    :main_element, :min_api_version, :target_api_version, :compile_sdk_version,
                    :api_release_type, :profiles, :permissions, :use_permissions,
                    :features, :use_features, :device_types, :components, :activities,
