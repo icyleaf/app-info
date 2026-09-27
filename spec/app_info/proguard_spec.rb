@@ -73,7 +73,7 @@ describe AppInfo::Proguard do
 
             proguard_file = File.join(dir, "#{name}.zip")
             FileUtils.rm_f(proguard_file) if File.exist?(proguard_file)
-            Zip::File.open(proguard_file, Zip::File::CREATE) do |zip_file|
+            Zip::File.open(proguard_file, create: true) do |zip_file|
               zip_file.add(name, File.join(dir, name))
             end
 
