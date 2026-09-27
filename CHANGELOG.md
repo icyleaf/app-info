@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [3.4.0] (2026-09-27)
+
+### Added
+
+- Add Android verify v2, v3 signatures and certificate lineage.
+- Add deepen HarmonyOS metadata parsing.
+
+### Fixed
+
+- Upgrade rubyzip >= 3.4.0 to fix path traversal vulnerability issue.
+- Fix archive extraction with rubyzip 3.x by passing `destination_directory` instead of an absolute entry path.
+- Fix Android v2/v3 signature verification with rubyzip 3.x by parsing the end of central directory directly.
+
 ## [3.3.1] (2025-04-27)
 
 ### Fixed

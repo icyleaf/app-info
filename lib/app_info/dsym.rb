@@ -56,7 +56,9 @@ module AppInfo
 
             dest_path = ::File.join(base_path, file_path)
             FileUtils.mkdir_p(::File.dirname(dest_path))
-            entry.extract(dest_path) unless ::File.exist?(dest_path)
+            next if ::File.exist?(dest_path)
+
+            entry.extract(file_path, destination_directory: base_path)
           end
         end
       }.call
