@@ -252,27 +252,128 @@ android.signatures
 
 ### HarmonyOS
 
-Accept `.hap` and `.app` HarmonyOS file. Only metabase, except resources mapping.
+Accept `.hap` and `.app` HarmonyOS file. Only metadata, except resources mapping.
 
 ```ruby
 hap = AppInfo.parse('app.hap')
 
 # get app file size
-android.size
-# => 2013213
+hap.size
+# => 142283
 
-# get app file size in human reable.
-android.size(human_size: true)
-# => 21 MB
+# get app file size in human readable.
+hap.size(human_size: true)
+# => "138.95 KB"
 
 # get app release version
-android.release_version
-# => 1.0
+hap.release_version
+# => "1.0.0"
 
-# get app package name
-android.bundle_id
-# => com.icyleaf.AppInfoDemo
+# get app build version
+hap.build_version
+# => 1000000
+
+# get app version (release_version, fallback to build_version)
+hap.version
+# => "1.0.0"
+
+# get app package name (alias: identifier, bundle_name)
+hap.bundle_id
+# => "com.example.myapplication"
+
+# get app display name (alias: name)
+hap.display_name
+# => "MyApplication"
+
+# get app icons
+hap.icons
+# => [{:name=>"app_icon.png", :file=>"/temp/dir/resources/base/media/app_icon.png", :dimensions=>[41, 41]}]
+
+# get the whole parsed module.json (alias: module_data)
+hap.module_info
+# => {"app" => {...}, "module" => {...}}
+
+# get app section of module.json
+hap.app_info
+# => {"minAPIVersion" => 50000012, "targetAPIVersion" => 50000012, "label" => "$string:app_name", "bundleName" => "com.example.myapplication", ...}
+
+# get module section of module.json
+hap.module_metadata
+# => {"mainElement" => "EntryAbility", "deviceTypes" => ["phone", "tablet", "2in1"], "abilities" => [...], ...}
+
+# get main entry ability name
+hap.main_element
+# => "EntryAbility"
+
+# get api version
+hap.min_api_version
+# => 50000012
+hap.target_api_version
+# => 50000012
+
+# get compile sdk version and release type
+hap.compile_sdk_version
+# => "5.0.0.25"
+hap.api_release_type
+# => "Beta1"
+
+# get resource profile files (name => parsed json)
+hap.profiles
+# => {"main_pages" => {"src" => ["pages/Index"]}, "backup_config" => {"allowToBackupRestore" => true}}
+
+# get requested permissions (alias: use_permissions)
+hap.permissions
+# => []
+
+# get supported device types (alias: features, use_features)
+hap.device_types
+# => ["phone", "tablet", "2in1"]
+
+# detect device type
+hap.phone?
+# => true
+hap.tablet?
+# => true
+hap.tv?
+# => false
+hap.wearable?
+# => false
+hap.car?
+# => false
+hap.two_in_one?
+# => true
+
+# get abilities and services
+hap.activities
+hap.services
+hap.components
+
+# get deep links host and schemes
+hap.deep_links
+hap.schemes
+
+# get native architectures (alias: architectures)
+hap.native_codes
+# => []
 ```
+
+The `.app` file is a bundle that contains one or more `.hap` modules:
+
+```ruby
+app = AppInfo.parse('app.app')
+
+# get all hap modules
+app.modules
+# => [#<AppInfo::HAP:...>]
+
+# get the default (entry) module
+app.default_entry
+# => #<AppInfo::HAP:...>
+app.default_entry_name
+# => "entry-default"
+```
+
+All metadata methods above (such as `module_info`, `app_info`, `module_metadata`, `profiles`, `device_types`, ...) are also available on the `.app` parser and are delegated to its default entry module. The `module_data` alias is only defined for `.hap`.
 
 ### macOS
 
