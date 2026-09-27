@@ -7,23 +7,23 @@
 
 Teardown tool for mobile app (iOS: ipa, Android: apk/aab, HarmonyOS: .hap/.app file), macOS app, dSYM.zip file and Windows PE file.
 
-Analysis metedata like version, name, icon etc.
+Analysis metadata like version, name, icon etc.
 
 ## Support
 
 - Android file
   - `.apk`
-  - `.aab` (Androld App Bundle)
+  - `.aab` (Android App Bundle)
 - iOS, Apple TV file
   - `.ipa`
   - `Info.plist` file
   - `.mobileprovision`/`.provisionprofile` file
-- HarmonyOS file (basic)
+- HarmonyOS file
   - `.hap`
   - `.app`
-- macOS App file (archived by starnd pkzip format)
+- macOS App file (archived by standard pkzip format)
   - `.app.zip`
-- dSYMs file (archived by starnd pkzip format)
+- dSYMs file (archived by standard pkzip format)
   - `.dSYM.zip`
 - Windows PE file
   - `.exe`
@@ -71,6 +71,8 @@ parser = AppInfo.parse('ipad.ipa')
 parser = AppInfo.parse('apple-tv.ipa')
 parser = AppInfo.parse('android.apk')
 parser = AppInfo.parse('android.aab')
+parser = AppInfo.parse('harmony.hap')
+parser = AppInfo.parse('harmony.app')
 parser = AppInfo.parse('u-u-i-d.mobileprovision')
 parser = AppInfo.parse('macOS.App.zip')
 parser = AppInfo.parse('App.dSYm.zip')
@@ -81,6 +83,8 @@ parser = AppInfo.parse('win.zip')
 parser = AppInfo::IPA.new('iphone-ipad-unversal-appletv.ipa')
 parser = AppInfo::APK.new('android.apk')
 parser = AppInfo::AAB.new('android.aab')
+parser = AppInfo::HAP.new('harmony.hap')
+parser = AppInfo::HAPP.new('harmony.app')
 parser = AppInfo::InfoPlist.new('Info.plist')
 parser = AppInfo::MobileProvision.new('uuid.mobileprovision')
 parser = AppInfo::Macos.new('App.dSYm.zip')
@@ -145,7 +149,7 @@ ipa.plugins
 ipa.url_schemes
 # => [{:name=>"Web", :role=>"Editor", :schemes=>["app-info", "app_info"]}]
 
-# get query schemes
+# get url schemes
 ipa.url_schemes
 # => ["twitter", "instagram", "www-x-callback"]
 
@@ -518,9 +522,9 @@ It is possible to use this gem as a command line interface to parse mobile app:
 ```
 > app-info
 
-app-info (2.7.0)> p = AppInfo.parse('/path/to/app')
+app-info (3.4.0)> p = AppInfo.parse('/path/to/app')
 => #<AppInfo::APK::......>
-app-info (2.7.0)> p.name
+app-info (3.4.0)> p.name
 => "AppName"
 ```
 

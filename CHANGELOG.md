@@ -14,13 +14,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Add Android verify v2, v3 signatures and certificate lineage.
-- Add deepen HarmonyOS metadata parsing.
+- Add deeper HarmonyOS `.hap`/`.app` metadata parsing: `module_info`, `app_info`, `module_metadata`, `profiles`, `permissions`, `features`, device type detection and more.
 
 ### Fixed
 
 - Upgrade rubyzip >= 3.4.0 to fix path traversal vulnerability issue.
 - Fix archive extraction with rubyzip 3.x by passing `destination_directory` instead of an absolute entry path.
 - Fix Android v2/v3 signature verification with rubyzip 3.x by parsing the end of central directory directly.
+
+## [3.3.2] (2025-05-23)
+
+### Added
+
+- Add determine mobile provision file content.
 
 ## [3.3.1] (2025-04-27)
 
@@ -84,7 +90,7 @@ Dropped Ruby 2.5 ~ 3.0 support (no changes required.).
 
 - Add `AppInfo::File` base class for all parsers.
 - Add `AppInfo::Certifiate` X509 certificate wrapped and apply in Android/MobileProvision.
-- Re-organize categories `.platform`  to `.manufacturer`, `.platform` and `.device` for all parsers.
+- Re-organize categories `.platform` to `.manufacturer`, `.platform` and `.device` for all parsers.
 - Remove `.sign_version` method in Android parser.
 - Rename `.file_type` to `.format` method in all parers and return a `AppInfo::Format` type.
 - Remove duplice `AppInfo::AndroidDevice` class.
@@ -228,6 +234,7 @@ Dropped Ruby 2.5 ~ 3.0 support (no changes required.).
 
 - Force write all icon data with `ASCII-8BIT`
 - Force convert developer cert name to `UTF-8`
+
 ## [2.6.1] (2021-08-26)
 
 ### Fixed
@@ -309,6 +316,7 @@ Dropped Ruby 2.5 ~ 3.0 support (no changes required.).
 ### Changed
 
 - Change `IPA::ExportType::INHOUSE` to `IPA::ExportType::ENTERPRISE` and change the value. #[24](https://github.com/icyleaf/app-info/pull/24)
+
 ### Added
 
 - Add `plugins`, `frameworks` to `AppInfo::IPA`. #[25](https://github.com/icyleaf/app-info/pull/25)
@@ -386,7 +394,10 @@ Dropped Ruby 2.5 ~ 3.0 support (no changes required.).
 
 - Updated dependency of CFPropertly list be a range between 2.3.4. (thanks @[cschroed](https://github.com/cschroed))
 
-[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.3.0..HEAD
+[Unreleased]: https://github.com/icyleaf/app-info/compare/v3.4.0..HEAD
+[3.4.0]: https://github.com/icyleaf/app-info/compare/v3.3.2...v3.4.0
+[3.3.2]: https://github.com/icyleaf/app-info/compare/v3.3.1...v3.3.2
+[3.3.1]: https://github.com/icyleaf/app-info/compare/v3.3.0...v3.3.1
 [3.3.0]: https://github.com/icyleaf/app-info/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/icyleaf/app-info/compare/v3.1.4...v3.2.0
 [3.1.4]: https://github.com/icyleaf/app-info/compare/v3.1.2...v3.1.4
@@ -430,4 +441,3 @@ Dropped Ruby 2.5 ~ 3.0 support (no changes required.).
 [1.1.2]: https://github.com/icyleaf/app-info/compare/v1.0.5...v1.1.2
 [1.1.0]: https://github.com/icyleaf/app-info/compare/v1.0.5...v1.1.0
 [1.0.5]: https://github.com/icyleaf/app-info/compare/v0.9.0...v1.0.5
-
