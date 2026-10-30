@@ -111,7 +111,6 @@ module AppInfo
 
     def _dump_sections(dimensions: false)
       pos = @io.header.size
-      optimized = false
       [].tap do |sections|
         while pos < @io.size
           type = @io[pos + 4, 4]
@@ -120,10 +119,7 @@ module AppInfo
           crc = @io[pos + 8 + length, 4].unpack1('N')
           pos += length + 12
 
-          if type == 'CgBI'
-            optimized = true
-            next
-          end
+          next if type == 'CgBI'
 
           if type == 'IHDR'
             width = data[0, 4].unpack1('N')
