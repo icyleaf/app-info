@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 > List all changes before release a new version.
 
+## [3.4.1] (2026-10-31)
+
 ### Fixed
 
 - Fix APK Signature Scheme v2/v3 verification falsely reports `content_digest_mismatch` when the signing block contains Android verity digest algorithms (`0x0421`/`0x0423`/`0x0425`). Those digest records are now skipped because the plain SHA-256 content digest cannot verify them without the Android verity tree digest.

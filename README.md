@@ -522,9 +522,9 @@ It is possible to use this gem as a command line interface to parse mobile app:
 ```
 > app-info
 
-app-info (3.4.0)> p = AppInfo.parse('/path/to/app')
+app-info (3.4.1)> p = AppInfo.parse('/path/to/app')
 => #<AppInfo::APK::......>
-app-info (3.4.0)> p.name
+app-info (3.4.1)> p.name
 => "AppName"
 ```
 
