@@ -91,6 +91,12 @@ module AppInfo::Helper
         max_bytes: AppInfo::Android::Signature::UINT64_SIZE
       ) do |digest|
         algorithm = digest.read(AppInfo::Android::Signature::UINT32_SIZE).unpack('C*')
+        if verity_algorithm?(algorithm)
+          logger.debug "Skip verity content digest algorithm 0x#{algorithm.pack('C*').unpack1('H*')} " \
+                       'because its digest can not be verified without Android verity tree digest'
+          next
+        end
+
         digest_name = algorithm_match(algorithm)
         next unless digest_name
 
@@ -150,6 +156,12 @@ module AppInfo::Helper
         logger: logger
       ) do |signature|
         algorithm = signature.read(AppInfo::Android::Signature::UINT32_SIZE).unpack('C*')
+        if verity_algorithm?(algorithm)
+          logger.debug "Skip verity signature algorithm 0x#{algorithm.pack('C*').unpack1('H*')} " \
+                       'because its content digest can not be verified without Android verity tree digest'
+          next
+        end
+
         digest = algorithm_match(algorithm)
         next unless digest
 
@@ -182,6 +194,16 @@ module AppInfo::Helper
     SIG_STRIPPING_PROTECTION_ATTR_ID = [0x0d, 0xf0, 0xef, 0xbe].freeze       # 0xbeeff00d
     SIG_PROOF_OF_ROTATION_ATTR_ID = [0x8c, 0x6f, 0xa0, 0x3b].freeze # 0x3ba06f8c
 
+    # Verity digest algorithms. Their digest records are 40 bytes long
+    # (32 bytes digest + 8 bytes file size) and can NOT be verified against
+    # the plain SHA-256 content digest computed over the file. Skipping them
+    # keeps the signer verification on standard algorithm records.
+    SIG_VERITY_ALGORITHMS = [
+      SIG_VERITY_RSA_PKCS1_V1_5_WITH_SHA256,
+      SIG_VERITY_ECDSA_WITH_SHA256,
+      SIG_VERITY_DSA_WITH_SHA256
+    ].freeze
+
     def best_algorithem(algorithems)
       algorithems.max_by { |algorithem| algorithem_priority(algorithem[:id]) || -1 }
     end
@@ -193,6 +215,10 @@ module AppInfo::Helper
       else
         source
       end
+    end
+
+    def verity_algorithm?(algorithm)
+      SIG_VERITY_ALGORITHMS.include?(algorithm)
     end
 
     def algorithem_priority(algorithm)
